@@ -1,0 +1,131 @@
+System Start: 15.06.2015 11:12 1434399123.94
+0 => Установка переменной<br />
+module => test<br />
+1 => method: get<br />
+
+SQL => <br />
+
+Запрос переменной: module test GET
+arg => pages<br />
+
+SQL => <br />
+
+arg => pages<br />
+
+SQL => <br />
+
+arg => 2<br />
+
+arg => new<br />
+
+SQL => <br />
+
+0 => Регистрацция действия<br />
+1 => new<br />
+2 => 228<br />
+3 => 2<br />
+
+arg => 2<br />
+
+arg => add<br />
+
+SQL => <br />
+
+0 => Регистрацция действия<br />
+1 => add<br />
+2 => 229<br />
+3 => 2<br />
+
+arg => 2<br />
+
+arg => edit<br />
+
+SQL => <br />
+
+0 => Регистрацция действия<br />
+1 => edit<br />
+2 => 268<br />
+3 => 2<br />
+
+arg => 2<br />
+
+arg => update<br />
+
+SQL => <br />
+
+0 => Регистрацция действия<br />
+1 => update<br />
+2 => 269<br />
+3 => 2<br />
+
+arg => 2<br />
+
+arg => view<br />
+
+SQL => <br />
+
+0 => Регистрацция действия<br />
+1 => view<br />
+2 => 230<br />
+3 => 2<br />
+
+arg => 2<br />
+
+arg => del<br />
+
+SQL => <br />
+
+0 => Регистрацция действия<br />
+1 => del<br />
+2 => 231<br />
+3 => 2<br />
+
+arg => 2<br />
+
+arg => newChild<br />
+
+SQL => <br />
+
+0 => Регистрацция действия<br />
+1 => newChild<br />
+2 => 409<br />
+3 => 2<br />
+
+arg => 2<br />
+
+arg => addChild<br />
+
+SQL => <br />
+
+0 => Регистрацция действия<br />
+1 => addChild<br />
+2 => 410<br />
+3 => 2<br />
+
+arg => 2<br />
+
+arg => usemodule<br />
+
+SQL => <br />
+
+0 => Регистрацция действия<br />
+1 => usemodule<br />
+2 => 411<br />
+3 => 2<br />
+
+arg => 2<br />
+
+arg => action<br />
+
+SQL => <br />
+
+0 => Регистрацция действия<br />
+1 => action<br />
+2 => 412<br />
+3 => 2<br />
+
+arg => 0<br />
+
+SQL => <br />
+
+System work time: 0.2511

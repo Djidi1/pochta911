@@ -1,0 +1,2 @@
+layout/viewLoginBar.xsl
+ layout/tc/tc.turedit.xsl

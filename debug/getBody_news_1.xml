@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<module name="news"><container module="news"><item><id>1</id><title><![CDATA[
+Внимание
+]]></title><subject/><content><![CDATA[
+<p><span style="color:rgb(148, 150, 150)">Уважаемые туристы!&nbsp;</span><br />
+<span style="color:rgb(148, 150, 150)">На нашем сайте запущена обновленная система онлайн бронирования.</span></p>
+
+]]></content><language>ru</language><time>01-01-2015</time><noshow/><prioritet/><user_id/></item></container></module>

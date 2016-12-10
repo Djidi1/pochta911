@@ -1,0 +1,39 @@
+body {background-color: #FFFFFF;}
+
+.calendar td {font-family: Tahoma; font-size: 9px; color: #474747;}
+
+.calendar a:link, .calendar a:active, .calendar a:visited, .calendar a:hover {color: #bcbcbc; text-decoration: none;}
+
+.calendar a.month {color: #474747; text-decoration: none;}
+
+.calendar td {
+	padding: 2px 3px 4px 4px;
+}
+
+.calendar tr.days td {
+	color: #474747;
+	font-weight: bold;
+	text-align: center;
+	padding: 2px 1px 2px 2px;
+	background-color: #e8e8e8;
+
+}
+
+.calendar .title {
+	color: #474747;
+	text-align: center;
+	font-weight: bold;
+	text-transform: uppercase;
+}
+
+.calendar span.select {
+	color: #FFFFFF;
+	text-align: center;
+	padding: 0px 1px 1px 1px;
+	font-weight: bold;
+}
+.calendar span.select a:link, .calendar span.select a:active, .calendar span.select a:visited, .calendar span.select a:hover {color: #FFFFFF; text-decoration: none; background-color:#da4131; padding:1px;}
+
+
+.calendar .current-date {padding-top: 10px; font-size: 10px; font-family: Tahoma, sans-serif;}
+.calendar .current-date a:link, .calendar .current-date a:active, .calendar .current-date a:visited, .calendar .current-date a:hover {color: #474747; text-decoration: none;}

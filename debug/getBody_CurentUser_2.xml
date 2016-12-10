@@ -1,0 +1,2 @@
+<?xml version="1.0" encoding="utf-8"?>
+<module name="CurentUser"><container module="login"><login>1</login><referer>http://bltur.ru//tc/turEdit-1065/</referer><user_id>3</user_id><rightsModAdmin>1</rightsModAdmin><subject/><title>Система БЛТ</title><error>Вы вошли как: admin</error><user_name>admin</user_name><params><item><subject>Группа</subject><message>Администраторы</message></item></params><statusbar/></container></module>

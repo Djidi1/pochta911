@@ -1,0 +1,2 @@
+<?xml version="1.0" encoding="utf-8"?>
+<module name="CurentUser"><container module="login"><formdata><form name="login" action="http://bltur.ru/email/debug-1" method="POST"><item id="referer" name="referer" type="hidden"><value>http://bltur.ru//email/debug-1</value></item><item id="login" name="login" type="hidden"><value>1</value></item><item id="user_id" name="user_id" type="hidden"><value>3</value></item><item type="message" className="msg-login">Балтиклайнс Тур</item><item type="message" className="error">Вы вошли как: admin</item></form></formdata></container></module>

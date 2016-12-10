@@ -1,0 +1,165 @@
+BODY {
+  margin: 0;
+  padding: 0;
+  font-family: Tahoma;
+  font-size: 12px;
+  color: #2D3D47;
+  text-align: justify;
+}
+
+P, UL, UL LI, H1, H2, H3, H4, FORM {
+  margin: 0;
+  padding: 0;
+}
+
+UL {
+    list-style: none;
+}
+UL LI UL{
+    list-style: none;
+    margin-left: 20px;
+}
+
+UL.formated-menu { list-style: disc inside; width: 500px; margin:0 15px;}
+UL.formated-menu LI {padding-left: 20px; line-height: 1.5em;}
+
+UL.formated-menu2 { list-style: disc inside; width: 100%; margin:0 15px;}
+UL.formated-menu2 LI {padding-left: 20px; line-height: 1.5em;}
+
+#products #content UL {list-style: disc inside; width: 100%; margin: 0 15px;}
+#products #content UL LI {padding-left: 20px; line-height: 1.5em;}
+
+A {
+  color: #0f3f82;
+}
+
+A:hover {
+  color: #2d97e7;
+  text-decoration: underline;
+}
+
+IMG {
+  border: 0px none;
+}
+
+H1, H2, H3, H4 {
+  color: #259eff;
+}
+
+ .info-block H1, .info-block H2, .info-block H3, .info-block H4{ color: #E77512; font-weight: normal; font-size: 18px; padding-bottom: 10px;}
+ .info-block H1 A, .info-block H2 A, .info-block H3 A, .info-block H4 A { color: #E77512; font-weight: normal; text-decoration: none;}
+/*
+H1 { font-size: 28px }
+H2 { font-size: 20px }
+H3 { font-size: }
+H4 { }
+*/
+
+.wrap {
+  min-width: 1000px;
+ /* border: 1px inset #000000; */
+}
+
+.headWrap {
+  overflow: hidden;
+  _height: 1%;
+  background-color: #FFE0CC;
+  border-bottom: 2px solid #8A3700;
+}
+
+.logo {
+ float: right;
+ padding: 10px 353px 10px 10px;
+}
+
+
+.menu {
+  clear: both;
+    overflow:hidden;
+    padding-left:20px;
+    padding-top:30px;
+  _height: 1%;
+font-size: 14px;
+}
+
+.menu UL {}
+.menu UL LI { float: left; padding: 10px 10px 10px 10px;}
+.menu UL LI.active { background-color: #CE5300; }
+.menu UL LI.over { background-color: #CC6600; }
+.menu UL LI A {font-weight: bold; text-decoration: none;}
+.menu UL LI A:hover {}
+
+.breadCrumb {
+  padding: 10px 10px 10px 20px;
+    clear: both;
+    overflow:hidden;
+  _height: 1%;
+    background-color: #EEEEEE;
+    width: 100%;
+    border-bottom: 1px solid #8A3700;
+    }
+.breadCrumb UL {}
+.breadCrumb UL LI {float:left; padding-right: 10px; padding-left: 20px; background: transparent url(../images/arrow.gif) no-repeat scroll 0 3px; }
+.breadCrumb UL LI.first {background-image: none; padding-left: 0;}
+.breadCrumb UL LI A {}
+
+
+/* IE 7 only!! */ /* [*:first-child+html .nav {padding-top:62px;}] */
+
+.contentWrap { color: #2d3d47;  }
+.contentWrap H2 { color: #e77512; font-size: 18px; font-weight: normal; }
+.contentWrap H2 A { color: #e77512; text-decoration: none; }
+.contentWrap H2 A:hover { color: #e77512; text-decoration: underline; }
+.contentWrap H3 { color: #475f6e; font-size: 14px; font-weight: normal; }
+.contentWrap H3 A { color: #475f6e; text-decoration: none; }
+.contentWrap .content-pad { padding: 30px 45px; }
+
+.contentWrap DIV#content { overflow: hidden; }
+
+
+
+.copy {clear: both; padding: 10px;}
+
+.message-block {color: #338833; font-weight: bold;}
+
+TABLE.bottom-block TR TD H3 {font-size: 18px;}
+#loginForm {width: 300px; margin: 0 auto;}
+#errors {padding: 10px;}
+.error-block P.title{padding-left: 20px; margin-left: 7px; background: transparent url(../images/error.gif) no-repeat scroll 0;}
+SPAN.msg-login {padding-left: 20px; margin-left: 7px; background: transparent url(../images/attention.gif) no-repeat scroll 0;}
+SPAN.error {}
+
+.form TABLE TR TD.msg-login { text-align: center; background-color:#3272D6; color: #FFFFFF; padding: 5px;}
+.form TABLE TR TD.error {   color: #CC0000; padding: 5px; text-align: center; }
+
+#form_login TABLE {
+ background-color: #DDDDDD;
+ border: 1px solid #999999;
+}
+#form_login TABLE TR.inputblock TD {padding: 5px;}
+#form_login TABLE TR TD INPUT {
+  border: 1px solid #999999;
+}
+
+#form_login TABLE TR TD.submit {text-align: right;}
+.module-menu {overflow: hidden;}
+.module-menu UL {padding: 2px 0;}
+.module-menu UL LI UL LI { padding-left: 15px;}
+
+
+#index .mass-block {clear: both; padding: 5px 0; overflow: hidden; padding-top: 3px; }
+.mass-block {clear: both; padding: 5px 0; overflow: hidden; padding-top: 21px; }
+.mass-block P {margin: 0; padding: 4px 0;}
+.mass-block .title { color:#3172D5;}
+ .mass-block .title { padding-top: 3px; color:#3172D5; font-weight: bold;}
+ .mass-block .title A {  text-decoration: none;}
+.mass-block .anons { padding-top: 3px;}
+ .mass-block .anons A { color: #415967; text-decoration: none;}
+ .mass-block .anons A:hover {text-decoration: underline;}
+.mass-block .image {width: 80px; height: 65px; float: left;}
+.mass-block .image IMG {width: 70px; height: 55px; padding: 0 5px;}
+
+#form_menu {
+  width: 400px;
+  float: left;
+}

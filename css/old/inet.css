@@ -1,0 +1,236 @@
+html, body {
+background-color:#FFFFFF;
+margin:0;
+padding:0;
+font-size:100%;
+}
+img
+{
+	border:0;
+}
+a:link {
+color:#0055CC;
+}
+a:visited {
+	color:#800080;
+}
+a:hover {
+color:#CC0000;
+}
+select
+{
+  font-family:arial,Tahoma;
+  font-size:11px;
+}
+form
+{
+  margin:0px;
+}
+input
+{
+  font-family:arial,Tahoma;
+  font-size:100%;
+}
+a
+{	color:#b8b8b8;
+  }
+#search_input
+{
+  font-family:arial,Tahoma;
+  font-size:11px;
+  color:#ffffff;
+  border:1px solid #b8b8b8;
+  background-color:#ffffff;
+  margin-right:5px;
+}
+
+table.auxmenu td {
+font-family: Arial,Sans-Serif;
+font-weight:bold;
+font-size: 80%;
+height: 30px;
+background-color:#5780ae;
+}
+a.auxmenu
+{
+  text-decoration:underline;
+  color:#f0f0f0;  
+  display:block;
+  padding-left:25px;
+  padding-right:10px;
+  padding-top:5px;
+  padding-bottom:10px;
+ }
+a.auxmenu:hover
+{
+  text-decoration:underline;
+  color:#ffffff; 
+  background-color:#6b8cb1;
+  display:block;
+  padding-left:25px;
+  padding-right:10px;
+  padding-top:5px;
+  padding-bottom:10px;
+}
+a.auxmenu:visited
+{
+  text-decoration:underline;
+  color:#f0f0f0;  
+  display:block;
+  padding-left:25px;
+  padding-right:10px;
+  padding-top:5px;
+  padding-bottom:10px;
+}
+div.auxmenu
+{
+  color:#f0f0f0;  
+  
+  display:block;
+  padding-left:25px;
+  padding-right:10px;
+  padding-top:5px;
+  padding-bottom:10px;
+ }
+.search
+{
+	padding-left:25px;
+	padding-top: 5px;
+	
+}
+.content
+{
+  padding-left:50px;
+  padding-right:50px;
+}
+.header
+{
+  font-size:120%;
+  color:#00537f;
+}
+.news
+{
+	padding-left:-0,3em;
+}
+p, div
+{
+	font-family:Arial, Helvetica, sans-serif;
+}
+p.h1
+{
+	margin-top:25px;
+	margin-bottom:10px;
+	font-weight:bold;
+	color:#333;
+}
+p.h2
+{
+	margin-top:25px;
+	margin-bottom:30px;
+	font-weight:bold;
+	color:#333;
+	font-size: 150%;
+}
+p.text
+{
+	margin:0px;
+	line-height:130%;
+	font-size:80%;
+}
+p.list
+{
+	line-height:200%;
+	font-size:80%;
+}
+p.text span
+{
+	margin-left:-10px;
+	line-height:150%;
+}
+p.bottomtext
+{
+	font-size:70%;
+}
+.userinfo
+{
+	padding-top:0px;
+	font-size:60%;
+	color:#69F;
+}
+.logo_ds
+{
+	padding:25px;
+}
+
+/*tables*/
+
+table.tables td
+{
+	font-size:75%;
+	padding-bottom:15px;
+	padding-top:15px;
+	padding-left:10px;
+	padding-right:10px;
+	color:#000;
+	border-left:1px solid #fff;
+}
+table.tables_b td
+{
+	font-size:70%;
+	padding-bottom:7px;
+	padding-top:7px;
+	padding-left:7px;
+	padding-right:7px;
+	color:#000;
+	border-left:1px solid #fff;
+}
+
+td.tables
+{
+	vertical-align:top;
+}
+td.tables div.list
+{
+	padding-bottom:10px;
+}
+td.tables_head
+{
+	vertical-align:bottom;
+}
+
+table.list td
+{
+	font-size:80%;
+	padding-bottom:7px;
+	padding-top:7px;
+	color:#000;
+}
+table.list td.rlist
+{
+	text-align:left;
+	padding-left:10px;
+	font-weight:bold;
+}
+table.list td.llist
+{
+	text-align:;
+	padding-right:10px;
+}
+
+
+/*приказ*/
+div.pricaz p.text, p.h1, p.podpis, p.h2
+{
+	font-family:Georgia, "Times New Roman", Times, serif;
+}
+div.pricaz p.podpis
+{
+	padding-left: 500px;
+}
+
+div.pricaz p.text
+{
+	margin-left:0px;
+	line-height:140%;
+	margin-bottom:20px;
+}

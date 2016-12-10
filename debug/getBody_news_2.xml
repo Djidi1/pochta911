@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<module name="news"><container module="news"><item><id>1</id><title><![CDATA[
+Первая
+]]></title><subject/><content><![CDATA[
+Новость обовсем
+]]></content><language>ru</language><time>02-02-2015</time><noshow/><prioritet/><user_id/><module name="file"><container module="images" count="1"><image inp=""><id>0</id><filename></filename><codename></codename><date>1422907441</date><folder></folder><owner>0</owner><description></description><module>0</module><access>0</access><size>0</size><mime></mime><inputName></inputName><isImage>false</isImage><ext>false</ext></image></container><container module="errors"><error caption="">files</error><error caption="">Модуль не зарегистрирован</error></container></module></item></container></module>
