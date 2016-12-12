@@ -36,7 +36,7 @@ $System = new TSYSTEM();
 
 // stop($_SERVER["DOCUMENT_ROOT"]);
 $module = $values->getVal('module', 'GET');
-if(!$module) $module = 'turs';             # костыль
+if(!$module) $module = 'title';             # костыль
 
 switch($module) {
     case 'files':

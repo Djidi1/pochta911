@@ -12,11 +12,9 @@ function delete_div_row(obj) {
         $(this).find('.input-group-addon').text(i);
 
     });
-    if (i == 1){
-        $(panel).find('.input-group .btn-clone').removeAttr('disabled');
-    }
-
+    $(panel).find('.input-group:last-child .btn-clone').removeAttr('disabled');
 }
+
 function clone_div_row(obj) {
     // находим блок со строкой
     var row = $(obj).parent().parent();

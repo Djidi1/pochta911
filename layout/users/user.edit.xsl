@@ -9,7 +9,7 @@
                 <div class="col-md-5">
 
                     <div class="panel panel-success">
-                        <div class="panel-heading">Контакты</div>
+                        <div class="panel-heading"><strong>Контакты</strong></div>
                         <div class="panel-body">
                             <input type="hidden" name="user_id" value="{user/user_id}"/>
                             <table>
@@ -97,7 +97,7 @@
                 </div>
                 <div class="col-md-5">
                     <div class="panel panel-info">
-                        <div class="panel-heading">Адреса</div>
+                        <div class="panel-heading"><strong>Адреса</strong></div>
                         <div class="panel-body">
                             <xsl:for-each select="address/item">
                                 <div class="input-group" rel="{position()}">
@@ -121,7 +121,7 @@
                     </div>
 
                     <div class="panel panel-warning">
-                        <div class="panel-heading">Кредитные карты</div>
+                        <div class="panel-heading"><strong>Кредитные карты</strong></div>
                         <div class="panel-body">
                             <xsl:for-each select="cards/item">
                                 <div class="input-group" rel="{position()}">

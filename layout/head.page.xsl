@@ -69,6 +69,9 @@
 								<a href="/pages/view-28/">О нас</a>
 							</li>
 							<li>
+								<a href="/orders/">Заказы</a>
+							</li>
+							<li>
 								<a href="/pages/view-49/">Акции</a>
 							</li>
 							<li>
