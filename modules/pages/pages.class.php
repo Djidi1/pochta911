@@ -20,7 +20,7 @@ class pageItem extends module_item {
 	public $page_title;
 
 	public function __construct ($Params) {
-		global $LOG;
+//		global $LOG;
 		parent::__construct();
 		if (isset($Params['id'])) $this->id = $Params['id']; else $this->id = 0;
 		if (isset($Params['name'])) $this->name = $Params['name']; else $this->name = 0;
@@ -154,7 +154,7 @@ class pageModel extends module_model {
 		$sr = $this->query($sql,$ip, $fio,$email,$message);
 		//stop($this->sql);
 		if (!$sr) return false;
-		$date = date('d.m.Y');
+//		$date = date('d.m.Y');
 		$to = 'support@rivc-pulkovo.ru';
 		$title='title';
 		// To send HTML mail, the Content-type header must be set
@@ -273,7 +273,7 @@ class pageProcess extends module_process {
 			$Params['description'] = $this->vals->getVal('description', 'POST', 'string');
 			$Params['keywords'] = $this->vals->getVal('keywords', 'POST', 'string');
 			$Params['page_title'] = $this->vals->getVal('page_title', 'POST', 'string');
-			$page = new pageItem($Params);
+//			$page = new pageItem($Params);
 
 			if ($user_id > 0) {
 			//	if ($this->isValid($Params)) {
@@ -355,7 +355,7 @@ class pageProcess extends module_process {
 			} else {
 				$p = 'У Вас нет прав для редактирования ';//.
 				$this->nView->viewError($p);
-				$p.= $page->id;
+				$p .= $page_id;
 				$this->Log->addError(array('msg'=>$p, 'user_id'=>$user_id, 'page_id'=>$page_id), __LINE__, __METHOD__);
 				$this->updated = true;
 			}
@@ -381,7 +381,7 @@ class pageProcess extends module_process {
 			#$page_id = $this->nModel->getPageID('index');
 			
 			if ($page_id == 30)
-				$this->nView->viewLogin('Вход для Агентов','',$user_id, array(),array());
+				$this->nView->viewLogin('Вход для Магазинов','',$user_id);
 				
 			if ($user_id > 0 and $page_id == 30 ) {
 				$this->nView->viewMessage('Вам доступен раздел для Агентов. <br/>
@@ -389,14 +389,14 @@ class pageProcess extends module_process {
 					<li><a href="/tc/agent-1/"><b>Список ваших бронирований.</b></a></li>
 					<li><a href="/turs/viewTur-1/"><b>Сделать новое бронирование.</b></a></li>
 				</ul><br />
-				Все бронирования должны осуществлять после авторизации в разделе "Агентам"','');
+				Все бронирования должны осуществлять после авторизации в разделе "Клиентам"','');
 			}
 
 			$page = $this->nModel->get($page_id);
 			if ($page->id > 0) {
 				$this->nView->viewPage($page);
 			} else {
-				$error = '';
+//				$error = '';
 				#$this->Log->addError('Страница не найдена', $page_id, 'index',__LINE__, __METHOD__);
 				$this->nView->viewError(array('Страница не найдена'));
 			}
@@ -410,7 +410,7 @@ class pageProcess extends module_process {
 				$page = $this->nModel->get($page_id);
 				$this->nView->viewIndexPage($page);
 			} else {
-				$error = '';
+//				$error = '';
 				#$this->Log->addError('Страница не найдена', $page_id, 'index',__LINE__, __METHOD__);
 				$this->nView->viewError(array('Страница не найдена', 'index', intval($page_id)));
 			}
@@ -497,14 +497,14 @@ class pageView extends module_view {
 		$form = new CFormGenerator('pages', SITE_ROOT.$this->modName.'/update-'.$page->id.'/', 'POST', 0);
 		$form->addHidden('update', $page->id, 'update');
 		$form->addHidden('user_id', $user_id, 'user_id');
-		$form->addBox('access', '1','Пометить NEW', '1', $page->access);
+//		$form->addBox('access', '1','Пометить NEW', '1', $page->access, '', '', '');
 		$form->addHidden('name', $page->name,'name');
 		$form->addText('title', $page->title,'Название страницы RUS', 'title', '', 30);
 	//	$form->addLabledMessage('name2', 'Название страницы ENG', $page->name, 'name2');
 
 		//$form->addText('module', $page->module,'Модуль', 'module', '', 30);
 		$modules = $System->getModules();
-		$modID = $System->getModule(0,$this->modName);
+//		$modID = $System->getModule(0,$this->modName);
 		//stop($page->module,0);
 		$form->addSelect('module', $page->module , 'Модуль', $page->module, $page->module, 'module', '', 1);
 		foreach ($modules as $option) {
@@ -535,7 +535,7 @@ class pageView extends module_view {
 		$Container = $this->newContainer($this->modName);
 		$itemConteiner = $this->addToNode($Container, 'items','');
 		foreach ($collect as $item) {
-			$pageElement = $this->arrToXML($item, $itemConteiner, 'item');
+			$this->arrToXML($item, $itemConteiner, 'item');
 			//$this->addAttr('name', $item['name'], $pageElement);
 		}
 		return true;

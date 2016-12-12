@@ -302,7 +302,7 @@ class DDList {
 }
 
 
-/**
+/*
  *
  * @param $date строка с датой по маске (DD.MM.YY[YY] HH.MM.SS)
  * @return Возвращает временную метку - timestamp

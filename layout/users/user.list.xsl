@@ -13,20 +13,22 @@
 								<h2>Список пользователей</h2>
 								<div style="float: left;">
 									<div class="icon">
-										<a href="http://{//page/@host}/admin/newUser-1/">
-											<img src="/images/icon-48-adduser.png" alt="Новый пользователь"/>
-											<span>Новый пользователь</span>
+										<a class="btn btn-success" href="/admin/newUser-1/" title="Добавить пользователя">
+											<span class="glyphicon glyphicon-user"> </span>
+											<span> Новый пользователь</span>
 										</a>
 									</div>
 								</div>
 								<div style="float: right;">
-									<input type="button" onclick="printBlock('#printlist');" value="Печать"/>
+									<input class="btn btn-info btn-sm" type="button" onclick="printBlock('#printlist');" value="Печать"/>
+                                    <input class="btn btn-info btn-sm" type="button" onclick="buttonSetFilter('langFilter', '1', 'ajax','input', '/admin/userList-1/xls-1/', true)" value="Excel"/>
 								</div>
 							</td>
 						</tr>
 					</tbody>
 				</table>
 			</div>
+			<hr/>
 			<table class="viewList" cellpadding="2" cellspacing="1" width="100%">
 				<tr>
 					<th colspan="11">Поиск по полям
@@ -38,20 +40,18 @@
 					</td>
 					<td>
 						<form id="langFilter" name="langFilter"  method="post" action="">
-							<table>
+							<table style="width: 100%">
 								<tbody>
 									<tr>
 										<td>Ф.И.О.:<br/>
-											<input id="f_name" type="text" name="f_name" onchange="" size="15" onkeyup="sendFilter('http://{//page/@host}/{//page/@name}/userList-1/', 'langFilter', 'viewListlang');"/>
+											<input id="f_name" type="text" name="f_name" class="form-control" size="15" onkeyup="sendFilter('/admin/userList-1/', 'langFilter', 'viewListlang');"/>
 										</td>
 										<td>Логин:<br/>
-											<input id="f_login" type="text" name="f_login" onchange="" size="15" onkeyup="sendFilter('http://{//page/@host}/{//page/@name}/userList-1/', 'langFilter', 'viewListlang');"/>
+											<input id="f_login" type="text" name="f_login" class="form-control" size="15" onkeyup="sendFilter('/admin/userList-1/', 'langFilter', 'viewListlang');"/>
 										</td>
 										<td>
-											<b>Выбор группы:</b>
-										</td>
-										<td>
-											<select name="idg" onchange="sendFilter('http://{//page/@host}/{//page/@name}/userList-1/', 'langFilter', 'viewListlang');">
+											<b>Выбор группы:</b> <br />
+											<select name="idg" class="form-control" onchange="sendFilter('/admin/userList-1/', 'langFilter', 'viewListlang');">
 												<optgroup label="Группа">
 												<option value="">Все</option>
 													<xsl:for-each select="groups/item">
@@ -65,9 +65,8 @@
 												</optgroup>
 											</select>
 										</td>
-										<td>
-										<input id="ajax" name="ajax" type="hidden" value="1"/>
-											<b><input type="button" onclick="buttonSetFilter('langFilter', '1', 'ajax','input', 'http://{//page/@host}/{//page/@name}/userList-1/xls-1/', true)" value="Экспорт в Excel"/></b>
+										<td style="text-align: right;">
+										    <input id="ajax" name="ajax" type="hidden" value="1"/>
 										</td>
 									</tr>
 								</tbody>
@@ -93,17 +92,17 @@
 					<thead>
 						<tr>
 							<th>№  [ID]</th>
-							<th style="cursor:pointer" onclick="document.langFilter.srt.value='name'; sendFilter('http://{//page/@host}/{//page/@name}/userList-1/', 'langFilter', 'viewListlang');" title="Сортировка">Ф.И.О. <xsl:if test="users/@order='name'">^</xsl:if>
+							<th style="cursor:pointer" onclick="document.langFilter.srt.value='name'; sendFilter('/admin/userList-1/', 'langFilter', 'viewListlang');" title="Сортировка">Ф.И.О. <xsl:if test="users/@order='name'">^</xsl:if>
 							</th>
 							<th>Агент</th>
 							<th>Телефон</th>
-							<th style="cursor:pointer" onclick="document.langFilter.srt.value='email'; sendFilter('http://{//page/@host}/{//page/@name}/userList-1/', 'langFilter', 'viewListlang');" title="Сортировка">Почта <xsl:if test="users/@order='email'">^</xsl:if>
+							<th style="cursor:pointer" onclick="document.langFilter.srt.value='email'; sendFilter('/admin/userList-1/', 'langFilter', 'viewListlang');" title="Сортировка">Почта <xsl:if test="users/@order='email'">^</xsl:if>
 							</th>
-							<th style="cursor:pointer" onclick="document.langFilter.srt.value='login'; sendFilter('http://{//page/@host}/{//page/@name}/userList-1/', 'langFilter', 'viewListlang');" title="Сортировка">Логин <xsl:if test="users/@order='login'">^</xsl:if>
+							<th style="cursor:pointer" onclick="document.langFilter.srt.value='login'; sendFilter('/admin/userList-1/', 'langFilter', 'viewListlang');" title="Сортировка">Логин <xsl:if test="users/@order='login'">^</xsl:if>
 							</th>
-							<th style="cursor:pointer" onclick="document.langFilter.srt.value='group_name'; sendFilter('http://{//page/@host}/{//page/@name}/userList-1/', 'langFilter', 'viewListlang');" title="Сортировка">Группа <xsl:if test="users/@order='group_name'">^</xsl:if>
+							<th style="cursor:pointer" onclick="document.langFilter.srt.value='group_name'; sendFilter('/admin/userList-1/', 'langFilter', 'viewListlang');" title="Сортировка">Группа <xsl:if test="users/@order='group_name'">^</xsl:if>
 							</th>
-							<th style="cursor:pointer" onclick="document.langFilter.srt.value='date_reg'; sendFilter('http://{//page/@host}/{//page/@name}/userList-1/', 'langFilter', 'viewListlang');" title="Сортировка">Дата регистрации <xsl:if test="users/@order='date_reg'">^</xsl:if>
+							<th style="cursor:pointer" onclick="document.langFilter.srt.value='date_reg'; sendFilter('/admin/userList-1/', 'langFilter', 'viewListlang');" title="Сортировка">Дата регистрации <xsl:if test="users/@order='date_reg'">^</xsl:if>
 							</th>
 							<xsl:if test="count(//page/@xls)=0">
 							<th colspan="3" align="center">*</th>
@@ -121,10 +120,11 @@
 										<xsl:value-of select="name"/>
 									</td>
 									<td>
-										<xsl:value-of select="tab_no"/>
+										<xsl:value-of select="title"/>
 									</td>
 									<td>
-										<xsl:value-of select="ip"/>
+										<xsl:value-of select="phone"/>
+                                        <xsl:value-of select="phone_mess"/>
 									</td>
 									<td>
 										<xsl:value-of select="email"/>
@@ -141,14 +141,14 @@
 									</td>
 									<xsl:if test="count(//page/@xls)=0">
 									<td width="40px" align="center">
-										<a href="http://{//page/@host}/admin/userEdit-{id}/" title="редактировать" class="btn btn-success btn-xs">
-											<span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>
+										<a href="/admin/userEdit-{id}/" title="редактировать" class="btn btn-success btn-xs">
+											<span class="glyphicon glyphicon-pencil" aria-hidden="true"> </span>
 										</a>
 									</td>
 									<td width="40px" align="center">
-										<a href="http://{//page/@host}/admin/userBan-{id}/" title="удалить" class="btn btn-danger btn-xs">
-											<xsl:attribute name="onClick">return confirm('Вы действительно хотите удалить<xsl:value-of select="name"/>?');</xsl:attribute>
-											<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+										<a href="/admin/userBan-{id}/" title="удалить" class="btn btn-danger btn-xs">
+											<xsl:attribute name="onClick">return confirm('Вы действительно хотите удалить <xsl:value-of select="name"/>?');</xsl:attribute>
+											<span class="glyphicon glyphicon-remove" aria-hidden="true"> </span>
 										</a>
 									</td>
 									</xsl:if>
@@ -175,7 +175,12 @@
 									<td>
 										<xsl:value-of select="name"/>
 									</td>
-									
+                                    <td>
+                                        <xsl:value-of select="tab_no"/>
+                                    </td>
+                                    <td>
+                                        <xsl:value-of select="ip"/>
+                                    </td>
 									<td>
 										<xsl:value-of select="email"/>
 									</td>
@@ -191,14 +196,14 @@
 									</td>
 									<xsl:if test="count(//page/@xls)=0">
 									<td width="40px" align="center">
-										<a href="http://{//page/@host}/admin/userUnBan-{id}/" title="восстановить">
-											<img alt="восстановить" src="/images/revert.png" border="0"/>
+										<a href="/admin/userUnBan-{id}/" class="btn btn-warning btn-xs" title="восстановить">
+                                            <i class="fa fa-undo" aria-hidden="true"> </i>
 										</a>
 									</td>
 									<td width="40px" align="center">
-										<a href="http://{//page/@host}/admin/userBan-{id}/full-1/" title="удалить полностью">
+										<a href="/admin/userBan-{id}/full-1/" class="btn btn-danger btn-xs" title="удалить полностью">
 											<xsl:attribute name="onClick">return confirm('Вы действительно хотите удалить безвозвратно?');</xsl:attribute>
-											<img alt="удалить" src="/images/del.png" border="0"/>
+                                            <span class="glyphicon glyphicon-remove" aria-hidden="true"> </span>
 										</a>
 									</td>
 									</xsl:if>

@@ -1927,7 +1927,7 @@ class tcView extends module_View
     {
         $this->pXSL [] = RIVC_ROOT . 'layout/' . $this->sysMod->layoutPref . '/tc.agentlist.xsl';
         if ($isAjax == 1) {
-            $this->pXSL [] = RIVC_ROOT . 'layout/head.turs.page.xsl';
+            $this->pXSL [] = RIVC_ROOT . 'layout/head.main.page.xsl';
         }
 
         $Container = $this->newContainer('agentlist');

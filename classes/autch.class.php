@@ -212,10 +212,9 @@ $row = $this->fetchOneRowA();
 
 	    while (($row = $this->fetchRowA())!==false) {
 	    	$a = false;
-	    	
 	    	if (($row['access'] == 1) || ($row['access'] == 2 && $user_id > 0)) $a = true;
 	    	elseif ($row['mcaccess'] == 1) $a = true;
-	     	$this->Log->addToLog('Установка разрешения '.$row['mcodename'].'.'.$row['action_name'].' установка в '.(($a) ? 'Разрешено' : 'Запрещено'), __LINE__, __METHOD__);
+	     	$this->Log->addToLog('Установка разрешения Auth '.$row['mcodename'].'.'.$row['action_name'].' установка в '.(($a) ? 'Разрешено' : 'Запрещено'), __LINE__, __METHOD__);
 	    	$this->user_right[$row['mcodename']][$row['action_name']] = $a;
 	    }   
 	    //stop($this->user_right);

@@ -282,7 +282,7 @@ protected function addToNodeCDATA ($nodeName, $newNode, $nodeValue, $htmlspecial
   					}
   					else $val = 'unsupported Object ['.get_class($val).'].['.get_parent_class($val).'] ';
   				break;
-  			case 'NULL': $val = 'NULL'; break;
+  			case 'NULL': $val = ''; break;
   			default: $val = 'undefined type: '.gettype($val);
   		}  		
   		/*

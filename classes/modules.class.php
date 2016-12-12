@@ -650,7 +650,7 @@ class module_model extends database {
 	protected $modSet;
 	protected $System;
 	protected $User;
-	
+
 	public function __construct($modName) {
 		global $LOG,$System, $User;
 		
@@ -659,7 +659,7 @@ class module_model extends database {
 		$this->System = $System;
 		$this->User = $User;
 		$this->Log = $LOG;
-								
+
 		$sql = 'SELECT * FROM '.TAB_PREF.'modules WHERE codename = \'%1$s\'';
 //        exit;
 //        stop($this->dbSelected);
@@ -971,7 +971,7 @@ abstract class module_process {
 	protected $nModel;
 	protected $nView;
 	private $pXSL;
-	private $updated;
+	public $updated;
 
 	protected $sysMod ;
 	/*

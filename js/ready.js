@@ -46,7 +46,7 @@ $('.thumbnail').click(function(){
 		});
 	});
 
-	ui_add();
+	//ui_add();
 
 	$.datepicker.regional['ru'] = {
 			changeMonth: true,

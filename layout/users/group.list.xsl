@@ -12,9 +12,9 @@
 							<h2>Список групп</h2>
 							<div style="float: left;">
 								<div class="icon">
-									<a href="http://{//page/@host}/admin/groupNew-1/">
-										<img src="/images/icon-48-groups.png" alt="Создать группу"/>
-										<span>Создать группу</span>
+									<a class="btn btn-success" href="http://{//page/@host}/admin/groupNew-1/">
+										<i class="fa fa-users" aria-hidden="true"> </i>
+										<span> Создать группу</span>
 									</a>
 								</div>
 							</div>
@@ -42,27 +42,26 @@
 								<xsl:value-of select="name"/>
 							</td>
 							<td align="center" width="40px">
-								<a href="http://{//page/@host}/admin/userList-1/idg-{id}/" title="список пользователей">
-									<img alt="список" src="/images/list.png" border="0"/>
+								<a class="btn btn-info btn-xs" href="http://{//page/@host}/admin/userList-1/idg-{id}/" title="список пользователей">
+									<i class="fa fa-list" aria-hidden="true"> </i>
 								</a></td>
 							<td align="center" width="40px">
-								<a href="http://{//page/@host}/admin/groupEdit-{id}/" title="редактировать">
-									<img alt="редактировать" src="/images/edit.png" border="0"/>
+								<a class="btn btn-success btn-xs" href="http://{//page/@host}/admin/groupEdit-{id}/" title="редактировать">
+									<i class="fa fa-pencil" aria-hidden="true"> </i>
 								</a></td>
 							<td align="center" width="40px">
-								<a href="http://{//page/@host}/admin/groupRightsAdmin-{id}/" title="права">
-									<img alt="права" src="/images/list_keys.gif" border="0"/>
+								<a class="btn btn-warning btn-xs" href="http://{//page/@host}/admin/groupRightsAdmin-{id}/" title="права">
+									<i class="fa fa-cog" aria-hidden="true"> </i>
 								</a></td>
 							<td align="center" width="40px">
-								<a href="http://{//page/@host}/admin/groupHide-{id}/" title="удалить">
-									<img alt="удалить" src="/images/del.png" border="0"/>
+								<a class="btn btn-danger btn-xs" href="http://{//page/@host}/admin/groupHide-{id}/" onclick="return confirm('Вы уверены?')" title="удалить">
+									<i class="fa fa-ban" aria-hidden="true"> </i>
 								</a>
 							</td>
 						</tr>
 					</xsl:for-each>
 				</tbody>
 			</table>
-			<xsl:call-template name="linkback"/>
 		</div>
 	</xsl:template>
 </xsl:stylesheet>
