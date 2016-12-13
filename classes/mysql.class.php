@@ -138,7 +138,7 @@ class mySQL {
 	}
 
 	public function numRows() {
-		if(($this->result)) return mysql_num_rows($this->result);
+		if(($this->result)) return mysqli_num_rows($this->result);
 		return 0;
 	}
 
