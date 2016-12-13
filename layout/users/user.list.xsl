@@ -10,7 +10,7 @@
 					<tbody>
 						<tr>
 							<td valign="top">
-								<h2>Список пользователей</h2>
+								<h2>Список клиентов</h2>
 								<div style="float: left;">
 									<div class="icon">
 										<a class="btn btn-success" href="/admin/newUser-1/" title="Добавить пользователя">

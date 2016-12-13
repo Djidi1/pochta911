@@ -10,14 +10,14 @@ class adminModel extends module_model {
 	}
 	
 	public function userCreate($username, $email, $login, $pass, $ip, $group_id, $tab_no) {
-		$sql = 'INSERT INTO ' . TAB_PREF . '`users` (`name`, `email`, `login`, `pass`, `ip`, `date_reg`, `isban`, `tab_no`)
+		$sql = 'INSERT INTO `users` (`name`, `email`, `login`, `pass`, `ip`, `date_reg`, `isban`, `tab_no`)
   				VALUES
   				(\'%1$s\', \'%2$s\', \'%3$s\', \'%4$s\', \'%5$s\', NOW(), 0, \'%6$s\')';
 		$a = $this->query ( $sql, $username, $email, $login, $pass, $ip, $tab_no );
 		$user_id = $this->insertID ();
 		if ($user_id == 0)
 			return false;
-		$sql = 'INSERT INTO ' . TAB_PREF . '`groups_user` (`group_id`, `user_id`) VALUES (%1$u, %2$u)';
+		$sql = 'INSERT INTO `groups_user` (`group_id`, `user_id`) VALUES (%1$u, %2$u)';
 		$b = $this->query ( $sql, $group_id, $user_id );
 		if ($a && $b) {
 			$this->Log->addToLog ( 'Зарегистрирован новый пользователь', __LINE__, __METHOD__ );
@@ -41,7 +41,7 @@ class adminModel extends module_model {
 			$Params ['isBan'] = $this->Vals->getVal ( 'isBan', 'POST', 'integer' );
      */
 	public function userUpdate($Params) {
-		$sql = 'UPDATE ' . TAB_PREF . '`users`
+		$sql = 'UPDATE `users`
 				SET
 				    name = \'%1$s\',
 				    email = \'%2$s\',
@@ -63,12 +63,12 @@ class adminModel extends module_model {
 
 //        stop($this->sql);
 
-		$sql = 'UPDATE ' . TAB_PREF . '`groups_user` SET `group_id`  = %1$u WHERE `user_id` = %2$u';
+		$sql = 'UPDATE `groups_user` SET `group_id`  = %1$u WHERE `user_id` = %2$u';
 		$this->query ( $sql, $Params ['group_id'], $Params ['user_id'] );
         if (is_array($Params ['credit_card'])) {
-            $sql = 'DELETE FROM ' . TAB_PREF . 'users_cards WHERE user_id = '.$Params ['user_id'].';';
+            $sql = 'DELETE FROM users_cards WHERE user_id = '.$Params ['user_id'].';';
             $this->query ( $sql );
-            $sql = 'INSERT INTO ' . TAB_PREF . 'users_cards (card_num,user_id) VALUES ';
+            $sql = 'INSERT INTO users_cards (card_num,user_id) VALUES ';
             foreach ($Params ['credit_card'] as $key => $item) {
                 $sql .= ($key > 0)?',':'';
                 $sql .= ' (\''.$item.'\','.$Params ['user_id'].')';
@@ -76,9 +76,9 @@ class adminModel extends module_model {
             $this->query ( $sql );
         }
         if (is_array($Params ['address'])) {
-            $sql = 'DELETE FROM ' . TAB_PREF . 'users_address WHERE user_id = '.$Params ['user_id'].';';
+            $sql = 'DELETE FROM users_address WHERE user_id = '.$Params ['user_id'].';';
             $this->query ( $sql );
-            $sql = 'INSERT INTO ' . TAB_PREF . 'users_address (address,user_id) VALUES ';
+            $sql = 'INSERT INTO users_address (address,user_id) VALUES ';
             foreach ($Params ['address'] as $key => $address) {
                 $sql .= ($key > 0)?', ':'';
                 $sql .= ' (\''.$address.'\','.$Params ['user_id'].')';
@@ -92,7 +92,7 @@ class adminModel extends module_model {
 		$type = 1;
 		if ($full)
 			$type = 2;
-		$sql = 'UPDATE ' . TAB_PREF . '`users`
+		$sql = 'UPDATE `users`
 				SET `isBan` = %2$u
                 WHERE `id` = %1$u';
 		$this->query ( $sql, $user_id, $type );
@@ -100,7 +100,7 @@ class adminModel extends module_model {
 	}
 	
 	public function groupHide($group_id) {
-		$sql = ' UPDATE ' . TAB_PREF . 'groups
+		$sql = ' UPDATE groups
                 SET [hidden] = 1
                 WHERE id = %1$u';
 		$this->query ( $sql, $group_id );
@@ -108,7 +108,7 @@ class adminModel extends module_model {
 	}
 	public function groupCount($group_id) {
 		$sql = ' SELECT COUNT(group_id) as count
-  				FROM ' . TAB_PREF . 'groups_user
+  				FROM groups_user
   				where group_id= %1$u';
 		$this->query ( $sql, $group_id );
 //		$count = array ();
@@ -117,7 +117,7 @@ class adminModel extends module_model {
 	}
 	
 	public function userUnBan($user_id) {
-		$sql = 'UPDATE ' . TAB_PREF . '`users`
+		$sql = 'UPDATE `users`
 				SET `isBan` = 0
                 WHERE `id` = %1$u';
 		$this->query ( $sql, $user_id );
@@ -125,7 +125,7 @@ class adminModel extends module_model {
 	}
 	
 //	public function user_rights($user_id) {
-//		$sql = 'SELECT allow  FROM ' . TAB_PREF . 'user_rights  where right_id=1 AND user_id=' . $user_id;
+//		$sql = 'SELECT allow  FROM user_rights  where right_id=1 AND user_id=' . $user_id;
 //		$this->query ( $sql );
 //		$user_rights = array ();
 //		while ( ($row = $this->fetchRowA ()) !== false ) {
@@ -135,7 +135,7 @@ class adminModel extends module_model {
 //	}
 
     public function getAddress($user_id) {
-        $sql = 'SELECT address, main FROM ' . TAB_PREF . 'users_address  WHERE user_id=' . $user_id;
+        $sql = 'SELECT address, main FROM users_address  WHERE user_id=' . $user_id;
         $this->query ( $sql );
         $items = array ();
         while ( ($row = $this->fetchRowA ()) !== false ) {
@@ -144,7 +144,7 @@ class adminModel extends module_model {
         return $items;
     }
     public function getCards($user_id) {
-        $sql = 'SELECT card_num, main  FROM ' . TAB_PREF . 'users_cards  WHERE user_id=' . $user_id;
+        $sql = 'SELECT card_num, main  FROM users_cards  WHERE user_id=' . $user_id;
         $this->query ( $sql );
         $items = array ();
         while ( ($row = $this->fetchRowA ()) !== false ) {
@@ -158,9 +158,9 @@ class adminModel extends module_model {
 		if (! $user_id)
 			return false;
 		$sql = 'SELECT u.id as user_id, u.*,g.id as group_id, g.name as group_name
-				FROM ' . TAB_PREF . '`users` u
-				LEFT JOIN ' . TAB_PREF . '`groups_user` gu ON u.id = gu.user_id
-				LEFT JOIN ' . TAB_PREF . '`groups` g ON gu.group_id = g.id
+				FROM `users` u
+				LEFT JOIN `groups_user` gu ON u.id = gu.user_id
+				LEFT JOIN `groups` g ON gu.group_id = g.id
 				WHERE u.id = %1$u';
 		$this->query ( $sql, $user_id );
 //		$user = array ();
@@ -170,7 +170,7 @@ class adminModel extends module_model {
 
 	
 	public function userList($order, $f_name, $f_tabno, $f_login, $f_group, $f_otdel, $id_group) {
-		
+
 		$fsql = '';
 		if ($id_group != '') {
 			$fsql .= ' AND g.id = \'' . $id_group . '\' ';
@@ -191,11 +191,11 @@ class adminModel extends module_model {
 		if ($order) {
 			$order_by = " ORDER BY $order";
 		}
-		
+
 		$sql = 'SELECT u.id as user_id, u.*,g.id as group_id, g.name as group_name
-				FROM ' . TAB_PREF . '`users` u
-				LEFT JOIN ' . TAB_PREF . '`groups_user` gu ON u.id = gu.user_id
-				LEFT JOIN ' . TAB_PREF . '`groups` g ON gu.group_id = g.id
+				FROM `users` u
+				LEFT JOIN `groups_user` gu ON u.id = gu.user_id
+				LEFT JOIN `groups` g ON gu.group_id = g.id
 				WHERE u.isBan<2 ' . $fsql . $order_by;
 		$this->query ( $sql, $f_name, $f_tabno, $f_login, $f_group, $f_otdel );
 		$users = array ();
@@ -205,7 +205,105 @@ class adminModel extends module_model {
 		}
 		return $users;
 	}
-	
+
+	public function getCar($car_id) {
+		$sql = 'SELECT
+				  id,
+				  fio,
+				  phone,
+				  phone2,
+				  car_type,
+				  car_year,
+				  car_firm,
+				  car_number,
+				  car_value
+				FROM cars_couriers cc
+				WHERE cc.id='.$car_id.' ';
+		$this->query ( $sql );
+		$car = array ();
+		while ( ($row = $this->fetchRowA ()) !== false ) {
+			$car = $row;
+		}
+		return $car;
+	}
+
+	public function getCarTypes() {
+		$sql = 'SELECT  id,car_type	FROM car_types ct ';
+		$this->query ( $sql );
+		$items = array ();
+		while ( ($row = $this->fetchRowA ()) !== false ) {
+			$items[] = $row;
+		}
+		return $items;
+	}
+
+	public function carsList() {
+		$sql = 'SELECT
+				  cc.id,
+				  fio,
+				  phone,
+				  phone2,
+				  ct.car_type,
+				  car_year,
+				  car_firm,
+				  car_number,
+				  car_value
+				FROM cars_couriers cc
+				  LEFT JOIN car_types ct ON cc.car_type = ct.id
+				ORDER BY cc.fio ';
+		$this->query ( $sql );
+		$items = array ();
+		while ( ($row = $this->fetchRowA ()) !== false ) {
+//			$row ['date_reg'] = date ( 'd.m.Y', strtotime ( substr ( $row ['date_reg'], 0, 20 ) ) );
+			$items [] = $row;
+		}
+		return $items;
+	}
+
+	public function carUpdate($param) {
+		$sql = "
+		UPDATE cars_couriers 
+			SET
+			  fio = '".$param['fio']."' -- fio - VARCHAR(255)
+			 ,phone = '".$param['phone']."' -- phone - VARCHAR(255)
+			 ,phone2 = '".$param['phone2']."' -- phone2 - VARCHAR(255)
+			 ,car_type = ".$param['car_type']." -- car_type - INT(11)
+			 ,car_year = ".$param['car_year']." -- car_year - INT(4)
+			 ,car_firm = '".$param['car_firm']."' -- car_firm - VARCHAR(255)
+			 ,car_number = '".$param['car_number']."' -- car_number - VARCHAR(255)
+			 ,car_value = '".$param['car_value']."' -- car_value - VARCHAR(255)
+			WHERE
+			  id = ".$param['car_id']." -- id - INT(11) NOT NULL
+  		";
+		return $this->query ( $sql );
+	}
+	public function carInsert($param) {
+		$sql = "
+		INSERT INTO cars_couriers
+			(
+			 fio
+			 ,phone
+			 ,phone2
+			 ,car_type
+			 ,car_year
+			 ,car_firm
+			 ,car_number
+			 ,car_value
+			)
+			VALUES
+			(
+			 '".$param['fio']."' -- fio - VARCHAR(255)
+			 ,'".$param['phone']."' -- phone - VARCHAR(255)
+			 ,'".$param['phone2']."' -- phone2 - VARCHAR(255)
+			 ,".$param['car_type']." -- car_type - INT(11)
+			 ,".$param['car_year']." -- car_year - INT(4)
+			 ,'".$param['car_firm']."' -- car_firm - VARCHAR(255)
+			 ,'".$param['car_number']."' -- car_number - VARCHAR(255)
+			 ,'".$param['car_value']."' -- car_value - VARCHAR(255)
+			);
+  		";
+		return $this->query ( $sql );
+	}
 	public function getLogins($page, $limCount) {
 		
 		$limStart = 0;
@@ -226,11 +324,11 @@ class adminModel extends module_model {
 		
 		$sql = 'SELECT 
 u.name,lu.ip,lu.date,lu.referer,lu.browser,lu.os,g.name as group_name,
-(SELECT COUNT(*) FROM ' . TAB_PREF . 'logins) as logscount 
-  FROM ' . TAB_PREF . 'logins lu
-  LEFT JOIN ' . TAB_PREF . 'users u ON lu.id_user = u.id
-  LEFT JOIN ' . TAB_PREF . 'groups_user gu ON u.id = gu.user_id
-  LEFT JOIN ' . TAB_PREF . 'groups g ON gu.group_id = g.id
+(SELECT COUNT(*) FROM logins) as logscount 
+  FROM logins lu
+  LEFT JOIN users u ON lu.id_user = u.id
+  LEFT JOIN groups_user gu ON u.id = gu.user_id
+  LEFT JOIN groups g ON gu.group_id = g.id
    LIMIT ' . $limStart . ', ' . ($limStart + $limCount) . '';
 		
 		$this->query ( $sql );
@@ -243,7 +341,7 @@ u.name,lu.ip,lu.date,lu.referer,lu.browser,lu.os,g.name as group_name,
 	}
 	
 	public function userTest($login_n) {
-		$sql = 'SELECT count(id) FROM ' . TAB_PREF . '`users` u  WHERE u.login = \'%1$s\'';
+		$sql = 'SELECT count(id) FROM `users` u  WHERE u.login = \'%1$s\'';
 		$this->query ( $sql, $login_n );
 		$test = $this->getOne ();
 		return $test;
@@ -265,7 +363,7 @@ u.name,lu.ip,lu.date,lu.referer,lu.browser,lu.os,g.name as group_name,
 	public function groupRightUpdate($actions, $group_id) {
 		//foreach($rights as $mod => $action) {
 		foreach ( $actions as $action_id => $access ) {
-			$sql = 'INSERT INTO ' . TAB_PREF . '`module_access` (`group_id`, `action_id`, `access`) VALUES (%1$u, %2$u, %3$u) ON DUPLICATE KEY UPDATE `access` = %3$u';
+			$sql = 'INSERT INTO `module_access` (`group_id`, `action_id`, `access`) VALUES (%1$u, %2$u, %3$u) ON DUPLICATE KEY UPDATE `access` = %3$u';
 			if ($this->query ( $sql, $group_id, $action_id, $access ))
 				$this->Log->addToLog ( 'Задано действие', __LINE__, __METHOD__ );
 			else
@@ -279,7 +377,7 @@ u.name,lu.ip,lu.date,lu.referer,lu.browser,lu.os,g.name as group_name,
 	}
 	
 	public function groupAdd($group_name, $group_name, $parent = 0, $position = 100) {
-		$sql = 'INSERT INTO ' . TAB_PREF . '`groups` (`name`,`name`, `admin`, `parent`) VALUES (\'%1$s\' ,\'%2$s\' , 1, %3$u)';
+		$sql = 'INSERT INTO `groups` (`name`,`name`, `admin`, `parent`) VALUES (\'%1$s\' ,\'%2$s\' , 1, %3$u)';
 		$this->query ( $sql, $group_name, $group_name, $parent );
 		$group_id = $this->insertID ();
 		
@@ -294,7 +392,7 @@ u.name,lu.ip,lu.date,lu.referer,lu.browser,lu.os,g.name as group_name,
 	public function groupUpdate($group_name, $group_name, $group_id) {
 		if ($group_id == 0)
 			return false;
-		$sql = 'UPDATE ' . TAB_PREF . 'groups SET name = \'%1$s\', name = \'%2$s\' WHERE id = %3$u';
+		$sql = 'UPDATE groups SET name = \'%1$s\', name = \'%2$s\' WHERE id = %3$u';
 		return $this->query ( $sql, $group_name, $group_name, $group_id );
 	}
 	
@@ -322,12 +420,12 @@ u.name,lu.ip,lu.date,lu.referer,lu.browser,lu.os,g.name as group_name,
 		*/
 		
 		$sql .= 'mc.group_id as group_adm
-            FROM ' . TAB_PREF . 'module_actions ma
-            INNER JOIN ' . TAB_PREF . 'modules m ON  ma.mod_id = m.id
-            LEFT JOIN ' . TAB_PREF . 'module_access mc ON ma.id = mc.action_id AND mc.group_id = %1$u
-            LEFT JOIN ' . TAB_PREF . 'groups_user ug ON mc.group_id = ug.group_id
-            LEFT JOIN ' . TAB_PREF . 'groups g ON ug.group_id = g.id 
-            LEFT JOIN ' . TAB_PREF . 'users u ON ug.user_id = u.id 
+            FROM module_actions ma
+            INNER JOIN modules m ON  ma.mod_id = m.id
+            LEFT JOIN module_access mc ON ma.id = mc.action_id AND mc.group_id = %1$u
+            LEFT JOIN groups_user ug ON mc.group_id = ug.group_id
+            LEFT JOIN groups g ON ug.group_id = g.id 
+            LEFT JOIN users u ON ug.user_id = u.id 
           /*  group by ma.id*/
             order by m.id';
 		
@@ -338,9 +436,9 @@ u.name,lu.ip,lu.date,lu.referer,lu.browser,lu.os,g.name as group_name,
                 mc.access as mcaccess,
                 mc.group_id ,       
                 mc.group_id as group_adm
-            FROM ' . TAB_PREF . 'module_actions ma            
-            INNER JOIN ' . TAB_PREF . 'module_access mc ON ma.id = mc.action_id AND mc.group_id  = 10
-            INNER JOIN ' . TAB_PREF . 'modules m ON  ma.mod_id = m.id';
+            FROM module_actions ma            
+            INNER JOIN module_access mc ON ma.id = mc.action_id AND mc.group_id  = 10
+            INNER JOIN modules m ON  ma.mod_id = m.id';
 			}
 		}
 		
@@ -385,7 +483,7 @@ u.name,lu.ip,lu.date,lu.referer,lu.browser,lu.os,g.name as group_name,
 		return $actionColl;
 	}
 	public function getGroupName($group_id) {
-		$sql = 'SELECT name FROM ' . TAB_PREF . 'groups WHERE id = %1$u';
+		$sql = 'SELECT name FROM groups WHERE id = %1$u';
 		$this->query ( $sql, $group_id );
 		return $this->getOne ();
 	}
@@ -394,8 +492,8 @@ u.name,lu.ip,lu.date,lu.referer,lu.browser,lu.os,g.name as group_name,
 		$logs = array ();
 		if ($type == 'few') {
 			$sql = 'SELECT s.*, CONVERT (char(10), s.`date`, 105) as date, u.name as username
-					FROM ' . TAB_PREF . '`sys_log` s
-					INNER JOIN ' . TAB_PREF . '`users` u ON s.user_id = u.id
+					FROM `sys_log` s
+					INNER JOIN `users` u ON s.user_id = u.id
 					ORDER BY s.`date` DESC';
 			$this->query ( $sql );
 			while ( ($row = $this->fetchOneRowA ()) !== false ) {
@@ -439,6 +537,9 @@ class adminProcess extends module_process {
 		
 		/* Default Process Class actions */
 		$this->regAction ( 'useAdmin', 'Использование Админки', ACTION_GROUP );
+		$this->regAction ( 'carEdit', 'Форма добавления/редактирования машины/курьера', ACTION_GROUP );
+		$this->regAction ( 'carUpdate', 'Добавление/обновление курьера', ACTION_GROUP );
+		$this->regAction ( 'carsList', 'Список машин/курьеров', ACTION_GROUP );
 		$this->regAction ( 'newUser', 'Форма создания пользователя', ACTION_GROUP );
 		$this->regAction ( 'addUser', 'Вставить пользователя в БД', ACTION_GROUP );
 		$this->regAction ( 'userList', 'Список пользователей', ACTION_GROUP );
@@ -764,7 +865,42 @@ class adminProcess extends module_process {
 			$this->updated = true;
 		}
 		/* * Конец Пользователи * */
-		
+
+
+		if ($action == 'carEdit') {
+			$car_id = $this->Vals->getVal ( 'carEdit', 'GET', 'integer' );
+			$car = $this->nModel->getCar ( $car_id );
+			$types = $this->nModel->getCarTypes ();
+			$this->nView->viewCarEdit ( $car, $types);
+			$this->updated = true;
+		}
+		if ($action == 'carUpdate') {
+			$param['car_id'] = $this->Vals->getVal ( 'car_id', 'POST', 'integer' );
+			$param['fio'] = $this->Vals->getVal ( 'fio', 'POST', 'string' );
+			$param['phone'] = $this->Vals->getVal ( 'phone', 'POST', 'string' );
+			$param['phone2'] = $this->Vals->getVal ( 'phone2', 'POST', 'string' );
+			$param['car_firm'] = $this->Vals->getVal ( 'car_firm', 'POST', 'string' );
+			$param['car_number'] = $this->Vals->getVal ( 'car_number', 'POST', 'string' );
+			$param['car_year'] = $this->Vals->getVal ( 'car_year', 'POST', 'integer' );
+			$param['car_value'] = $this->Vals->getVal ( 'car_value', 'POST', 'integer' );
+			$param['car_type'] = $this->Vals->getVal ( 'car_type', 'POST', 'integer' );
+			if ($param['car_id'] > 0) {
+				$result = $this->nModel->carUpdate($param);
+			}else{
+				$result = $this->nModel->carInsert($param);
+			}
+			if ($result){
+				$this->nView->viewMessage('Операция выполнена успешно', '' );
+			}else{
+				$this->nView->viewError ( array ('Ошибка выполнения' ) );
+			}
+			$action = 'carsList';
+		}
+		if ($action == 'carsList') {
+			$cars = $this->nModel->carsList ( );
+			$this->nView->viewCarsList ( $cars );
+			$this->updated = true;
+		}
 		/* * Группы * */
 		
 		if ($action == 'groupNew') {
@@ -953,7 +1089,29 @@ class adminView extends module_view {
 		}
 		return true;
 	}
-	
+
+	public function viewCarsList($cars) {
+		$this->pXSL [] = RIVC_ROOT . 'layout/users/cars.list.xsl';
+
+		$Container = $this->newContainer ( 'carslist' );
+		$ContainerCars = $this->addToNode ( $Container, 'cars', '' );
+		foreach ( $cars as $user ) {
+			$this->arrToXML ( $user, $ContainerCars, 'car' );
+		}
+		return true;
+	}
+
+	public function viewCarEdit($car, $car_types) {
+		$this->pXSL [] = RIVC_ROOT . 'layout/users/car.edit.xsl';
+		$Container = $this->newContainer ( 'caredit' );
+		$this->arrToXML ( $car, $Container, 'car' );
+		$ContainerCarTypes = $this->addToNode ( $Container, 'car_types', '' );
+		foreach ( $car_types as $item ) {
+			$this->arrToXML ( $item, $ContainerCarTypes, 'item' );
+		}
+		return true;
+	}
+
 	public function viewMainPage() {
 		$this->pXSL [] = RIVC_ROOT . 'layout/admin/admin.main.xsl';
 		$this->newContainer ( 'adminmain' );

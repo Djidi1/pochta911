@@ -15,6 +15,11 @@
 										<span class="glyphicon glyphicon-bullhorn"> </span>
 										<span> Новости</span>
 									</a>
+
+                                    <a class="btn btn-default" href="/orders/">
+                                        <i class="fa fa-flag" aria-hidden="true"> </i>
+                                        <span> Заказы</span>
+                                    </a>
 							<!--<div style="float: left;">-->
 								<!--<div class="icon">-->
 									<!--<a href="http://{//page/@host}/email/">-->
@@ -36,11 +41,15 @@
 					<tr>
 						<td valign="top">
 							<h2>Настройки</h2>
-									<a class="btn btn-default" href="http://{//page/@host}/admin/userList-1/">
+									<a class="btn btn-default" href="/admin/userList-1/">
 										<span class="glyphicon glyphicon-user"> </span>
-										<span> Пользователи</span>
+										<span> Клиенты</span>
 									</a>
-									<a class="btn btn-default" href="http://{//page/@host}/admin/groupList-1/">
+									<a class="btn btn-default" href="/admin/carsList-1/">
+										<i class="fa fa-car" aria-hidden="true"> </i>
+										<span> Автоштат</span>
+									</a>
+									<a class="btn btn-default" href="/admin/groupList-1/">
 										<i class="fa fa-users" aria-hidden="true"> </i>
 										<span> Группы</span>
 									</a>
