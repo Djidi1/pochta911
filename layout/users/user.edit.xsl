@@ -9,15 +9,17 @@
                 <div class="col-md-5">
 
                     <div class="panel panel-success">
-                        <div class="panel-heading"><strong>Контакты</strong></div>
+                        <div class="panel-heading">
+                            <strong>Контакты</strong>
+                        </div>
                         <div class="panel-body">
-                            <input type="hidden" name="user_id" value="{user/user_id}"/>
+                            <input id="user_id" type="hidden" name="user_id" value="{user/user_id}"/>
                             <table>
                                 <tbody>
                                     <tr>
                                         <td>Название:</td>
                                         <td>
-                                            <input class="form-control" type="text" name="title"
+                                            <input class="form-control" type="text" name="title" onkeyup="check_user(this)"
                                                    value="{user/title}" size="30" required=""/>
                                         </td>
                                     </tr>
@@ -52,7 +54,7 @@
                                     <tr>
                                         <td>Логин:</td>
                                         <td>
-                                            <input class="form-control" type="text" name="login" id="login"
+                                            <input class="form-control" type="text" name="login" id="login" onkeyup="check_user(this)"
                                                    value="{user/login}" size="30">
                                                 <xsl:if test="user/login != ''">
                                                     <xsl:attribute name="readonly">readonly</xsl:attribute>
@@ -97,31 +99,58 @@
                 </div>
                 <div class="col-md-5">
                     <div class="panel panel-info">
-                        <div class="panel-heading"><strong>Адреса</strong></div>
+                        <div class="panel-heading">
+                            <strong>Адреса</strong>
+                        </div>
                         <div class="panel-body">
                             <xsl:for-each select="address/item">
                                 <div class="input-group" rel="{position()}">
                                     <span class="input-group-addon">
                                         <xsl:value-of select="position()"/>
                                     </span>
-                                    <input type="text" class="form-control" name="address[]" placeholder="Адрес" value="{address}" />
+                                    <input type="text" class="form-control" name="address[]" placeholder="Адрес" value="{address}"/>
                                     <div class="input-group-btn">
                                         <button type="button" class="btn-clone btn btn-success" title="Добавить" onclick="clone_div_row(this)">
                                             <xsl:if test="position() != count(../../address/item)">
                                                 <xsl:attribute name="disabled"> </xsl:attribute>
-                                            </xsl:if>+</button>
+                                            </xsl:if>
+                                            +
+                                        </button>
                                         <button type="button" class="btn-delete btn btn-danger" title="Удалить" onclick="delete_div_row(this)">
                                             <xsl:if test="position() = 1">
                                                 <xsl:attribute name="disabled"> </xsl:attribute>
-                                            </xsl:if>-</button>
+                                            </xsl:if>
+                                            -
+                                        </button>
                                     </div>
+                                    <br/>
+                                    <textarea name="addr_comment[]" class="form-control">
+                                        <xsl:value-of select="comment"/>
+                                    </textarea>
                                 </div>
+
                             </xsl:for-each>
+                            <xsl:if test="count(address/item) = 0">
+                                <div class="input-group" rel="1">
+                                    <span class="input-group-addon">1</span>
+                                    <input type="text" class="form-control" name="address[]" placeholder="Адрес" value=""/>
+                                    <div class="input-group-btn">
+                                        <button type="button" class="btn-clone btn btn-success" title="Добавить" onclick="clone_div_row(this)">+</button>
+                                        <button type="button" class="btn-delete btn btn-danger" title="Удалить" onclick="delete_div_row(this)" disabled="">-</button>
+                                    </div>
+                                    <br/>
+                                    <textarea name="addr_comment[]" class="form-control">
+                                        <xsl:value-of select="comment"/>
+                                    </textarea>
+                                </div>
+                            </xsl:if>
                         </div>
                     </div>
 
                     <div class="panel panel-warning">
-                        <div class="panel-heading"><strong>Кредитные карты</strong></div>
+                        <div class="panel-heading">
+                            <strong>Оплата</strong>
+                        </div>
                         <div class="panel-body">
                             <xsl:for-each select="cards/item">
                                 <div class="input-group" rel="{position()}">
@@ -133,14 +162,36 @@
                                         <button type="button" class="btn-clone btn btn-success" title="Добавить" onclick="clone_div_row(this)">
                                             <xsl:if test="position() != count(../../cards/item)">
                                                 <xsl:attribute name="disabled"> </xsl:attribute>
-                                            </xsl:if>+</button>
+                                            </xsl:if>
+                                            +
+                                        </button>
                                         <button type="button" class="btn-delete btn btn-danger" title="Удалить" onclick="delete_div_row(this)">
                                             <xsl:if test="position() = 1">
                                                 <xsl:attribute name="disabled"> </xsl:attribute>
-                                            </xsl:if>-</button>
+                                            </xsl:if>
+                                            -
+                                        </button>
                                     </div>
+                                    <br/>
+                                    <textarea name="card_comment[]" class="form-control">
+                                        <xsl:value-of select="comment"/>
+                                    </textarea>
                                 </div>
                             </xsl:for-each>
+                            <xsl:if test="count(address/item) = 0">
+                                <div class="input-group" rel="1">
+                                    <span class="input-group-addon">1</span>
+                                    <input type="text" class="form-control" name="credit_card[]" placeholder="Номер кредитной карты" value=""/>
+                                    <div class="input-group-btn">
+                                        <button type="button" class="btn-clone btn btn-success" title="Добавить" onclick="clone_div_row(this)">+</button>
+                                        <button type="button" class="btn-delete btn btn-danger" title="Удалить" onclick="delete_div_row(this)" disabled="">-</button>
+                                    </div>
+                                    <br/>
+                                    <textarea name="card_comment[]" class="form-control">
+                                        <xsl:value-of select="comment"/>
+                                    </textarea>
+                                </div>
+                            </xsl:if>
                         </div>
                     </div>
 
@@ -150,6 +201,6 @@
                 <input class="btn btn-success" type="submit" value="сохранить" name="submit"/>
             </div>
         </form>
-
+        <hr/>
     </xsl:template>
 </xsl:stylesheet>

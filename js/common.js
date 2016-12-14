@@ -29,3 +29,30 @@ function clone_div_row(obj) {
     $(new_el).find('.btn-delete').removeAttr('disabled');
     //$(new_el).find("input").attr('id', '');
 }
+var timer_check_user;
+function check_user(obj){
+    clearTimeout(timer_check_user);
+    var elem_type = $(obj).attr('name');
+    timer_check_user=setTimeout(function send_req_check_user(){
+        var obj = $('input[name='+elem_type+']');
+        var user_id = $('#user_id').val();
+        var elem_val = $(obj).val();
+        $.post("/admin/checkUser-1/", {user_id:user_id,elem_type:elem_type,value:elem_val},  function(data) {
+            if (data == 1){
+                $(obj).attr('style','border: 1px solid maroon');
+                if ($('.alert-div-'+elem_type).length == 0) {
+                    var alert_div = $('<div class="alert alert-danger alert-div alert-div-' + elem_type + '">Введите другое значение...</div>');
+                    $(obj).parent().append(alert_div);
+                }
+                $('input[type=submit]').attr("disabled","disabled")
+            }else{
+                $(obj).attr('style','border: 1px solid darkgreen');
+                $('.alert-div-'+elem_type+'').fadeOut().remove();
+                if ($('.alert-div').length == 0) {
+                    $('input[type=submit]').removeAttr("disabled");
+                }
+            }
+
+        });
+    },500,elem_type);
+}

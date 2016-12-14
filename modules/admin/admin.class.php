@@ -40,6 +40,36 @@ class adminModel extends module_model {
 			$Params ['isAutoPass'] = $this->Vals->getVal ( 'isAutoPass', 'POST', 'integer' );
 			$Params ['isBan'] = $this->Vals->getVal ( 'isBan', 'POST', 'integer' );
      */
+	public function userInsert($Params) {
+		$passi = md5 ( $Params ['pass'] );
+		$sql = 'INSERT INTO `users` (name,email,login,phone,phone_mess,title,isBan,pass,date_reg)
+				VALUES (
+				    \'%1$s\',
+				    \'%2$s\',
+				    \'%3$s\',
+				    \'%4$s\',
+				    \'%5$s\',
+				    \'%6$s\',
+				    %7$u,
+				    \'' . $passi . '\',
+				    NOW()
+				    )';
+
+		$test = $this->query ( $sql, $Params ['username'], $Params ['email'], $Params ['login'], $Params ['phone'],
+			$Params ['phone_mess'], $Params ['title'], $Params ['isBan'] );
+
+//        stop($this->sql);
+		$user_id = $this->insertID();
+		if ($user_id > 0) {
+			$sql = 'INSERT INTO `groups_user` (`group_id`, `user_id`) VALUES (%1$u, %2$u)';
+			$this->query($sql, $Params ['group_id'], $user_id);
+
+			$Params ['user_id'] = $user_id;
+			$this->updateAddrAndCard($Params);
+		}
+		return $test;
+	}
+
 	public function userUpdate($Params) {
 		$sql = 'UPDATE `users`
 				SET
@@ -65,29 +95,41 @@ class adminModel extends module_model {
 
 		$sql = 'UPDATE `groups_user` SET `group_id`  = %1$u WHERE `user_id` = %2$u';
 		$this->query ( $sql, $Params ['group_id'], $Params ['user_id'] );
-        if (is_array($Params ['credit_card'])) {
-            $sql = 'DELETE FROM users_cards WHERE user_id = '.$Params ['user_id'].';';
-            $this->query ( $sql );
-            $sql = 'INSERT INTO users_cards (card_num,user_id) VALUES ';
-            foreach ($Params ['credit_card'] as $key => $item) {
-                $sql .= ($key > 0)?',':'';
-                $sql .= ' (\''.$item.'\','.$Params ['user_id'].')';
-            }
-            $this->query ( $sql );
-        }
-        if (is_array($Params ['address'])) {
-            $sql = 'DELETE FROM users_address WHERE user_id = '.$Params ['user_id'].';';
-            $this->query ( $sql );
-            $sql = 'INSERT INTO users_address (address,user_id) VALUES ';
-            foreach ($Params ['address'] as $key => $address) {
-                $sql .= ($key > 0)?', ':'';
-                $sql .= ' (\''.$address.'\','.$Params ['user_id'].')';
-            }
-            $this->query ( $sql );
-        }
+
+		$this->updateAddrAndCard($Params);
+
 		return $test;
 	}
-	
+
+	public function updateAddrAndCard($Params){
+		if (is_array($Params ['credit_card'])) {
+			$sql = 'DELETE FROM users_cards WHERE user_id = '.$Params ['user_id'].';';
+			$this->query ( $sql );
+			$sql = 'INSERT INTO users_cards (card_num,comment,user_id) VALUES ';
+			foreach ($Params ['credit_card'] as $key => $item) {
+				$sql .= ($key > 0)?',':'';
+				$sql .= ' (\''.$item.'\',\''.$Params ['card_comment'][$key].'\','.$Params ['user_id'].')';
+			}
+			$this->query ( $sql );
+		}
+		if (is_array($Params ['address'])) {
+			$sql = 'DELETE FROM users_address WHERE user_id = '.$Params ['user_id'].';';
+			$this->query ( $sql );
+			$sql = 'INSERT INTO users_address (address,comment,user_id) VALUES ';
+			foreach ($Params ['address'] as $key => $address) {
+				$sql .= ($key > 0)?', ':'';
+				$sql .= ' (\''.$address.'\',\''.$Params ['addr_comment'][$key].'\','.$Params ['user_id'].')';
+			}
+			$this->query ( $sql );
+		}
+	}
+	public function carBan($id) {
+		$sql = "UPDATE `cars_couriers`
+				SET `isBan` = 1
+                WHERE `id` = $id";
+		return $this->query ( $sql);
+	}
+
 	public function userBan($user_id, $full) {
 		$type = 1;
 		if ($full)
@@ -135,7 +177,7 @@ class adminModel extends module_model {
 //	}
 
     public function getAddress($user_id) {
-        $sql = 'SELECT address, main FROM users_address  WHERE user_id=' . $user_id;
+        $sql = 'SELECT address, comment, main FROM users_address  WHERE user_id=' . $user_id;
         $this->query ( $sql );
         $items = array ();
         while ( ($row = $this->fetchRowA ()) !== false ) {
@@ -144,7 +186,7 @@ class adminModel extends module_model {
         return $items;
     }
     public function getCards($user_id) {
-        $sql = 'SELECT card_num, main  FROM users_cards  WHERE user_id=' . $user_id;
+        $sql = 'SELECT card_num, comment, main  FROM users_cards  WHERE user_id=' . $user_id;
         $this->query ( $sql );
         $items = array ();
         while ( ($row = $this->fetchRowA ()) !== false ) {
@@ -152,6 +194,14 @@ class adminModel extends module_model {
         }
         return $items;
     }
+
+	public function checkUserData($this_user_id,$elem_type,$elem_value)	{
+		$sql = "SELECT id FROM users WHERE $elem_type = '$elem_value'";
+		$this->query ( $sql );
+		$user_data = $this->fetchRowA ();
+		$result = (isset($user_data['id']) and $user_data['id'] != $this_user_id )?'1':'0';
+		return $result;
+	}
 	
 	public function userGet($user_id) {
 		
@@ -163,7 +213,6 @@ class adminModel extends module_model {
 				LEFT JOIN `groups` g ON gu.group_id = g.id
 				WHERE u.id = %1$u';
 		$this->query ( $sql, $user_id );
-//		$user = array ();
 		$user = $this->fetchOneRowA ();
 		return $user;
 	}
@@ -250,6 +299,7 @@ class adminModel extends module_model {
 				  car_value
 				FROM cars_couriers cc
 				  LEFT JOIN car_types ct ON cc.car_type = ct.id
+				  WHERE isBan = 0
 				ORDER BY cc.fio ';
 		$this->query ( $sql );
 		$items = array ();
@@ -537,6 +587,7 @@ class adminProcess extends module_process {
 		
 		/* Default Process Class actions */
 		$this->regAction ( 'useAdmin', 'Использование Админки', ACTION_GROUP );
+		$this->regAction ( 'carBan', 'Блокировка машины/курьера', ACTION_GROUP );
 		$this->regAction ( 'carEdit', 'Форма добавления/редактирования машины/курьера', ACTION_GROUP );
 		$this->regAction ( 'carUpdate', 'Добавление/обновление курьера', ACTION_GROUP );
 		$this->regAction ( 'carsList', 'Список машин/курьеров', ACTION_GROUP );
@@ -547,6 +598,7 @@ class adminProcess extends module_process {
 		$this->regAction ( 'userUpdate', 'Обновить данные пользователя', ACTION_GROUP );
 		$this->regAction ( 'userBan', 'Удалить пользователя в корзину', ACTION_GROUP );
 		$this->regAction ( 'userUnBan', 'Восстановить пользователя', ACTION_GROUP );
+		$this->regAction ( 'checkUser', 'Проверка пользователя', ACTION_GROUP );
 		$this->regAction ( 'groupNew', 'Диалог создания группы', ACTION_GROUP );
 		$this->regAction ( 'groupAdd', 'Добавить группу', ACTION_GROUP );
 		$this->regAction ( 'groupEdit', 'Редактировать группу', ACTION_GROUP );
@@ -782,10 +834,7 @@ class adminProcess extends module_process {
 		
 		if ($action == 'userUpdate') {
 			$Params ['user_id'] = $this->Vals->getVal ( 'user_id', 'POST', 'integer' );
-			if ($Params ['user_id'] == 0) {
-				$this->nView->viewError ( 'Ошибка ID' );
-				return false;
-			}
+
 			$Params ['username'] = $this->Vals->getVal ( 'username', 'POST', 'string' );
 			$Params ['email'] = $this->Vals->getVal ( 'email', 'POST', 'string' );
 			$Params ['title'] = $this->Vals->getVal ( 'title', 'POST', 'string' );
@@ -795,7 +844,9 @@ class adminProcess extends module_process {
 			$Params ['pass'] = $this->Vals->getVal ( 'pass', 'POST', 'string' );
 			$Params ['group_id'] = $this->Vals->getVal ( 'group_id', 'POST', 'integer' );
 			$Params ['address'] = $this->Vals->getVal ( 'address', 'POST', 'array' );
+			$Params ['addr_comment'] = $this->Vals->getVal ( 'addr_comment', 'POST', 'array' );
 			$Params ['credit_card'] = $this->Vals->getVal ( 'credit_card', 'POST', 'array' );
+			$Params ['card_comment'] = $this->Vals->getVal ( 'card_comment', 'POST', 'array' );
 			$Params ['isAutoPass'] = $this->Vals->getVal ( 'isAutoPass', 'POST', 'integer' );
 			$Params ['isBan'] = $this->Vals->getVal ( 'isBan', 'POST', 'integer' );
 			
@@ -805,12 +856,18 @@ class adminProcess extends module_process {
 			}
 			// $username, $email, $login, $pass, $ip, $group_id
 			if ($Params ['username'] != '' && $Params ['email'] != '' && $Params ['group_id'] > 0) {
-				$res = $this->nModel->userUpdate ( $Params );
+				if ($Params ['user_id'] == 0) {
+					$res = $this->nModel->userInsert ( $Params );
+					$msg = 'добавлен';
+				}else{
+					$res = $this->nModel->userUpdate ( $Params );
+					$msg = 'обновлен';
+				}
 				if ($res) {
 					//					$this->System->actionLog($this->mod_id, $Params['user_id'], 'Пользователь обновлен: '.$Params['username'], dateToDATETIME (date('Y-d-m h-i-s')), $this->User->getUserID(), 1, $action);
-					$this->nView->viewMessage ( 'Профиль клиента успешно обновлен', 'Сообщение' );
-					$message1 = ' Ваш профиль обновлен<br />' . rn . rn;
-					$message2 = ' Профиль клиента успешно обновлен<br />' . rn . rn;
+					$this->nView->viewMessage ( 'Профиль клиента успешно '.$msg, 'Сообщение' );
+					$message1 = ' Ваш профиль '.$msg.'<br />' . rn . rn;
+					$message2 = ' Профиль клиента успешно '.$msg.'<br />' . rn . rn;
 					$usInfo = '';
 					foreach ( $Params as $key => $val ) {
 						$usInfo .= $key . ' : ' . (is_array($val)?json_encode($val):$val) . '<br />' . rn;
@@ -818,10 +875,10 @@ class adminProcess extends module_process {
 					$message1 .= $usInfo;
 					$message2 .= $usInfo;
 				
-					sendMail('Профиль обновлен', $message1, $Params['email'],'Интранет портал');
-					sendMail('Пользователь обновлен', $message2, 'djidi@mail.ru','Интранет портал');
+					sendMail('Профиль '.$msg, $message1, $Params['email'],'Интранет портал');
+					sendMail('Пользователь '.$msg, $message2, 'djidi@mail.ru','Интранет портал');
 				} else {
-					$this->nView->viewError ( array ('Ошибка обновления профиля' ) );
+					$this->nView->viewError ( array ('Ошибка профиля' ) );
 				}
 			} else {
 				$this->nView->viewError ( array ('Заполнены не все обязательные поля', $Params ['username'], $Params ['email'], $Params ['group_id'] ) );
@@ -833,21 +890,26 @@ class adminProcess extends module_process {
 		
 		if ($action == 'userEdit') {
 			$user_id = $this->Vals->getVal ( 'userEdit', 'GET', 'integer' );
-			if ($user_id > 0) {
-				$user = $this->nModel->userGet ( $user_id );
-                $address = $this->nModel->getAddress ($user_id);
-                $cards = $this->nModel->getCards ($user_id);
-//                $user_rights = $this->nModel->user_rights ( $user_id );
-				$groups = $this->nModel->getGroups ();
-				
-				if ($user ['user_id'] > 0)
-					$this->nView->viewUserEdit ( $user, $groups, $address, $cards );
-				else
-					$this->nView->viewError ( 'Пользователь не найден' );
-			} else {
-				$this->nView->viewError ( 'Пользователь не выбран' );
-			}
+
+			$user = ($user_id > 0)?$this->nModel->userGet ( $user_id ):array();
+			$address = ($user_id > 0)?$this->nModel->getAddress ($user_id):array();
+			$cards = ($user_id > 0)?$this->nModel->getCards ($user_id):array();
+			$groups = $this->nModel->getGroups ();
+
+			$this->nView->viewUserEdit ( $user, $groups, $address, $cards );
+
 			$this->updated = true;
+		}
+
+		if ($action == 'carBan') {
+			$id = $this->Vals->getVal ( 'carBan', 'GET', 'integer' );
+			$res = $this->nModel->carBan ( $id );
+			if ($res) {
+				$this->nView->viewMessage ( 'Курьер заблокирован', 'Сообщение' );
+			} else {
+				$this->nView->viewError ( array ('Ошибка блокировки' ) );
+			}
+			header ( "Location:/admin/carsList-1/" );
 		}
 		
 		if ($action == 'userList') {
@@ -865,7 +927,15 @@ class adminProcess extends module_process {
 			$this->updated = true;
 		}
 		/* * Конец Пользователи * */
-
+//user_id:user_id,elem_type:elem_type,value:elem_val
+		if ($action == 'checkUser') {
+			$this_user_id = $this->Vals->getVal ( 'user_id', 'POST', 'string' );
+			$elem_type = $this->Vals->getVal ( 'elem_type', 'POST', 'string' );
+			$elem_value = $this->Vals->getVal ( 'value', 'POST', 'string' );
+			$result = $this->nModel->checkUserData($this_user_id,$elem_type,$elem_value);
+			echo $result;
+			exit();
+		}
 
 		if ($action == 'carEdit') {
 			$car_id = $this->Vals->getVal ( 'carEdit', 'GET', 'integer' );

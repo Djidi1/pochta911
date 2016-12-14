@@ -19,7 +19,7 @@ jQuery(function ($) {
         bootbox.alert(img);
     });
 
-    if ($('.camera_wrap'))
+    if ($('.camera_wrap').length)
         $('.camera_wrap').camera({
             height: '300px'
         });
