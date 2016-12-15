@@ -109,7 +109,11 @@
                                         <xsl:value-of select="position()"/>
                                     </span>
                                     <input type="text" class="form-control" name="address[]" placeholder="Адрес" value="{address}"/>
-                                    <div class="input-group-btn">
+                                    <br/>
+                                    <textarea name="addr_comment[]" class="form-control">
+                                        <xsl:value-of select="comment"/>
+                                    </textarea>
+                                    <div class="input-group-btn" style="vertical-align: top;">
                                         <button type="button" class="btn-clone btn btn-success" title="Добавить" onclick="clone_div_row(this)">
                                             <xsl:if test="position() != count(../../address/item)">
                                                 <xsl:attribute name="disabled"> </xsl:attribute>
@@ -123,10 +127,6 @@
                                             -
                                         </button>
                                     </div>
-                                    <br/>
-                                    <textarea name="addr_comment[]" class="form-control">
-                                        <xsl:value-of select="comment"/>
-                                    </textarea>
                                 </div>
 
                             </xsl:for-each>
@@ -134,14 +134,14 @@
                                 <div class="input-group" rel="1">
                                     <span class="input-group-addon">1</span>
                                     <input type="text" class="form-control" name="address[]" placeholder="Адрес" value=""/>
-                                    <div class="input-group-btn">
-                                        <button type="button" class="btn-clone btn btn-success" title="Добавить" onclick="clone_div_row(this)">+</button>
-                                        <button type="button" class="btn-delete btn btn-danger" title="Удалить" onclick="delete_div_row(this)" disabled="">-</button>
-                                    </div>
                                     <br/>
                                     <textarea name="addr_comment[]" class="form-control">
                                         <xsl:value-of select="comment"/>
                                     </textarea>
+                                    <div class="input-group-btn" style="vertical-align: top;">
+                                        <button type="button" class="btn-clone btn btn-success" title="Добавить" onclick="clone_div_row(this)">+</button>
+                                        <button type="button" class="btn-delete btn btn-danger" title="Удалить" onclick="delete_div_row(this)" disabled="">-</button>
+                                    </div>
                                 </div>
                             </xsl:if>
                         </div>
@@ -158,7 +158,11 @@
                                         <xsl:value-of select="position()"/>
                                     </span>
                                     <input type="text" class="form-control" name="credit_card[]" placeholder="Номер кредитной карты" size="20" value="{card_num}"/>
-                                    <div class="input-group-btn">
+                                    <br/>
+                                    <textarea name="card_comment[]" class="form-control">
+                                        <xsl:value-of select="comment"/>
+                                    </textarea>
+                                    <div class="input-group-btn" style="vertical-align: top;">
                                         <button type="button" class="btn-clone btn btn-success" title="Добавить" onclick="clone_div_row(this)">
                                             <xsl:if test="position() != count(../../cards/item)">
                                                 <xsl:attribute name="disabled"> </xsl:attribute>
@@ -172,17 +176,17 @@
                                             -
                                         </button>
                                     </div>
-                                    <br/>
-                                    <textarea name="card_comment[]" class="form-control">
-                                        <xsl:value-of select="comment"/>
-                                    </textarea>
                                 </div>
                             </xsl:for-each>
                             <xsl:if test="count(address/item) = 0">
                                 <div class="input-group" rel="1">
                                     <span class="input-group-addon">1</span>
                                     <input type="text" class="form-control" name="credit_card[]" placeholder="Номер кредитной карты" value=""/>
-                                    <div class="input-group-btn">
+                                    <br/>
+                                    <textarea name="card_comment[]" class="form-control">
+                                        <xsl:value-of select="comment"/>
+                                    </textarea>
+                                    <div class="input-group-btn" style="vertical-align: top;">
                                         <button type="button" class="btn-clone btn btn-success" title="Добавить" onclick="clone_div_row(this)">+</button>
                                         <button type="button" class="btn-delete btn btn-danger" title="Удалить" onclick="delete_div_row(this)" disabled="">-</button>
                                     </div>

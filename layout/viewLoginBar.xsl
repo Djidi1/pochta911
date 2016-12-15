@@ -11,8 +11,8 @@
 	</xsl:template>
 	<xsl:template name="loginform">
 		<div class="poping_links">
-			<a href="#" id="openHome">Главная</a>
-			<a href="javascript:;" onclick="showThem('login_pop');return false;" id="openLogin">Войти</a>
+			<!--<a class="btn btn-info btn-xs" href="/" id="openHome">Главная</a>-->
+			<span class="btn btn-info btn-xs" onclick="showThem('login_pop');" id="openLogin">Войти</span>
 		</div>
 		<div id="login_pop" style="display: none;">
 			<form id="login-form" action="/?login" method="post" name="form">
@@ -20,23 +20,25 @@
 					<div class="boxIndent">
 						<div class="wrapper">
 							<form action="#" method="post" id="login-form">
-								<span class="msg-login">
+								<strong class="msg-login">
 									<xsl:value-of select="title"/>
-								</span>
-								<p>
-									<xsl:value-of select="error"/>
-								</p>
+								</strong>
+                                <xsl:if test="error != ''">
+                                    <p class="alert alert-info">
+                                        <xsl:value-of select="error"/>
+                                    </p>
+                                </xsl:if>
 								<p id="form-login-username">
 									<label for="modlgn-username">Логин</label>
-									<input id="modlgn-username" type="text" name="username" class="" size="18" value="" onblur="" onfocus=""/>
+									<input id="modlgn-username" type="text" name="username" class="form-control" size="18" value="" onblur="" onfocus=""/>
 								</p>
 								<p id="form-login-password">
 									<label for="modlgn-passwd">Пароль</label>
-									<input id="modlgn-passwd" type="password" name="userpass" class="" size="18" value="" onblur="" onfocus=""/>
+									<input id="modlgn-passwd" type="password" name="userpass" class="form-control" size="18" value="" onblur="" onfocus=""/>
 								</p>
 								<div class="wrapper">
-									<div class="create">
-										<input type="submit" name="submit" value="Войти" style="padding: 5px;border-radius: 5px;"/>
+									<div class="create" style="text-align: right">
+										<input type="submit" name="submit" value="Войти" class="btn btn-success"/>
 									</div>
 								</div>
 							</form>
