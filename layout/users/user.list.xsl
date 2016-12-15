@@ -13,16 +13,16 @@
 								<h2>Список клиентов</h2>
 								<div style="float: left;">
 									<div class="icon">
-										<a class="btn btn-success" href="/admin/newUser-1/" title="Добавить пользователя">
+										<a class="btn btn-success" href="/admin/userEdit-0/" title="Добавить пользователя">
 											<span class="glyphicon glyphicon-user"> </span>
 											<span> Новый пользователь</span>
 										</a>
 									</div>
 								</div>
-								<div style="float: right;">
-									<input class="btn btn-info btn-sm" type="button" onclick="printBlock('#printlist');" value="Печать"/>
-                                    <input class="btn btn-info btn-sm" type="button" onclick="buttonSetFilter('langFilter', '1', 'ajax','input', '/admin/userList-1/xls-1/', true)" value="Excel"/>
-								</div>
+								<!--<div style="float: right;">-->
+									<!--<input class="btn btn-info btn-sm" type="button" onclick="printBlock('#printlist');" value="Печать"/>-->
+                                    <!--<input class="btn btn-info btn-sm" type="button" onclick="buttonSetFilter('langFilter', '1', 'ajax','input', '/admin/userList-1/xls-1/', true)" value="Excel"/>-->
+								<!--</div>-->
 							</td>
 						</tr>
 					</tbody>

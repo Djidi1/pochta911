@@ -4,7 +4,57 @@ class ordersModel extends module_model {
 	public function __construct($modName) {
 		parent::__construct ( $modName );
 	}
-	
+	public function getStores($user_id) {
+		$sql = 'SELECT
+				  id,
+				  address
+				FROM users_address
+				WHERE user_id = '.$user_id;
+		$this->query ( $sql );
+		$items = array ();
+		while ( ($row = $this->fetchRowA ()) !== false ) {
+			$items[] = $row;
+		}
+		return $items;
+	}
+	public function getRoutes($order_id) {
+		$sql = 'SELECT `from`,`to`,to_house,to_corpus,to_appart,
+					  to_fio,to_phone,to_coord,from_coord,lenght,cost_route,
+					  `date`,`time`,`comment`
+				FROM orders_routes
+				WHERE id_order = '.$order_id;
+		$this->query ( $sql );
+		$items = array ();
+		while ( ($row = $this->fetchRowA ()) !== false ) {
+			$items[] = $row;
+		}
+		return $items;
+	}
+	public function getOrder($order_id) {
+		$sql = 'SELECT o.id,
+					   o.id_user,
+					   o.id_address,
+					   o.ready,
+					   o.date,
+					   o.cost,
+					   o.comment,
+					   o.dk,
+					   u.name,
+					   u.title,
+					   u.phone,
+					   os.status
+				FROM orders o
+				LEFT JOIN users u ON o.id_user = u.id
+				LEFT JOIN orders_status os ON os.id = o.id_status
+				WHERE o.id = '.$order_id;
+		$this->query ( $sql );
+		$items = array ();
+		// один заказ
+		while ( ($row = $this->fetchRowA ()) !== false ) {
+			$items = $row;
+		}
+		return $items;
+	}
 	
 	public function getOrdersList($from, $to) {
 		$sql = 'SELECT o.id, o.comment, o.cost, r.`from`, r.`to`, r.lenght, r.cost_route, s.status, u.name, u.title, o.dk, o.id_user
@@ -211,15 +261,11 @@ class ordersProcess extends module_process {
 
 		
 		if ($action == 'order') {
-			$tur_id = $this->Vals->getVal ( 'order', 'GET', 'integer' );
-			$tour = array();
-			if ($tur_id > 0){
-				$tour = $this->nModel->tourGet ( $tur_id );
-			}
-			$countris = $this->nModel->getCountrys ();
-			$mp = $this->nModel->getMP ($tour[0]['loc_id']);
-			$this->nView->viewOrderEdit ( $tour, $countris, $mp );
-			
+			$order_id = $this->Vals->getVal ( 'order', 'GET', 'integer' );
+			$order = $this->nModel->getOrder($order_id);
+			$routes = $this->nModel->getRoutes($order_id);
+			$stores = $this->nModel->getStores($order['id_user']);
+			$this->nView->viewOrderEdit ( $order, $stores, $routes );
 		}
 		
 		if ($action == 'orderUpdate') {
@@ -347,21 +393,21 @@ class ordersView extends module_View {
 		return true;
 	}
 	
-	public function viewOrderEdit($tour, $countris, $mp) {
-		$this->pXSL [] = RIVC_ROOT . 'layout/'.$this->sysMod->layoutPref.'/turs.order.xsl';
-		$Container = $this->newContainer ( 'orderedit' );
-		$ContainerCountris = $this->addToNode ( $Container, 'tour', '' );
-		foreach ( $tour as $item ) {
-			$this->arrToXML ( $item, $ContainerCountris, 'item' );
+	public function viewOrderEdit($order, $stores, $routes) {
+		$this->pXSL [] = RIVC_ROOT . 'layout/orders/order.edit.xsl';
+		$Container = $this->newContainer ( 'order' );
+
+		$this->arrToXML ( $order, $Container, 'order' );
+
+		$ContainerStores = $this->addToNode ( $Container, 'stores', '' );
+		foreach ( $stores as $item ) {
+			$this->arrToXML ( $item, $ContainerStores, 'item' );
 		}
-		$ContainerCountris = $this->addToNode ( $Container, 'countris', '' );
-		foreach ( $countris as $item ) {
-			$this->arrToXML ( $item, $ContainerCountris, 'item' );
+		$ContainerRoutes = $this->addToNode ( $Container, 'routes', '' );
+		foreach ( $routes as $item ) {
+			$this->arrToXML ( $item, $ContainerRoutes, 'item' );
 		}
-		$ContainerMP = $this->addToNode ( $Container, 'mp', '' );
-		foreach ( $mp as $item ) {
-			$this->arrToXML ( $item, $ContainerMP, 'item' );
-		}
+
 		return true;
 	}
 	

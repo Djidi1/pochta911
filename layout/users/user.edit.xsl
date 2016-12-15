@@ -190,10 +190,6 @@
                                         <button type="button" class="btn-clone btn btn-success" title="Добавить" onclick="clone_div_row(this)">+</button>
                                         <button type="button" class="btn-delete btn btn-danger" title="Удалить" onclick="delete_div_row(this)" disabled="">-</button>
                                     </div>
-                                    <br/>
-                                    <textarea name="card_comment[]" class="form-control">
-                                        <xsl:value-of select="comment"/>
-                                    </textarea>
                                 </div>
                             </xsl:if>
                         </div>

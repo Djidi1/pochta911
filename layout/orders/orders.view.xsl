@@ -3,6 +3,14 @@
     <xsl:template match="container[@module = 'list']">
         <xsl:if test="//page/@isAjax != 1">
             <h2>Ваши заказы</h2>
+            <div style="float: left;">
+                <div class="icon">
+                    <a class="btn btn-success" href="/orders/order-1/" title="Добавить заказ">
+                        <span class="glyphicon glyphicon-flag"> </span>
+                        <span> Новый заказ</span>
+                    </a>
+                </div>
+            </div>
             <table class="table data-table">
                 <thead>
                     <th>id</th>

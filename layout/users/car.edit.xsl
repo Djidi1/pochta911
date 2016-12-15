@@ -38,7 +38,7 @@
                                         </td>
                                     </tr>
                                     <tr>
-                                        <td>Модель:</td>
+                                        <td>Марка:</td>
                                         <td>
                                             <input class="form-control" type="phone" name="car_firm"
                                                    value="{car/car_firm}" size="30" required=""/>
