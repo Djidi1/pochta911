@@ -10,6 +10,8 @@ jQuery(function ($) {
             $loading.hide();
         });
 
+
+
     $('.data-table').dataTable();
 
 
@@ -35,6 +37,22 @@ jQuery(function ($) {
     });
 
     //ui_add();
+    // сохранение улиц в браузере:
+    $.getJSON('/orders/get_data-spbStreets', function(spb_street_data){
+        $(".spb-streets").typeahead({ source: spb_street_data });
+        //console.log(spb_street_data);
+    },'json');
+    //console.log(localStorage.getItem('spb_street_data'));
+
+    $('.time-picker').datetimepicker({
+        format: 'LT',
+        locale: 'ru'
+    });
+
+    $('.date-picker').datetimepicker({
+        format: 'L',
+        locale: 'ru'
+    });
 
     $.datepicker.regional['ru'] = {
         changeMonth: true,

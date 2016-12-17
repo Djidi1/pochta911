@@ -6,36 +6,30 @@
             <base href="."/>
             <title>Доставка цветов</title>
             <link href="/images/favicon.png" rel="shortcut icon" type="image/vnd.microsoft.icon"/>
-            <!--<link rel="stylesheet" href="/css/facebox.css"/>-->
             <link rel="stylesheet" href="/css/camera.css"/>
             <link rel="stylesheet" href="/css/style.css"/>
-            <!--<link rel="stylesheet" href="/css/custom.css"/>-->
-            <!--<link rel="stylesheet" href="/css/stylesheet.css"/>-->
-            <!--<link rel="stylesheet" href="/css/system.css"/>-->
-            <!--<link rel="stylesheet" href="/css/position.css" media="screen,projection"/>-->
-            <!--<link rel="stylesheet" href="/css/layout.css" media="screen,projection"/>-->
             <link rel="stylesheet" href="/css/print.css" media="Print"/>
-            <!--<link rel="stylesheet" href="/css/products.css"/>-->
-            <!--<link rel="stylesheet" href="/css/personal.css"/>-->
             <link rel="stylesheet"
                   href="//cdn.datatables.net/plug-ins/3cfcc339e89/integration/bootstrap/3/dataTables.bootstrap.css"/>
             <link rel="stylesheet" href="/css/bootstrap.min.css"/>
-            <!--<link rel="stylesheet" href="/css/bootstrap-slider.css"/>-->
+            <link rel="stylesheet" href="/css/bootstrap-datetimepicker.min.css"/>
             <script src="/js/jquery.min.js"/>
             <script src="/js/jquery-ui.min.js"/>
             <script src="/js/bootstrap.min.js"/>
             <script src="/js/bootbox.min.js"/>
             <script src="/js/jquery.multiselect.min.js?v1"/>
             <script src="/js/jquery.maskinput.min.js"/>
+            <script src="/js/moment.min.js"/>
+            <script src="/js/moment.ru.js"/>
+            <script src="/js/bootstrap-datetimepicker.js"/>
+            <script src="/js/bootstrap-typeahead.min.js"/>
             <script src="/js/camera.min.js"/>
             <script src="/js/ready.js?v1"/>
             <script src="/js/common.js?v1"/>
             <script src="/js/script.js?v1"/>
-            <!--<script src="/js/bootstrap-slider.js"/>-->
-            <script src="//cdn.ckeditor.com/4.6.1/full/ckeditor.js"></script>
+            <script src="//cdn.ckeditor.com/4.6.1/full/ckeditor.js"/>
             <script src="//cdn.datatables.net/1.10.4/js/jquery.dataTables.min.js"/>
             <script src="//cdn.datatables.net/plug-ins/3cfcc339e89/integration/bootstrap/3/dataTables.bootstrap.js"/>
-            <!--<script src="/ckeditor/ckeditor.js?v1"/>-->
             <script>
             <!--var roxyFileman = '/fileman/index.html';-->
             <!--//1-->

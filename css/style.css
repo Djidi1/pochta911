@@ -12,7 +12,7 @@
 
 .main { width: 90%;  margin: 0 auto;  }
 
-
+.typeahead { z-index: 1051; }
 /*
 div#form_login {max-width: 300px;float: right;margin-left: 25px;border: 1px solid #D3E5F7;padding: 10px;border-radius: 5px;background-color: #F2F8FF;}
 #admin div#form_login {float: left !important;}

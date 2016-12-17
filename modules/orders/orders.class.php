@@ -4,32 +4,39 @@ class ordersModel extends module_model {
 	public function __construct($modName) {
 		parent::__construct ( $modName );
 	}
+
+	public function get_assoc_array($sql){
+		$this->query ( $sql );
+		$items = array ();
+		while ( ($row = $this->fetchRowA ()) !== false ) {
+			$items[] = $row;
+		}
+		return $items;
+	}
+
 	public function getStores($user_id) {
 		$sql = 'SELECT
 				  id,
 				  address
 				FROM users_address
 				WHERE user_id = '.$user_id;
-		$this->query ( $sql );
-		$items = array ();
-		while ( ($row = $this->fetchRowA ()) !== false ) {
-			$items[] = $row;
-		}
-		return $items;
+		return $this->get_assoc_array($sql);
 	}
+
 	public function getRoutes($order_id) {
 		$sql = 'SELECT `from`,`to`,to_house,to_corpus,to_appart,
 					  to_fio,to_phone,to_coord,from_coord,lenght,cost_route,
 					  `date`,`time`,`comment`
 				FROM orders_routes
 				WHERE id_order = '.$order_id;
-		$this->query ( $sql );
-		$items = array ();
-		while ( ($row = $this->fetchRowA ()) !== false ) {
-			$items[] = $row;
-		}
-		return $items;
+		return $this->get_assoc_array($sql);
 	}
+
+	public function getSpbStreets(){
+		$sql = 'SELECT id, street_name name FROM spb_streets';
+		return $this->get_assoc_array($sql);
+	}
+
 	public function getOrder($order_id) {
 		$sql = 'SELECT o.id,
 					   o.id_user,
@@ -51,6 +58,7 @@ class ordersModel extends module_model {
 		$items = array ();
 		// один заказ
 		while ( ($row = $this->fetchRowA ()) !== false ) {
+			$row['date'] = $this->dateToRuFormat($row['date']);
 			$items = $row;
 		}
 		return $items;
@@ -65,15 +73,7 @@ class ordersModel extends module_model {
                   WHERE o.dk BETWEEN \''.$this->dmy_to_mydate($from).'\' AND \''.$this->dmy_to_mydate($to).' 23:59:59\'
                 ORDER BY o.id desc
                 LIMIT 0,1000';
-		$this->query ( $sql );
-		echo "<!-- ".$this->sql." -->";
-		$items = array ();
-		while ( ($row = $this->fetchRowA ()) !== false ) {
-//			$row ['from'] = $this->dateToRuFormat( $row ['from'] );
-//			$row ['to'] = $this->dateToRuFormat( $row ['to'] );
-			$items [] = $row;
-		}
-		return $items;
+		return $this->get_assoc_array($sql);
 	}
 	
 	function dateToRuFormat($date) {
@@ -92,7 +92,7 @@ class ordersModel extends module_model {
 		LEFT JOIN ' . TAB_PREF . 'tc_locations l ON t.id_loc = l.id
 		LEFT JOIN ' . TAB_PREF . 'tc_gids g ON t.id_gid = g.id
 		LEFT JOIN ' . TAB_PREF . 'tc_bus b ON t.id_bus = b.id
-		WHERE t.`id` = '.$tur_id.'';
+		WHERE t.`id` = '.$tur_id.' ';
 		//	stop($sql);
 		$this->query ( $sql );
 		$items = array ();
@@ -215,7 +215,8 @@ class ordersProcess extends module_process {
 		$this->regAction ( 'view', 'Главная страница', ACTION_GROUP );
 		$this->regAction ( 'order', 'Заявка', ACTION_GROUP );
 		$this->regAction ( 'orderUpdate', 'Редактирование заявки', ACTION_GROUP );
-		
+		$this->regAction ( 'get_data', 'Получение интерактивных данных', ACTION_GROUP );
+
 		if (DEBUG == 0) {
 			$this->registerActions ( 1 );
 		}
@@ -267,7 +268,17 @@ class ordersProcess extends module_process {
 			$stores = $this->nModel->getStores($order['id_user']);
 			$this->nView->viewOrderEdit ( $order, $stores, $routes );
 		}
-		
+
+		if ($action == 'get_data'){
+			$type_data = $this->Vals->getVal ( 'get_data', 'GET', 'string' );
+			if ($type_data == 'spbStreets'){
+				$items = $this->nModel->getSpbStreets();
+				echo json_encode($items);
+				exit();
+			}
+
+		}
+
 		if ($action == 'orderUpdate') {
 			$params['tur_id'] = $this->Vals->getVal ( 'tur_id', 'POST', 'integer' );
 			$params['def_mp'] = $this->Vals->getVal ( 'def_mp', 'POST', 'integer' );
