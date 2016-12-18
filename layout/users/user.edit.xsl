@@ -178,7 +178,7 @@
                                     </div>
                                 </div>
                             </xsl:for-each>
-                            <xsl:if test="count(address/item) = 0">
+                            <xsl:if test="count(cards/item) = 0">
                                 <div class="input-group" rel="1">
                                     <span class="input-group-addon">1</span>
                                     <input type="text" class="form-control" name="credit_card[]" placeholder="Номер кредитной карты" value=""/>

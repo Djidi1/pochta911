@@ -27,6 +27,10 @@ function clone_div_row(obj) {
     $(row).find('.btn-clone').attr('disabled','');
     // даем возможность удалиться созданному
     $(new_el).find('.btn-delete').removeAttr('disabled');
+    // автозаполение адреса
+    $(new_el).remove('.typeahead');
+    $(new_el).find('.time-picker').datetimepicker({format: 'LT',locale: 'ru'});
+    autoc_spb_streets();
     //$(new_el).find("input").attr('id', '');
 }
 var timer_check_user;
@@ -55,4 +59,39 @@ function check_user(obj){
 
         });
     },500,elem_type);
+}
+
+function chg_status(order_id){
+    $.post("/orders/chg_status-1/", {order_id:order_id},  function(data) {
+        bootbox.confirm({
+            title: "Изменение статуса",
+            message: data,
+            callback: function(result){ if(result){send_new_status()} }
+        });
+        //bootbox.alert(data,send_new_status(this));
+    });
+}
+
+function send_new_status(){
+    var order_id = $('.bootbox-body').find('input[name=order_id]').val();
+    var new_status = $('.bootbox-body').find('select[name=new_status]').val();
+    var stat_comment = $('.bootbox-body').find('textarea[name=comment_status]').val();
+
+    $.post("/orders/chg_status-1/", {order_id:order_id,new_status:new_status,stat_comment:stat_comment},  function(data) {
+        bootbox.alert(data,location.reload());
+    });
+
+}
+
+function autoc_spb_streets(){
+    var saved_data = localStorage.getItem('spb_street_data');
+    if (typeof saved_data == 'undefined' || saved_data == null || saved_data == '' ) {
+        $.getJSON('/orders/get_data-spbStreets', function(spb_street_data){
+            localStorage.setItem('spb_street_data', JSON.stringify(spb_street_data));
+            $(".spb-streets").typeahead({ source: spb_street_data, hint: true });
+        },'json');
+    }else{
+        var localData = JSON.parse(localStorage.getItem('spb_street_data'));
+        $(".spb-streets").typeahead({ source: localData, hint: true });
+    }
 }

@@ -12,7 +12,10 @@ jQuery(function ($) {
 
 
 
-    $('.data-table').dataTable();
+    $('.data-table').dataTable({"language": {
+        "url": "//cdn.datatables.net/plug-ins/1.10.13/i18n/Russian.json"
+    }});
+
 
 
     $('.thumbnail').click(function () {
@@ -26,34 +29,32 @@ jQuery(function ($) {
             height: '300px'
         });
 
-    $("#back-top").hide();
-    $(function () {
-        $('#back-top a').click(function () {
-            $('body,html').animate({
-                scrollTop: 0
-            }, 800);
-            return false;
-        });
+
+    $('#back-top').hide().find('a').click(function () {
+        $('body,html').animate({
+            scrollTop: 0
+        }, 800);
+        return false;
+    });
+
+
+    $(window).scroll(function(){
+        if (isVisisble( $('.navbar') )) {
+            $("#back-top").show();
+        } else {
+            $("#back-top").hide();
+        }
     });
 
     //ui_add();
-    // сохранение улиц в браузере:
-    $.getJSON('/orders/get_data-spbStreets', function(spb_street_data){
-        $(".spb-streets").typeahead({ source: spb_street_data });
-        //console.log(spb_street_data);
-    },'json');
-    //console.log(localStorage.getItem('spb_street_data'));
+    // автозаполнение улиц
+    autoc_spb_streets();
 
-    $('.time-picker').datetimepicker({
-        format: 'LT',
-        locale: 'ru'
-    });
+    $('.time-picker').datetimepicker({format: 'LT',locale: 'ru'});
 
-    $('.date-picker').datetimepicker({
-        format: 'L',
-        locale: 'ru'
-    });
+    $('.date-picker').datetimepicker({format: 'L', locale: 'ru'});
 
+    /*
     $.datepicker.regional['ru'] = {
         changeMonth: true,
         changeYear: true,
@@ -73,7 +74,12 @@ jQuery(function ($) {
         isRTL: false
     };
     $.datepicker.setDefaults($.datepicker.regional['ru']);
-
+*/
 
 
 });
+
+function isVisisble(elem){
+    //return $(elem).offset().top - $(window).scrollTop() < $(elem).height() ;
+    return $(elem).offset().top - $(window).scrollTop() < -1 * $(elem).height() ;
+}

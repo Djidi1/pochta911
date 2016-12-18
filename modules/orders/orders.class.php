@@ -14,6 +14,14 @@ class ordersModel extends module_model {
 		return $items;
 	}
 
+	public function getClientTitle($user_id){
+		$sql = 'SELECT
+				  title
+				FROM users
+				WHERE id = '.$user_id;
+		return $this->get_assoc_array($sql);
+	}
+
 	public function getStores($user_id) {
 		$sql = 'SELECT
 				  id,
@@ -22,11 +30,18 @@ class ordersModel extends module_model {
 				WHERE user_id = '.$user_id;
 		return $this->get_assoc_array($sql);
 	}
+	public function getStatuses() {
+		$sql = 'SELECT
+				  id,
+				  status
+				FROM orders_status ';
+		return $this->get_assoc_array($sql);
+	}
 
 	public function getRoutes($order_id) {
-		$sql = 'SELECT `from`,`to`,to_house,to_corpus,to_appart,
+		$sql = 'SELECT `to`,to_house,to_corpus,to_appart,
 					  to_fio,to_phone,to_coord,from_coord,lenght,cost_route,
-					  `date`,`time`,`comment`
+					  `to_time`,`comment`
 				FROM orders_routes
 				WHERE id_order = '.$order_id;
 		return $this->get_assoc_array($sql);
@@ -49,7 +64,8 @@ class ordersModel extends module_model {
 					   u.name,
 					   u.title,
 					   u.phone,
-					   os.status
+					   os.status,
+					   o.id_status
 				FROM orders o
 				LEFT JOIN users u ON o.id_user = u.id
 				LEFT JOIN orders_status os ON os.id = o.id_status
@@ -65,15 +81,21 @@ class ordersModel extends module_model {
 	}
 	
 	public function getOrdersList($from, $to) {
-		$sql = 'SELECT o.id, o.comment, o.cost, r.`from`, r.`to`, r.lenght, r.cost_route, s.status, u.name, u.title, o.dk, o.id_user
-                  FROM ' . TAB_PREF . 'orders o
-                LEFT JOIN ' . TAB_PREF . 'orders_routes r ON r.id_order = o.id
-                LEFT JOIN ' . TAB_PREF . 'orders_status s ON s.id = o.id_status
-                LEFT JOIN ' . TAB_PREF . 'users u ON u.id = o.id_user
+		$sql = 'SELECT o.id, o.comment, o.cost, a.address `from`, s.status, u.name, u.title, o.dk, o.id_user
+                  FROM orders o
+                LEFT JOIN users_address a ON a.id = o.id_address
+                LEFT JOIN orders_status s ON s.id = o.id_status
+                LEFT JOIN users u ON u.id = o.id_user
                   WHERE o.dk BETWEEN \''.$this->dmy_to_mydate($from).'\' AND \''.$this->dmy_to_mydate($to).' 23:59:59\'
+                  and o.isBan = 0
                 ORDER BY o.id desc
                 LIMIT 0,1000';
-		return $this->get_assoc_array($sql);
+		$orders = $this->get_assoc_array($sql);
+		foreach ($orders as $key => $order) {
+			$route = $this->getRoutes($order['id']);
+			$orders[$key]['route'] = $route;
+		}
+		return $orders;
 	}
 	
 	function dateToRuFormat($date) {
@@ -102,24 +124,67 @@ class ordersModel extends module_model {
 		}
 		return $items;
 	}
-	
 
+	public function orderInsert($id_user, $params) {
+		$sql = "
+		INSERT INTO orders (id_user, ready, `date`, comment, id_address, id_status, dk)
+		VALUES ($id_user,'".$params['ready']."','".$this->dmy_to_mydate($params['date'])."','".$params['order_comment']."','".$params['store_id']."','1',NOW());
+		";
+		$this->query($sql);
 
-	
-	public function orderUpdate($params) {
-		$sql = 'UPDATE ' . TAB_PREF . '`tc_tourists` SET
-		`name_f` = \'%1$s\',`name_i` = \'%2$s\',`name_o` = \'%3$s\',
-		`dob` = \'%4$s\',`passport` = \'%5$s\',`phone` = \'%6$s\',
-		`def_mp` = \'%7$u\',`country` = \'%8$u\',`comment` = \'%9$s\'
-		WHERE `id` = \'%10$u\'';
-		if (! $this->query ( $sql, $params['username_f'],$params['username_i'],$params['username_o'],
-				$this->dmy_to_mydate($params['dob']),$params['passport'],$params['phone'],
-				$params['def_mp'],$params['country'],$params['comment'],$params['user_id'] ))
-			return false;
-		return true;
+		$order_id = $this->insertID();
+		$this->update_routes($order_id,$params);
+
+		return $order_id;
 	}
 
+	public function orderUpdate($params) {
+		$sql = "
+		UPDATE orders SET
+		`ready` = '".$params['ready']."',
+		`date` = '".$this->dmy_to_mydate($params['date'])."',
+		`id_address` = '".$params['store_id']."',
+		`comment` = '".$params['order_comment']."',
+		`dk` = NOW()
+		WHERE id = ".$params['order_id']."
+		";
+		$this->query($sql);
 
+		$this->update_routes($params['order_id'],$params);
+
+		return $params['order_id'];
+	}
+
+	public function updOrderStatus($user_id, $order_id, $new_status, $stat_comment){
+		$sql = "UPDATE orders SET id_status = $new_status, `dk` = NOW()	WHERE id = ".$order_id." ";
+		$this->query($sql);
+
+		$sql = "INSERT INTO order_status_history (user_id, order_id, new_status, comment, dk)
+				VALUES ($user_id, $order_id, $new_status, '$stat_comment', NOW())";
+		$this->query($sql);
+	}
+
+	public function update_routes($order_id,$params){
+		if (is_array($params ['to'])) {
+			$sql = 'DELETE FROM orders_routes WHERE id_order = '.$order_id.';';
+			$this->query ( $sql );
+			$sql = 'INSERT INTO orders_routes (id_order,`to`,`to_house`,`to_corpus`,`to_appart`,`to_fio`,`to_phone`,`cost_route`,`to_time`,`comment`) VALUES ';
+			foreach ($params ['to'] as $key => $item) {
+				$sql .= ($key > 0)?',':'';
+				$sql .= ' (\''.$order_id.'\',\''.$params ['to'][$key].'\',\''.$params ['to_house'][$key].'\',\''.$params ['to_corpus'][$key].'\',
+							\''.$params ['to_appart'][$key].'\',\''.$params ['to_fio'][$key].'\',\''.$params ['to_phone'][$key].'\',
+							\''.$params ['cost_route'][$key].'\',\''.$params ['to_time'][$key].'\',\''.$params ['comment'][$key].'\'	)';
+			}
+			$this->query ( $sql );
+		}
+	}
+
+	public function orderBan($id) {
+		$sql = "UPDATE `orders`
+				SET `isBan` = 1
+                WHERE `id` = $id";
+		return $this->query ( $sql);
+	}
 
 function mydate_to_dmy($date) {
 	return date ( 'd.m.Y', strtotime ( substr ( $date, 0, 20 ) ) );
@@ -215,6 +280,8 @@ class ordersProcess extends module_process {
 		$this->regAction ( 'view', 'Главная страница', ACTION_GROUP );
 		$this->regAction ( 'order', 'Заявка', ACTION_GROUP );
 		$this->regAction ( 'orderUpdate', 'Редактирование заявки', ACTION_GROUP );
+		$this->regAction ( 'orderBan', 'Удаление заявки', ACTION_GROUP );
+		$this->regAction ( 'chg_status', 'Изменение статуса заявки', ACTION_GROUP );
 		$this->regAction ( 'get_data', 'Получение интерактивных данных', ACTION_GROUP );
 
 		if (DEBUG == 0) {
@@ -242,32 +309,8 @@ class ordersProcess extends module_process {
 		if ($user_id > 0) {
 			$this->User->nView->viewLoginParams ( 'Доставка', '', $user_id, array (), array (), $this->User->getRight ( 'admin', 'view' ) );
 		}
-		
 
-		
-		if ($action == 'view') {
-            $from = $this->Vals->getVal ( 'order', 'POST', 'string' );
-            $to = $this->Vals->getVal ( 'order', 'POST', 'string' );
-            if ($from == '') {
-                $from = (isset($_SESSION['from']) and $_SESSION['from'] != '') ? $_SESSION['from'] : date('01.m.Y');
-                $to = (isset($_SESSION['to']) and $_SESSION['to'] != '') ? $_SESSION['to'] : date('d.m.Y');
-            }else{
-                $_SESSION['from'] = $from;
-                $_SESSION['to'] = $to;
-            }
-            $orders = $this->nModel->getOrdersList($from, $to);
-			$this->nView->viewOrders ($from, $to, $orders);
-		}
-		
 
-		
-		if ($action == 'order') {
-			$order_id = $this->Vals->getVal ( 'order', 'GET', 'integer' );
-			$order = $this->nModel->getOrder($order_id);
-			$routes = $this->nModel->getRoutes($order_id);
-			$stores = $this->nModel->getStores($order['id_user']);
-			$this->nView->viewOrderEdit ( $order, $stores, $routes );
-		}
 
 		if ($action == 'get_data'){
 			$type_data = $this->Vals->getVal ( 'get_data', 'GET', 'string' );
@@ -276,29 +319,95 @@ class ordersProcess extends module_process {
 				echo json_encode($items);
 				exit();
 			}
+		}
 
+		
+		if ($action == 'order') {
+			$order_id = $this->Vals->getVal ( 'order', 'GET', 'integer' );
+			$order = $this->nModel->getOrder($order_id);
+			$routes = $this->nModel->getRoutes($order_id);
+			$stores = $this->nModel->getStores(isset($order['id_user'])?$order['id_user']:$user_id);
+			$client_title = $this->nModel->getClientTitle(isset($order['id_user'])?$order['id_user']:$user_id);
+			$this->nView->viewOrderEdit ( $order, $stores, $routes, $client_title );
+		}
+
+		if ($action == 'orderBan') {
+			$order_id = $this->Vals->getVal ( 'orderBan', 'GET', 'integer' );
+			$this->nModel->orderBan($order_id);
+			$this->nView->viewMessage('Заказ успешно удален.', 'Сообщение');
+			header ( "Location:/orders/" );
 		}
 
 		if ($action == 'orderUpdate') {
-			$params['tur_id'] = $this->Vals->getVal ( 'tur_id', 'POST', 'integer' );
-			$params['def_mp'] = $this->Vals->getVal ( 'def_mp', 'POST', 'integer' );
-			$params['phone'] = $this->Vals->getVal ( 'phone', 'POST', 'string' );
-			$params['name'] = $this->Vals->getVal ( 'name', 'POST', 'string' );
-			$params['comment'] = $this->Vals->getVal ( 'comment', 'POST', 'string' );
-
-			$id_tur_code = $this->nModel->addTuristInTour($params, $user_id);
-			$this->nView->viewMessage('Заказ успешно добавлен. Номер для отслеживания: '.$id_tur_code, 'Сообщение');
+			$params['order_id'] = $this->Vals->getVal ( 'order_id', 'POST', 'integer' );
+			$params['id_user'] = $this->Vals->getVal ( 'id_user', 'POST', 'integer' );
+			$params['store_id'] = $this->Vals->getVal ( 'store_id', 'POST', 'integer' );
+			$params['date'] = $this->Vals->getVal ( 'date', 'POST', 'string' );
+			$params['ready'] = $this->Vals->getVal ( 'ready', 'POST', 'string' );
+			$params['order_comment'] = $this->Vals->getVal ( 'order_comment', 'POST', 'string' );
+			$params['to'] = $this->Vals->getVal ( 'to', 'POST', 'array' );
+			$params['to_house'] = $this->Vals->getVal ( 'to_house', 'POST', 'array' );
+			$params['to_corpus'] = $this->Vals->getVal ( 'to_corpus', 'POST', 'array' );
+			$params['to_appart'] = $this->Vals->getVal ( 'to_appart', 'POST', 'array' );
+			$params['to_fio'] = $this->Vals->getVal ( 'to_fio', 'POST', 'array' );
+			$params['to_phone'] = $this->Vals->getVal ( 'to_phone', 'POST', 'array' );
+			$params['to_time'] = $this->Vals->getVal ( 'to_time', 'POST', 'array' );
+			$params['cost_route'] = $this->Vals->getVal ( 'cost_route', 'POST', 'array' );
+			$params['comment'] = $this->Vals->getVal ( 'comment', 'POST', 'array' );
+			if ($params['order_id'] > 0) {
+				$id_code = $this->nModel->orderUpdate($params);
+			}else{
+				$id_code = $this->nModel->orderInsert($user_id,$params);
+			}
+			$this->nView->viewMessage('Заказ успешно сохранен. Номер для отслеживания: '.$id_code, 'Сообщение');
+			$action = 'view';
 		}
 
-/** Поиск своего заказа */		
+		if ($action == 'chg_status'){
+			$order_id = $this->Vals->getVal ( 'order_id', 'POST', 'integer' );
+			$new_status = $this->Vals->getVal ( 'new_status', 'POST', 'integer' );
+			$stat_comment = $this->Vals->getVal ( 'stat_comment', 'POST', 'string' );
+			if ($new_status > 0){
+				$this->nModel->updOrderStatus($user_id, $order_id, $new_status, $stat_comment);
+				echo 'Статус успешно изменен. Сообщение клиенту отправлено.';
+			}else {
+				$order = $this->nModel->getOrder($order_id);
+				$statuses = $this->nModel->getStatuses();
+				$select = "<select class='form-control' name='new_status' >";
+				foreach ($statuses as $status) {
+					$selected = ($order['id_status'] == $status['id']) ? 'selected=""' : '';
+					$select .= "<option value='" . $status['id'] . "' $selected>" . $status['status'] . "</option>";
+				}
+				$select .= "</select>";
+				$comment = "<textarea class='form-control' name='comment_status' placeholder='Комментарий для клиента'></textarea>";
+				$info = "<div class='alert alert-info'>Выберите новый статус и введите комментарий для клиента.</div>
+						<input type='hidden' name='order_id' value='$order_id' />";
+				echo $info . "<br/>" . $select . "<br/>" . $comment;
+			}
+			exit();
+		}
+
+/** Поиск своего заказа */		/*
 		if ($action == 'search_order') {
 			$order = $this->Vals->getVal ( 'order_number', 'POST', 'integer' );
 //			$items = $this->nModel->SearchOrder ( $order);
-			$this->nView->viewSearchOrder ( /*$items*/ );
+			$this->nView->viewSearchOrder (  );
 			
 		}
-
-
+*/
+		if ($action == 'view') {
+			$from = $this->Vals->getVal ( 'order', 'POST', 'string' );
+			$to = $this->Vals->getVal ( 'order', 'POST', 'string' );
+			if ($from == '') {
+				$from = (isset($_SESSION['from']) and $_SESSION['from'] != '') ? $_SESSION['from'] : date('01.m.Y');
+				$to = (isset($_SESSION['to']) and $_SESSION['to'] != '') ? $_SESSION['to'] : date('d.m.Y');
+			}else{
+				$_SESSION['from'] = $from;
+				$_SESSION['to'] = $to;
+			}
+			$orders = $this->nModel->getOrdersList($from, $to);
+			$this->nView->viewOrders ($from, $to, $orders);
+		}
 		
 		if ($this->Vals->isVal ( 'ajax', 'INDEX' )) {
 			if ($this->Vals->isVal ( 'xls', 'INDEX' )) {
@@ -404,11 +513,16 @@ class ordersView extends module_View {
 		return true;
 	}
 	
-	public function viewOrderEdit($order, $stores, $routes) {
+	public function viewOrderEdit($order, $stores, $routes, $client_title) {
 		$this->pXSL [] = RIVC_ROOT . 'layout/orders/order.edit.xsl';
 		$Container = $this->newContainer ( 'order' );
 
 		$this->arrToXML ( $order, $Container, 'order' );
+
+		$ContainerClient = $this->addToNode ( $Container, 'client', '' );
+		foreach ( $client_title as $item ) {
+			$this->arrToXML ( $item, $ContainerClient, 'item' );
+		}
 
 		$ContainerStores = $this->addToNode ( $Container, 'stores', '' );
 		foreach ( $stores as $item ) {

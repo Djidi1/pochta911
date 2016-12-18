@@ -1,6 +1,10 @@
 /*@media print {BODY>* {display: none; } DIV.printBlock { display: block !important; }}*/
+BODY {min-width: 320px;}
 #logo img { width: 120px;}
 .header1 {display: block}
+.phoneheader { font-size: 90%; padding-top: 10px !important; padding-right: 0 !important;}
+span.phone { display: block;  text-align: right; font-weight: bold}
+span.address { display: block;  text-align: right;}
 .moduletable_LoginForm .form {font-size: 80%;  text-align: right;}
 #header{ z-index: 1000;    position: relative;}
 .phoneheader {     text-shadow: 0 0 5px white;    margin-top: -2px !important;}
@@ -11,8 +15,38 @@
 .footerText { float: right;   margin-top: -10px;}
 
 .main { width: 90%;  margin: 0 auto;  }
-
+.clear {clear: both}
 .typeahead { z-index: 1051; }
+
+DIV.add_buttons { position: absolute; z-index: 100;  right: 58px; top: 0;}
+
+#back-top a span {
+    display: block;
+    width: 20px;
+    height: 20px;
+    background: url(/images/icon_24.png) -18px 1px no-repeat;
+    margin: 0 auto;
+}
+#back-top a {
+     display: block;
+     width: 50px;
+     height: 50px;
+     background: #fff;
+     opacity: 0.5;
+     border-radius: 10px;
+     padding: 15px;
+ }
+#back-top a:hover {
+    opacity: 0.8;
+}
+#back-top {
+    /* display: none; */
+    position: fixed;
+    width: 50px;
+    height: 50px;
+    bottom: 10px;
+    left: 10px;
+}
 /*
 div#form_login {max-width: 300px;float: right;margin-left: 25px;border: 1px solid #D3E5F7;padding: 10px;border-radius: 5px;background-color: #F2F8FF;}
 #admin div#form_login {float: left !important;}

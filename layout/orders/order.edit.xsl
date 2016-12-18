@@ -3,7 +3,7 @@
     <xsl:template match="container[@module = 'order']">
 
         <!--<h2>Заказ:</h2>-->
-        <form action="/orders/orderUpdate-{order/order_id}/" method="post" name="main_form">
+        <form action="/orders/orderUpdate-{order/id}/" method="post" name="main_form">
             <div class="row">
                 <div class="col-md-1"> </div>
                 <div class="col-md-10">
@@ -17,45 +17,39 @@
                             </div>
                         </div>
                         <div class="panel-body">
-                            <input id="user_id" type="hidden" name="user_id" value="{user/user_id}"/>
-                            <table class="table">
-                                <tbody>
-                                    <tr>
-                                        <td>Клиент:</td>
-                                        <td>
-                                            <input class="form-control" type="text" name="title" onkeyup="check_user(this)"
-                                                   value="{order/title}" size="30" required=""/>
-                                        </td>
-                                        <td>Откуда:</td>
-                                        <td>
-                                            <select class="form-control" name="group_id">
-                                                <xsl:for-each select="stores/item">
-                                                    <option value="{id}">
-                                                        <xsl:if test="id = //order/id_address">
-                                                            <xsl:attribute name="selected">selected
-                                                            </xsl:attribute>
-                                                        </xsl:if>
-                                                        <xsl:value-of select="address"/>
-                                                    </option>
-                                                </xsl:for-each>
-                                            </select>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>Дата:</td>
-                                        <td>
-                                            <input class="form-control date-picker" type="text" name="title" onkeyup="check_user(this)"
-                                                   value="{order/date}" size="30" required=""/>
-                                        </td>
-                                        <td>Готовность:</td>
-                                        <td>
-                                            <input class="form-control time-picker" type="text" name="title" onkeyup="check_user(this)"
-                                                   value="{order/ready}" size="30" required=""/>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                            Комментарий:
+                            <input id="order_id" type="hidden" name="order_id" value="{order/id}"/>
+                            <input id="id_user" type="hidden" name="id_user" value="{order/id_user}"/>
+                            <div class="row">
+                                <div class="col-sm-2"><label>Клиент:</label></div>
+                                <div class="col-sm-4">
+                                    <input class="form-control" type="text" name="title" onkeyup="check_user(this)" value="{client/item/title}" size="30" readonly=""/>
+                                </div>
+                                <div class="col-sm-2"><label>Откуда:</label></div>
+                                <div class="col-sm-4">
+                                    <select class="form-control" name="store_id">
+                                        <xsl:for-each select="stores/item">
+                                            <option value="{id}">
+                                                <xsl:if test="id = //order/id_address">
+                                                    <xsl:attribute name="selected">selected
+                                                    </xsl:attribute>
+                                                </xsl:if>
+                                                <xsl:value-of select="address"/>
+                                            </option>
+                                        </xsl:for-each>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-2"><label>Дата:</label></div>
+                                <div class="col-sm-4">
+                                    <input class="form-control date-picker" type="text" name="date" onkeyup="check_user(this)" value="{order/date}" size="30" required=""/>
+                                </div>
+                                <div class="col-sm-2"><label>Готовность:</label></div>
+                                <div class="col-sm-4">
+                                    <input class="form-control time-picker" type="text" name="ready" onkeyup="check_user(this)" value="{order/ready}" size="30" required=""/>
+                                </div>
+                            </div>
+                            <label>Комментарий:</label>
                             <textarea class="form-control" name="order_comment" placeholder="Комментарий к заказу" title="Комментарий к заказу">
                                 <xsl:value-of select="order/comment"/>
                             </textarea>
@@ -73,19 +67,19 @@
                                     <span class="input-group-addon">
                                         <xsl:value-of select="position()"/>
                                     </span>
-                                    <input type="text" class="form-control spb-streets" name="to[]" placeholder="Адрес" title="Адрес" value="{to}" style="width: 100%;"/>
+                                    <input type="search" class="form-control spb-streets" name="to[]" placeholder="Адрес" title="Адрес" value="{to}" style="width: 100%;"/>
                                     <input type="text" class="form-control" name="to_house[]" placeholder="Дом" title="Дом" value="{to_house}" style="width: 34%;"/>
                                     <input type="text" class="form-control" name="to_corpus[]" placeholder="Корпус" title="Корпус" value="{to_corpus}" style="width: 33%;"/>
                                     <input type="text" class="form-control" name="to_appart[]" placeholder="Квартира" title="Квартира" value="{to_appart}" style="width: 33%;"/>
                                     <input type="text" class="form-control" name="to_fio[]" placeholder="Получатель" title="Получатель" value="{to_fio}" style="width: 50%;"/>
                                     <input type="text" class="form-control" name="to_phone[]" placeholder="Телефон получателя" title="Телефон получателя" value="{to_phone}" style="width: 50%;"/>
-                                    <input type="text" class="form-control time-picker" name="to_time[]" placeholder="Время доставки" title="Время доставки" value="{time}" style="width: 50%;"/>
+                                    <input type="text" class="form-control time-picker" name="to_time[]" placeholder="Время доставки" title="Время доставки" value="{to_time}" style="width: 50%;"/>
                                     <input type="text" class="form-control" name="cost_route[]" placeholder="Инкассация" title="Инкассация" value="{cost_route}" style="width: 50%;"/>
                                     <br/>
                                     <textarea name="comment[]" class="form-control" placeholder="Комментарий" title="Комментарий">
                                         <xsl:value-of select="comment"/>
                                     </textarea>
-                                    <div class="input-group-btn" style="vertical-align: top;">
+                                    <div class="input-group-btn add_buttons" style="vertical-align: top;">
                                         <button type="button" class="btn-clone btn btn-success" title="Добавить" onclick="clone_div_row(this)">
                                             <xsl:if test="position() != count(../../routes/item)">
                                                 <xsl:attribute name="disabled"> </xsl:attribute>
@@ -105,19 +99,19 @@
                             <xsl:if test="count(routes/item) = 0">
                                 <div class="input-group" rel="1">
                                     <span class="input-group-addon">1</span>
-                                    <input type="text" class="form-control" name="to[]" placeholder="Адрес" value="" style="width: 100%;"/>
+                                    <input type="text" class="form-control spb-streets" name="to[]" placeholder="Адрес" value="" style="width: 100%;"/>
                                     <input type="text" class="form-control" name="to_house[]" placeholder="Дом" value="" style="width: 34%;"/>
                                     <input type="text" class="form-control" name="to_corpus[]" placeholder="Корпус" value="" style="width: 33%;"/>
                                     <input type="text" class="form-control" name="to_appart[]" placeholder="Квартира" value="" style="width: 33%;"/>
                                     <input type="text" class="form-control" name="to_fio[]" placeholder="Получатель" value="" style="width: 50%;"/>
                                     <input type="text" class="form-control" name="to_phone[]" placeholder="Телефон получателя" value="" style="width: 50%;"/>
-                                    <input type="text" class="form-control" name="to_time[]" placeholder="Время доставки" value="" style="width: 50%;"/>
+                                    <input type="text" class="form-control time-picker" name="to_time[]" placeholder="Время доставки" value="" style="width: 50%;"/>
                                     <input type="text" class="form-control" name="cost_route[]" placeholder="Инкассация" value="" style="width: 50%;"/>
                                     <br/>
-                                    <textarea name="сomment[]" class="form-control"  placeholder="Комментарий" title="Комментарий">
+                                    <textarea name="comment[]" class="form-control"  placeholder="Комментарий" title="Комментарий">
                                         <xsl:value-of select="comment"/>
                                     </textarea>
-                                    <div class="input-group-btn" style="vertical-align: top;">
+                                    <div class="input-group-btn add_buttons" style="vertical-align: top;">
                                         <button type="button" class="btn-clone btn btn-success" title="Добавить" onclick="clone_div_row(this)">+</button>
                                         <button type="button" class="btn-delete btn btn-danger" title="Удалить" onclick="delete_div_row(this)" disabled="">-</button>
                                     </div>
