@@ -218,7 +218,7 @@ class adminModel extends module_model {
 	}
 
 	
-	public function userList($order, $f_name, $f_tabno, $f_login, $f_group, $f_otdel, $id_group) {
+	public function userList($order='', $f_name='', $f_tabno='', $f_login='', $f_group='', $f_otdel='', $id_group='') {
 
 		$fsql = '';
 		if ($id_group != '') {
@@ -237,7 +237,7 @@ class adminModel extends module_model {
 			$fsql .= ' AND g.name like \'%%%4$s%%\' ';
 		}
 		$order_by = ' ORDER BY u.name';
-		if ($order) {
+		if ($order != '') {
 			$order_by = " ORDER BY $order";
 		}
 
@@ -611,6 +611,7 @@ class adminProcess extends module_process {
 		$this->regAction ( 'LoginsList', 'Журнал входов', ACTION_GROUP );
 		$this->regAction ( 'logs', 'Журнал изменений', ACTION_GROUP );
 		$this->regAction ( 'mails', 'Рассылка писем', ACTION_GROUP );
+		$this->regAction ( 'getTelegramUpdates', 'Обновления телеграмма', ACTION_GROUP );
 		if (DEBUG == 0) {
 			$this->registerActions ( 1 );
 		}
@@ -1072,6 +1073,28 @@ class adminProcess extends module_process {
 			$this->nView->viewLogs ( $logs, $type );
 			$this->updated = true;
 		}
+
+		if ($action == 'getTelegramUpdates') {
+			$users = $this->nModel->userList();
+			$response =  $this->callApiTlg('getUpdates', array(), TLG_TOKEN);
+			$items = array();
+			foreach ($response->result as $data){
+				$from = $data->message->from;
+				$chat = $data->message->chat;
+				$date = $data->message->date;
+				$text = $data->message->text;
+
+				$row['user_name'] = $from->first_name." ".
+					(isset($from->last_name)?$from->last_name:'').
+					(isset($from->username)?" [".$from->username."]":'');
+				$row['chat_id'] = $chat->id;
+				$row['date'] = date('d.m.Y H:i', $date);
+				$row['text'] = $text;
+				$items[] = $row;
+			}
+			$this->nView->viewTelegramUpdates ( $items, $users );
+			$this->updated = true;
+		}
 		
 		if ($this->Vals->isVal ( 'ajax', 'INDEX' )) {
 			if ($this->Vals->isVal ( 'xls', 'INDEX' )) {
@@ -1108,6 +1131,33 @@ class adminProcess extends module_process {
 			$code .= $chars [mt_rand ( 0, $clean )];
 		}
 		return $code;
+	}
+
+	public function callApiTlg( $method, $params, $access_token) {
+		$url = sprintf(
+			"https://api.telegram.org/bot%s/%s",
+			$access_token,
+			$method
+		);
+		$ch = curl_init();
+		curl_setopt_array( $ch, array(
+			CURLOPT_URL             => $url,
+			CURLOPT_POST            => TRUE,
+			CURLOPT_RETURNTRANSFER  => TRUE,
+			CURLOPT_FOLLOWLOCATION  => FALSE,
+			CURLOPT_HEADER          => FALSE,
+			CURLOPT_TIMEOUT         => 10,
+			CURLOPT_HTTPHEADER      => array( 'Accept-Language: ru,en-us'),
+			CURLOPT_POSTFIELDS      => $params,
+			CURLOPT_SSL_VERIFYPEER  => FALSE,
+		));
+
+		$response = curl_exec($ch);
+		if(curl_error($ch))
+		{
+			stop ('error:' . curl_error($ch));
+		}
+		return json_decode($response);
 	}
 
 }
@@ -1325,5 +1375,20 @@ class adminView extends module_view {
 		}
 		return true;
 	}
+
+	public function viewTelegramUpdates($items,$users) {
+		$this->pXSL [] = RIVC_ROOT . 'layout/admin/telegram.logs.xsl';
+		$Container = $this->newContainer ( 'messages' );
+		foreach ( $items as $aArray ) {
+			$this->arrToXML($aArray, $Container, 'item');
+		}
+		$Containerusers = $this->addToNode ( $Container, 'users', '' );
+		foreach ( $users as $user ) {
+			$this->arrToXML ( $user, $Containerusers, 'user' );
+		}
+		return true;
+	}
+
+
 
 }

@@ -78,7 +78,8 @@ function send_new_status(){
     var stat_comment = $('.bootbox-body').find('textarea[name=comment_status]').val();
 
     $.post("/orders/chg_status-1/", {order_id:order_id,new_status:new_status,stat_comment:stat_comment},  function(data) {
-        bootbox.alert(data,location.reload());
+      //  bootbox.alert(data,location.reload());
+        bootbox.alert(data);
     });
 
 }

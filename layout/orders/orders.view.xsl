@@ -21,6 +21,7 @@
                     <th>Статус</th>
                     <th> </th>
                     <th> </th>
+                    <th> </th>
                 </thead>
                 <tbody>
                     <xsl:for-each select="orders/item">
@@ -50,7 +51,8 @@
                             </td>
                             <td>
                                 <xsl:value-of select="status"/>
-                                <xsl:text> </xsl:text>
+                            </td>
+                            <td width="40px" align="center">
                                 <a href="#" title="Изменить статус" class="btn btn-warning btn-xs" onclick="chg_status({id})">
                                     <span class="glyphicon glyphicon-flag" aria-hidden="true"> </span>
                                 </a>

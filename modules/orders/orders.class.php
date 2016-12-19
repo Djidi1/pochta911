@@ -79,7 +79,23 @@ class ordersModel extends module_model {
 		}
 		return $items;
 	}
-	
+
+	public function getChatIdByOrder($order_id) {
+		$sql = 'SELECT u.phone_mess,
+					   os.status
+				FROM orders o
+				LEFT JOIN users u ON o.id_user = u.id
+				LEFT JOIN orders_status os ON os.id = o.id_status
+				WHERE o.id = '.$order_id;
+		$this->query ( $sql );
+		$items = array ();
+		// один заказ
+		while ( ($row = $this->fetchRowA ()) !== false ) {
+			$items = $row;
+		}
+		return $items;
+	}
+
 	public function getOrdersList($from, $to) {
 		$sql = 'SELECT o.id, o.comment, o.cost, a.address `from`, s.status, u.name, u.title, o.dk, o.id_user
                   FROM orders o
@@ -369,7 +385,17 @@ class ordersProcess extends module_process {
 			$stat_comment = $this->Vals->getVal ( 'stat_comment', 'POST', 'string' );
 			if ($new_status > 0){
 				$this->nModel->updOrderStatus($user_id, $order_id, $new_status, $stat_comment);
-				echo 'Статус успешно изменен. Сообщение клиенту отправлено.';
+				$result = 'Статус успешно изменен. ';
+				$inform = $this->nModel->getChatIdByOrder($order_id);
+				if (isset($inform['phone_mess']) and $inform['phone_mess'] != '') {
+					$result .= ' Сообщение клиенту отправлено.';
+					$message = 'Статус вашего заказа: '.$inform['status'].''."\r\n";
+					if (trim($stat_comment) != '') {
+						$message .= 'Сообщение с сайта: ' . $stat_comment . '';
+					}
+					$this->telegram($message, $inform['phone_mess']);
+				}
+				echo $result;
 			}else {
 				$order = $this->nModel->getOrder($order_id);
 				$statuses = $this->nModel->getStatuses();
@@ -431,28 +457,50 @@ class ordersProcess extends module_process {
 
 
 	}
-	// Функции оплаты
-	public function getSignature( $Shop_IDP, $Order_IDP, $Subtotal_P, $MeanType, $EMoneyType,
-			$Lifetime, $Customer_IDP, $Card_IDP, $IData, $PT_Code, $password ) {
-		$Signature = strtoupper(
-				md5(
-						md5($Shop_IDP) . "&" .
-						md5($Order_IDP) . "&" .
-						md5($Subtotal_P) . "&" .
-						md5($MeanType) . "&" .
-						md5($EMoneyType) . "&" .
-						md5($Lifetime) . "&" .
-						md5($Customer_IDP) . "&" .
-						md5($Card_IDP) . "&" .
-						md5($IData) . "&" .
-						md5($PT_Code) . "&" .
-						md5($password)
-				)
-		);
-		return $Signature;
+
+	public function telegram($message,$chat_id)
+	{
+		/**
+		 * Задаём основные переменные.
+		 */
+	/*	$output = json_decode(file_get_contents('php://input'), TRUE);
+		file_put_contents('log.txt', "\n OK: " . date('d-m-Y H:i:s') . " " . json_encode($output), FILE_APPEND);
+		$chat_id = $output['message']['chat']['id'];
+		$first_name = $output['message']['chat']['first_name'];
+		$message = $output['message']['text'];
+		$message_id = $output['message']['message_id'];
+*/
+		//https://api.telegram.org/bot<YourBOTToken>/getUpdates
+		$this->callApiTlg('sendMessage', array(
+			'chat_id' => $chat_id,
+			'text' => "" . $message . ""
+			//,'reply_to_message_id' => $message_id,
+		), TLG_TOKEN);
+
 	}
-	
-	
+	public function callApiTlg( $method, $params, $access_token) {
+		$url = sprintf(
+			"https://api.telegram.org/bot%s/%s",
+			$access_token,
+			$method
+		);
+
+		$ch = curl_init();
+		curl_setopt_array( $ch, array(
+			CURLOPT_URL             => $url,
+			CURLOPT_POST            => TRUE,
+			CURLOPT_RETURNTRANSFER  => TRUE,
+			CURLOPT_FOLLOWLOCATION  => FALSE,
+			CURLOPT_HEADER          => FALSE,
+			CURLOPT_TIMEOUT         => 10,
+			CURLOPT_HTTPHEADER      => array( 'Accept-Language: ru,en-us'),
+			CURLOPT_POSTFIELDS      => $params,
+			CURLOPT_SSL_VERIFYPEER  => FALSE,
+		));
+
+		$response = curl_exec($ch);
+		return json_decode($response);
+	}
 	
 }
 
