@@ -9,6 +9,8 @@ class ordersModel extends module_model {
 		$this->query ( $sql );
 		$items = array ();
 		while ( ($row = $this->fetchRowA ()) !== false ) {
+			if (isset($row['ready'])) $row['ready'] = substr($row['ready'],0,5);
+			if (isset($row['to_time'])) $row['to_time'] = substr($row['to_time'],0,5);
 			$items[] = $row;
 		}
 		return $items;
@@ -105,6 +107,22 @@ class ordersModel extends module_model {
                   WHERE o.dk BETWEEN \''.$this->dmy_to_mydate($from).'\' AND \''.$this->dmy_to_mydate($to).' 23:59:59\'
                   and o.isBan = 0
                 ORDER BY o.id desc
+                LIMIT 0,1000';
+		$orders = $this->get_assoc_array($sql);
+		foreach ($orders as $key => $order) {
+			$route = $this->getRoutes($order['id']);
+			$orders[$key]['route'] = $route;
+		}
+		return $orders;
+	}
+
+	public function getLogistList($from, $to) {
+		$sql = 'SELECT o.id, ua.address,ua.comment addr_comment, u.name,u.title, o.ready, o.date, os.status
+			  FROM orders o
+			  LEFT JOIN users_address ua ON o.id_address = ua.id
+			  LEFT JOIN users u ON u.id = o.id_user
+			  LEFT JOIN orders_status os ON o.id_status = os.id
+                  WHERE o.dk BETWEEN \''.$this->dmy_to_mydate($from).'\' AND \''.$this->dmy_to_mydate($to).' 23:59:59\'
                 LIMIT 0,1000';
 		$orders = $this->get_assoc_array($sql);
 		foreach ($orders as $key => $order) {
@@ -293,7 +311,8 @@ class ordersProcess extends module_process {
 		$this->sysMod = $sysMod;
 		$this->mod_id = $sysMod->id;
 		$this->nView = new ordersView ( $this->modName, $this->sysMod );
-		$this->regAction ( 'view', 'Главная страница', ACTION_GROUP );
+		$this->regAction ( 'view', 'Главная страница заказов', ACTION_GROUP );
+		$this->regAction ( 'LogistList', 'Для логистов', ACTION_GROUP );
 		$this->regAction ( 'order', 'Заявка', ACTION_GROUP );
 		$this->regAction ( 'orderUpdate', 'Редактирование заявки', ACTION_GROUP );
 		$this->regAction ( 'orderBan', 'Удаление заявки', ACTION_GROUP );
@@ -422,8 +441,8 @@ class ordersProcess extends module_process {
 		}
 */
 		if ($action == 'view') {
-			$from = $this->Vals->getVal ( 'order', 'POST', 'string' );
-			$to = $this->Vals->getVal ( 'order', 'POST', 'string' );
+			$from = $this->Vals->getVal ( 'from', 'POST', 'string' );
+			$to = $this->Vals->getVal ( 'to', 'POST', 'string' );
 			if ($from == '') {
 				$from = (isset($_SESSION['from']) and $_SESSION['from'] != '') ? $_SESSION['from'] : date('01.m.Y');
 				$to = (isset($_SESSION['to']) and $_SESSION['to'] != '') ? $_SESSION['to'] : date('d.m.Y');
@@ -434,6 +453,22 @@ class ordersProcess extends module_process {
 			$orders = $this->nModel->getOrdersList($from, $to);
 			$this->nView->viewOrders ($from, $to, $orders);
 		}
+
+		if ($action == 'LogistList') {
+			$from = $this->Vals->getVal ( 'order', 'POST', 'string' );
+			$to = $this->Vals->getVal ( 'order', 'POST', 'string' );
+			if ($from == '') {
+				$from = (isset($_SESSION['from']) and $_SESSION['from'] != '') ? $_SESSION['from'] : date('01.m.Y');
+				$to = (isset($_SESSION['to']) and $_SESSION['to'] != '') ? $_SESSION['to'] : date('d.m.Y');
+			}else{
+				$_SESSION['from'] = $from;
+				$_SESSION['to'] = $to;
+			}
+			$orders = $this->nModel->getLogistList($from, $to);
+			$this->nView->viewLogistList ($from, $to, $orders);
+		}
+
+
 		
 		if ($this->Vals->isVal ( 'ajax', 'INDEX' )) {
 			if ($this->Vals->isVal ( 'xls', 'INDEX' )) {
@@ -523,6 +558,21 @@ class ordersView extends module_View {
 		}
 		return true;
 	}
+
+	public function viewLogistList($from, $to, $orders) {
+		$this->pXSL [] = RIVC_ROOT . 'layout/orders/logist.view.xsl';
+		$Container = $this->newContainer ( 'list' );
+
+		$this->addAttr('from', $from, $Container);
+		$this->addAttr('to', $to, $Container);
+
+		$ContainerNews = $this->addToNode ( $Container, 'orders', '' );
+		foreach ( $orders as $item ) {
+			$this->arrToXML ( $item, $ContainerNews, 'item' );
+		}
+		return true;
+	}
+
 	public function viewlocations($type,$items,$locs) {
 		$this->pXSL [] = RIVC_ROOT . 'layout/'.$this->sysMod->layoutPref.'/turs.locations.xsl';
 		$Container = $this->newContainer ( 'locations' );
