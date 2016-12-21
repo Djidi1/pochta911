@@ -47,3 +47,6 @@ DIV.add_buttons { position: absolute; z-index: 100;  right: 58px; top: 0;}
     bottom: 10px;
     left: 10px;
 }
+input.input-sm {
+    text-align: center;
+}

@@ -61,6 +61,26 @@ function check_user(obj){
     },500,elem_type);
 }
 
+function chg_courier(order_id){
+    $.post("/orders/chg_courier-1/", {order_id:order_id},  function(data) {
+        bootbox.confirm({
+            title: "Изменение курьера",
+            message: data,
+            callback: function(result){ if(result){send_new_courier()} }
+        });
+        //bootbox.alert(data,send_new_status(this));
+    });
+}
+function send_new_courier(){
+    var order_id = $('.bootbox-body').find('input[name=order_id]').val();
+    var new_courier = $('.bootbox-body').find('select[name=new_courier]').val();
+
+    $.post("/orders/chg_courier-1/", {order_id:order_id,new_courier:new_courier},  function(data) {
+          bootbox.alert(data,location.reload());
+        //bootbox.alert(data);
+    });
+
+}
 function chg_status(order_id){
     $.post("/orders/chg_status-1/", {order_id:order_id},  function(data) {
         bootbox.confirm({
@@ -78,8 +98,8 @@ function send_new_status(){
     var stat_comment = $('.bootbox-body').find('textarea[name=comment_status]').val();
 
     $.post("/orders/chg_status-1/", {order_id:order_id,new_status:new_status,stat_comment:stat_comment},  function(data) {
-      //  bootbox.alert(data,location.reload());
-        bootbox.alert(data);
+        bootbox.alert(data,location.reload());
+        //bootbox.alert(data);
     });
 
 }

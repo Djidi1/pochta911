@@ -10,6 +10,43 @@
                 </a>
             </div>
             <hr/>
+            <form method="post">
+                <div class="row">
+                    <div class="col-md-4">
+
+                    </div>
+                    <div class="col-md-3">
+                        <div class="input-daterange input-group" id="datepicker">
+                            <input type="text" class="input-sm form-control" id="start_date" name="from" value="{@from}" />
+                            <span class="input-group-addon">to</span>
+                            <input type="text" class="input-sm form-control" id="end_date" name="to" value="{@to}" />
+                        </div>
+                        <script type="text/javascript">
+                            $(function () {
+                            $('#start_date').datetimepicker({format: 'L', locale: 'ru'});
+                            $('#end_date').datetimepicker({format: 'L', locale: 'ru',
+                            useCurrent: false //Important! See issue #1075
+                            });
+                            $("#start_date").on("dp.change", function (e) {
+                            $('#end_date').data("DateTimePicker").minDate(e.date);
+                            });
+                            $("#end_date").on("dp.change", function (e) {
+                            $('#start_date').data("DateTimePicker").maxDate(e.date);
+                            });
+                            $("#start_date").on("dp.show", function (e) {
+                            $('#start_date').data("DateTimePicker").maxDate(e.date);
+                            });
+                            $("#end_date").on("dp.show", function (e) {
+                            $('#end_date').data("DateTimePicker").minDate(e.date);
+                            });
+                            });
+                        </script>
+                    </div>
+                    <div class="col-md-1">
+                        <button class="btn btn-info btn-sm">Обновить</button>
+                    </div>
+                </div>
+            </form>
             <table class="table data-table">
                 <thead>
                     <th>id</th>
@@ -19,9 +56,8 @@
                     <th>Комментарий</th>
                     <th>Дата заказа</th>
                     <th>Статус</th>
-                    <th> </th>
-                    <th> </th>
-                    <th> </th>
+                    <th>Курьер</th>
+                    <th width="160px"> </th>
                 </thead>
                 <tbody>
                     <xsl:for-each select="orders/item">
@@ -52,22 +88,26 @@
                             <td>
                                 <xsl:value-of select="status"/>
                             </td>
-                            <td width="40px" align="center">
-                                <a href="#" title="Изменить статус" class="btn btn-warning btn-xs" onclick="chg_status({id})">
-                                    <span class="glyphicon glyphicon-flag" aria-hidden="true"> </span>
-                                </a>
+                            <td>
+                                <xsl:value-of select="courier"/>
                             </td>
-                            <td width="40px" align="center">
-                                <a href="/orders/order-{id}/" title="редактировать" class="btn btn-success btn-xs">
-                                    <span class="glyphicon glyphicon-pencil" aria-hidden="true"> </span>
-                                </a>
-                            </td>
-                            <td width="40px" align="center">
-                                <a href="/orders/orderBan-{id}/" title="удалить" class="btn btn-danger btn-xs">
-                                    <xsl:attribute name="onClick">return confirm('Вы действительно хотите удалить заказ <xsl:value-of select="id"/>?');
-                                    </xsl:attribute>
-                                    <span class="glyphicon glyphicon-remove" aria-hidden="true"> </span>
-                                </a>
+                            <td width="160px" align="center">
+                                <div class="btn-group" role="group" aria-label="Управление заказом">
+                                    <a href="#" title="Изменить статус" class="btn btn-warning btn-sm" onclick="chg_status({id})">
+                                        <span class="glyphicon glyphicon-flag" aria-hidden="true"> </span>
+                                    </a>
+                                    <a href="#" title="Назначить курьера" class="btn btn-info btn-sm" onclick="chg_courier({id})">
+                                        <i class="fa fa-car" aria-hidden="true"> </i>
+                                    </a>
+                                    <a href="/orders/order-{id}/" title="редактировать" class="btn btn-success btn-sm">
+                                        <span class="glyphicon glyphicon-pencil" aria-hidden="true"> </span>
+                                    </a>
+                                    <a href="/orders/orderBan-{id}/" title="удалить" class="btn btn-danger btn-sm">
+                                        <xsl:attribute name="onClick">return confirm('Вы действительно хотите удалить заказ <xsl:value-of select="id"/>?');
+                                        </xsl:attribute>
+                                        <span class="glyphicon glyphicon-remove" aria-hidden="true"> </span>
+                                    </a>
+                                </div>
                             </td>
                         </tr>
                     </xsl:for-each>

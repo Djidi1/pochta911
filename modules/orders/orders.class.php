@@ -39,6 +39,13 @@ class ordersModel extends module_model {
 				FROM orders_status ';
 		return $this->get_assoc_array($sql);
 	}
+	public function getCouriers() {
+		$sql = 'SELECT
+				  id,
+				  fio
+				FROM cars_couriers ';
+		return $this->get_assoc_array($sql);
+	}
 
 	public function getRoutes($order_id) {
 		$sql = 'SELECT `to`,to_house,to_corpus,to_appart,
@@ -58,6 +65,7 @@ class ordersModel extends module_model {
 		$sql = 'SELECT o.id,
 					   o.id_user,
 					   o.id_address,
+					   o.id_car,
 					   o.ready,
 					   o.date,
 					   o.cost,
@@ -67,10 +75,12 @@ class ordersModel extends module_model {
 					   u.title,
 					   u.phone,
 					   os.status,
+					   cc.fio courier,
 					   o.id_status
 				FROM orders o
 				LEFT JOIN users u ON o.id_user = u.id
 				LEFT JOIN orders_status os ON os.id = o.id_status
+				LEFT JOIN cars_couriers cc ON cc.id = o.id_car
 				WHERE o.id = '.$order_id;
 		$this->query ( $sql );
 		$items = array ();
@@ -99,10 +109,12 @@ class ordersModel extends module_model {
 	}
 
 	public function getOrdersList($from, $to) {
-		$sql = 'SELECT o.id, o.comment, o.cost, a.address `from`, s.status, u.name, u.title, o.dk, o.id_user
+		$sql = 'SELECT o.id, o.comment, o.cost, a.address `from`,
+					   c.fio courier, s.status, u.name, u.title, o.dk, o.id_user
                   FROM orders o
                 LEFT JOIN users_address a ON a.id = o.id_address
                 LEFT JOIN orders_status s ON s.id = o.id_status
+                LEFT JOIN cars_couriers c ON c.id = o.id_car
                 LEFT JOIN users u ON u.id = o.id_user
                   WHERE o.dk BETWEEN \''.$this->dmy_to_mydate($from).'\' AND \''.$this->dmy_to_mydate($to).' 23:59:59\'
                   and o.isBan = 0
@@ -117,11 +129,12 @@ class ordersModel extends module_model {
 	}
 
 	public function getLogistList($from, $to) {
-		$sql = 'SELECT o.id, ua.address,ua.comment addr_comment, u.name,u.title, o.ready, o.date, os.status
+		$sql = 'SELECT o.id, ua.address,ua.comment addr_comment, u.name,u.title, o.ready, o.date, os.status, cc.fio car, o.comment
 			  FROM orders o
 			  LEFT JOIN users_address ua ON o.id_address = ua.id
 			  LEFT JOIN users u ON u.id = o.id_user
 			  LEFT JOIN orders_status os ON o.id_status = os.id
+			  LEFT JOIN cars_couriers cc ON o.id_car = cc.id
                   WHERE o.dk BETWEEN \''.$this->dmy_to_mydate($from).'\' AND \''.$this->dmy_to_mydate($to).' 23:59:59\'
                 LIMIT 0,1000';
 		$orders = $this->get_assoc_array($sql);
@@ -195,6 +208,15 @@ class ordersModel extends module_model {
 
 		$sql = "INSERT INTO order_status_history (user_id, order_id, new_status, comment, dk)
 				VALUES ($user_id, $order_id, $new_status, '$stat_comment', NOW())";
+		$this->query($sql);
+	}
+
+	public function updOrderCourier($user_id, $order_id, $new_courier){
+		$sql = "UPDATE orders SET id_car = $new_courier, `dk` = NOW() WHERE id = ".$order_id." ";
+		$this->query($sql);
+
+		$sql = "INSERT INTO order_courier_history (user_id, order_id, new_courier, dk)
+				VALUES ($user_id, $order_id, $new_courier, NOW())";
 		$this->query($sql);
 	}
 
@@ -317,6 +339,7 @@ class ordersProcess extends module_process {
 		$this->regAction ( 'orderUpdate', 'Редактирование заявки', ACTION_GROUP );
 		$this->regAction ( 'orderBan', 'Удаление заявки', ACTION_GROUP );
 		$this->regAction ( 'chg_status', 'Изменение статуса заявки', ACTION_GROUP );
+		$this->regAction ( 'chg_courier', 'Изменение курьера', ACTION_GROUP );
 		$this->regAction ( 'get_data', 'Получение интерактивных данных', ACTION_GROUP );
 
 		if (DEBUG == 0) {
@@ -432,6 +455,29 @@ class ordersProcess extends module_process {
 			exit();
 		}
 
+		if ($action == 'chg_courier'){
+			$order_id = $this->Vals->getVal ( 'order_id', 'POST', 'integer' );
+			$new_courier = $this->Vals->getVal ( 'new_courier', 'POST', 'integer' );
+			if ($new_courier > 0){
+				$this->nModel->updOrderCourier($user_id, $order_id, $new_courier);
+				$result = 'Курьер успешно назначен.';
+				echo $result;
+			}else {
+				$order = $this->nModel->getOrder($order_id);
+				$couriers = $this->nModel->getCouriers();
+				$select = "<select class='form-control' name='new_courier' >";
+				foreach ($couriers as $courier) {
+					$selected = ($order['id_car'] == $courier['id']) ? 'selected=""' : '';
+					$select .= "<option value='" . $courier['id'] . "' $selected>" . $courier['fio'] . "</option>";
+				}
+				$select .= "</select>";
+				$info = "<div class='alert alert-info'>Выберите курьера для данного заказа.</div>
+						<input type='hidden' name='order_id' value='$order_id' />";
+				echo $info . "<br/>" . $select;
+			}
+			exit();
+		}
+
 /** Поиск своего заказа */		/*
 		if ($action == 'search_order') {
 			$order = $this->Vals->getVal ( 'order_number', 'POST', 'integer' );
@@ -455,8 +501,8 @@ class ordersProcess extends module_process {
 		}
 
 		if ($action == 'LogistList') {
-			$from = $this->Vals->getVal ( 'order', 'POST', 'string' );
-			$to = $this->Vals->getVal ( 'order', 'POST', 'string' );
+			$from = $this->Vals->getVal ( 'from', 'POST', 'string' );
+			$to = $this->Vals->getVal ( 'to', 'POST', 'string' );
 			if ($from == '') {
 				$from = (isset($_SESSION['from']) and $_SESSION['from'] != '') ? $_SESSION['from'] : date('01.m.Y');
 				$to = (isset($_SESSION['to']) and $_SESSION['to'] != '') ? $_SESSION['to'] : date('d.m.Y');

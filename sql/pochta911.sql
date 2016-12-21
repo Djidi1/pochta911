@@ -1,7 +1,7 @@
 ﻿--
 -- Скрипт сгенерирован Devart dbForge Studio for MySQL, Версия 7.2.53.0
 -- Домашняя страница продукта: http://www.devart.com/ru/dbforge/mysql/studio
--- Дата скрипта: 19.12.2016 23:09:12
+-- Дата скрипта: 21.12.2016 23:48:41
 -- Версия сервера: 5.5.5-10.1.19-MariaDB
 -- Версия клиента: 4.1
 --
@@ -273,7 +273,7 @@ CREATE TABLE module_actions (
   UNIQUE INDEX Index_1 (mod_id, action_name)
 )
 ENGINE = MYISAM
-AUTO_INCREMENT = 440
+AUTO_INCREMENT = 442
 AVG_ROW_LENGTH = 56
 CHARACTER SET utf8
 COLLATE utf8_general_ci;
@@ -359,6 +359,24 @@ CHARACTER SET utf8
 COLLATE utf8_general_ci;
 
 --
+-- Описание для таблицы order_courier_history
+--
+DROP TABLE IF EXISTS order_courier_history;
+CREATE TABLE order_courier_history (
+  id INT(11) NOT NULL AUTO_INCREMENT,
+  order_id INT(11) DEFAULT NULL,
+  new_courier INT(11) DEFAULT NULL,
+  user_id INT(11) DEFAULT NULL,
+  dk DATETIME DEFAULT NULL,
+  PRIMARY KEY (id)
+)
+ENGINE = INNODB
+AUTO_INCREMENT = 3
+AVG_ROW_LENGTH = 8192
+CHARACTER SET utf8
+COLLATE utf8_general_ci;
+
+--
 -- Описание для таблицы order_status_history
 --
 DROP TABLE IF EXISTS order_status_history;
@@ -372,8 +390,8 @@ CREATE TABLE order_status_history (
   PRIMARY KEY (id)
 )
 ENGINE = INNODB
-AUTO_INCREMENT = 11
-AVG_ROW_LENGTH = 1638
+AUTO_INCREMENT = 12
+AVG_ROW_LENGTH = 1489
 CHARACTER SET utf8
 COLLATE utf8_general_ci;
 
@@ -384,6 +402,7 @@ DROP TABLE IF EXISTS orders;
 CREATE TABLE orders (
   id INT(11) NOT NULL AUTO_INCREMENT,
   id_user VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL,
+  id_car INT(11) DEFAULT NULL,
   ready TIME DEFAULT NULL,
   date DATE DEFAULT NULL,
   cost DECIMAL(19, 2) DEFAULT NULL,
@@ -3417,7 +3436,9 @@ INSERT INTO module_access VALUES
 (1, 436, 1),
 (1, 437, 1),
 (1, 438, 1),
-(1, 439, 1);
+(1, 439, 1),
+(1, 440, 1),
+(1, 441, 1);
 
 -- 
 -- Вывод данных для таблицы module_actions
@@ -3645,7 +3666,9 @@ INSERT INTO module_actions VALUES
 (13, 'get_data', 'Получение интерактивных данных', 3, 436),
 (13, 'orderBan', 'Удаление заявки', 3, 437),
 (13, 'chg_status', 'Изменение статуса заявки', 3, 438),
-(3, 'getTelegramUpdates', 'Обновления телеграмма', 3, 439);
+(3, 'getTelegramUpdates', 'Обновления телеграмма', 3, 439),
+(13, 'LogistList', 'Для логистов', 3, 440),
+(13, 'chg_courier', 'Изменение курьера', 3, 441);
 
 -- 
 -- Вывод данных для таблицы module_addons
@@ -3692,6 +3715,13 @@ INSERT INTO news VALUES
 (6, 'Новость', '<p>Продолжение текста новости, на отдельной странице</p>\r\n', '<p>Здесь будут информационные сообщения для клиентов</p>\r\n', '2016-12-10 00:00:00', 0, 0, 'ru', 0);
 
 -- 
+-- Вывод данных для таблицы order_courier_history
+--
+INSERT INTO order_courier_history VALUES
+(1, 2, 3, 3, '2016-12-21 23:24:27'),
+(2, 2, 3, 3, '2016-12-21 23:25:40');
+
+-- 
 -- Вывод данных для таблицы order_status_history
 --
 INSERT INTO order_status_history VALUES
@@ -3704,18 +3734,19 @@ INSERT INTO order_status_history VALUES
 (7, 2, 5, 'wwww', 3, '2016-12-19 23:02:17'),
 (8, 2, 3, 'Проверка связи 2', 3, '2016-12-19 23:03:35'),
 (9, 1, 3, 'Это уведомление я напечатал при изменении статуса заказа.', 3, '2016-12-19 23:04:40'),
-(10, 2, 5, 'Приносим извинения за доставленные неудобства.', 3, '2016-12-19 23:07:47');
+(10, 2, 5, 'Приносим извинения за доставленные неудобства.', 3, '2016-12-19 23:07:47'),
+(11, 2, 4, '', 3, '2016-12-21 23:25:51');
 
 -- 
 -- Вывод данных для таблицы orders
 --
 INSERT INTO orders VALUES
-(1, '83', '17:0:0', '2016-12-15', 500.00, 'Доставка тестовой продукции', 41, '3', '2016-12-19 23:04:40', False),
-(2, '3', '17:23:0', '2016-12-18', NULL, 'Тестовый заказ', 44, '5', '2016-12-19 23:07:47', False),
-(3, '3', '17:23:0', '2016-12-18', NULL, 'Тестовый заказ', 44, '1', '2016-12-18 21:34:13', False),
-(4, '3', '17:23:0', '2016-12-18', NULL, 'Тестовый заказ', 44, '1', '2016-12-18 17:28:30', True),
-(5, '3', '17:23:0', '2016-12-18', NULL, 'Тестовый заказ', 44, '1', '2016-12-18 17:28:49', True),
-(6, '3', '17:50:0', '2016-12-20', NULL, 'ntcnjdsq 2', 44, '1', '2016-12-18 17:51:56', True);
+(1, '83', 1, '17:0:0', '2016-12-15', 500.00, 'Доставка тестовой продукции', 41, '3', '2016-12-19 23:04:40', False),
+(2, '3', 3, '17:23:0', '2016-12-18', NULL, 'Тестовый заказ', 44, '4', '2016-12-21 23:25:51', False),
+(3, '3', NULL, '17:23:0', '2016-12-18', NULL, 'Тестовый заказ', 44, '1', '2016-12-18 21:34:13', False),
+(4, '3', NULL, '17:23:0', '2016-12-18', NULL, 'Тестовый заказ', 44, '1', '2016-12-18 17:28:30', True),
+(5, '3', NULL, '17:23:0', '2016-12-18', NULL, 'Тестовый заказ', 44, '1', '2016-12-18 17:28:49', True),
+(6, '3', NULL, '17:50:0', '2016-12-20', NULL, 'ntcnjdsq 2', 44, '1', '2016-12-18 17:51:56', True);
 
 -- 
 -- Вывод данных для таблицы orders_routes
