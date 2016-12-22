@@ -43,7 +43,7 @@ class ordersModel extends module_model {
 		$sql = 'SELECT
 				  id,
 				  fio
-				FROM cars_couriers ';
+				FROM cars_couriers WHERE isBan != 1';
 		return $this->get_assoc_array($sql);
 	}
 
@@ -152,25 +152,7 @@ class ordersModel extends module_model {
 		return iconv('windows-1251','Utf-8', $date);
 	}
 	
-	public function orderGet($tur_id) {
-		$sql = 'SELECT t.`id`, t.`name`,`date`,c.`name` city_name, l.`name` loc_name, l.`id` loc_id,
-		g.`name` gid_name, b.`number` bus_number,cost,currency, t.fire,
-		(select count(*) from tc_tur_list tl WHERE tl.id_tur = t.`id`) turists
-		FROM ' . TAB_PREF . '`tc_tur` t
-		LEFT JOIN ' . TAB_PREF . 'tc_citys c ON t.id_city = c.id
-		LEFT JOIN ' . TAB_PREF . 'tc_locations l ON t.id_loc = l.id
-		LEFT JOIN ' . TAB_PREF . 'tc_gids g ON t.id_gid = g.id
-		LEFT JOIN ' . TAB_PREF . 'tc_bus b ON t.id_bus = b.id
-		WHERE t.`id` = '.$tur_id.' ';
-		//	stop($sql);
-		$this->query ( $sql );
-		$items = array ();
-		while ( ($row = $this->fetchRowA ()) !== false ) {
-			$row ['date'] = $this->mydate_to_dmy( $row ['date'] );
-			$items [] = $row;
-		}
-		return $items;
-	}
+
 
 	public function orderInsert($id_user, $params) {
 		$sql = "

@@ -23,6 +23,12 @@
                                 <xsl:text> </xsl:text>
                                 <span>Заказы</span>
                             </a>
+                            <a class="btn btn-default" href="/orders/LogistList-1">
+                                <i class="fa fa-bus" aria-hidden="true"> </i>
+                                <xsl:text> </xsl:text>
+                                <span>Логист</span>
+                            </a>
+
                             <!--<div style="float: left;">-->
                             <!--<div class="icon">-->
                             <!--<a href="http://{//page/@host}/email/">-->

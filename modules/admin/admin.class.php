@@ -9,37 +9,7 @@ class adminModel extends module_model {
 		// stop($this->System);
 	}
 	
-	public function userCreate($username, $email, $login, $pass, $ip, $group_id, $tab_no) {
-		$sql = 'INSERT INTO `users` (`name`, `email`, `login`, `pass`, `ip`, `date_reg`, `isban`, `tab_no`)
-  				VALUES
-  				(\'%1$s\', \'%2$s\', \'%3$s\', \'%4$s\', \'%5$s\', NOW(), 0, \'%6$s\')';
-		$a = $this->query ( $sql, $username, $email, $login, $pass, $ip, $tab_no );
-		$user_id = $this->insertID ();
-		if ($user_id == 0)
-			return false;
-		$sql = 'INSERT INTO `groups_user` (`group_id`, `user_id`) VALUES (%1$u, %2$u)';
-		$b = $this->query ( $sql, $group_id, $user_id );
-		if ($a && $b) {
-			$this->Log->addToLog ( 'Зарегистрирован новый пользователь', __LINE__, __METHOD__ );
-			return $user_id;
-		}
-		return false;
-	}
-    /*
-     * $Params ['user_id']
-     * $Params ['username'] = $this->Vals->getVal ( 'username', 'POST', 'string' );
-			$Params ['email'] = $this->Vals->getVal ( 'email', 'POST', 'string' );
-			$Params ['title'] = $this->Vals->getVal ( 'title', 'POST', 'string' );
-			$Params ['login'] = $this->Vals->getVal ( 'login', 'POST', 'string' );
-			$Params ['phone'] = $this->Vals->getVal ( 'phone', 'POST', 'string' );
-			$Params ['phone_mess'] = $this->Vals->getVal ( 'phone_mess', 'POST', 'string' );
-			$Params ['pass'] = $this->Vals->getVal ( 'pass', 'POST', 'string' );
-			$Params ['group_id'] = $this->Vals->getVal ( 'group_id', 'POST', 'integer' );
-			$Params ['address'] = $this->Vals->getVal ( 'address', 'POST', 'array' );
-			$Params ['credit_card'] = $this->Vals->getVal ( 'credit_card', 'POST', 'array' );
-			$Params ['isAutoPass'] = $this->Vals->getVal ( 'isAutoPass', 'POST', 'integer' );
-			$Params ['isBan'] = $this->Vals->getVal ( 'isBan', 'POST', 'integer' );
-     */
+
 	public function userInsert($Params) {
 		$passi = md5 ( $Params ['pass'] );
 		$sql = 'INSERT INTO `users` (name,email,login,phone,phone_mess,title,isBan,pass,date_reg)
@@ -50,7 +20,7 @@ class adminModel extends module_model {
 				    \'%4$s\',
 				    \'%5$s\',
 				    \'%6$s\',
-				    %7$u,
+				    \'%7$u\',
 				    \'' . $passi . '\',
 				    NOW()
 				    )';
@@ -61,7 +31,7 @@ class adminModel extends module_model {
 //        stop($this->sql);
 		$user_id = $this->insertID();
 		if ($user_id > 0) {
-			$sql = 'INSERT INTO `groups_user` (`group_id`, `user_id`) VALUES (%1$u, %2$u)';
+			$sql = 'INSERT INTO `groups_user` (`group_id`, `user_id`) VALUES (\'%1$u\', \'%2$u\')';
 			$this->query($sql, $Params ['group_id'], $user_id);
 
 			$Params ['user_id'] = $user_id;
@@ -79,7 +49,7 @@ class adminModel extends module_model {
 				    phone = \'%4$s\',
 				    phone_mess = \'%5$s\',
 				    title = \'%6$s\',
-				    isBan = %7$u
+				    isBan = \'%7$u\'
 				    ';
 
 		if ($Params ['pass'] != '') {
@@ -93,7 +63,7 @@ class adminModel extends module_model {
 
 //        stop($this->sql);
 
-		$sql = 'UPDATE `groups_user` SET `group_id`  = %1$u WHERE `user_id` = %2$u';
+		$sql = 'UPDATE `groups_user` SET `group_id`  = \'%1$u\' WHERE `user_id` = \'%2$u\'';
 		$this->query ( $sql, $Params ['group_id'], $Params ['user_id'] );
 
 		$this->updateAddrAndCard($Params);
@@ -698,13 +668,13 @@ class adminProcess extends module_process {
 		*/
 		/* * Пользователи * */
 		if ($user_right == 0 && $user_id == 0 && ! $_action) {
-			$this->nView->viewLogin ( 'SkyLC', '', $user_id );
+			$this->nView->viewLogin ( 'FD', '', $user_id );
 			$this->updated = true;
 			return true;
 		}
 		
 		if ($user_id > 0 && ! $_action) {
-			$this->User->nView->viewLoginParams ( 'SkyLC', '', $user_id, array (), array (), $this->User->getRightModule ( 'admin' ) );
+			$this->User->nView->viewLoginParams ( 'FD', '', $user_id, array (), array (), $this->User->getRightModule ( 'admin' ) );
 		}
 		
 		if ($action == 'newUser') {
@@ -713,61 +683,7 @@ class adminProcess extends module_process {
 			$this->updated = true;
 		}
 		
-		if ($action == 'addUser') {
-			$Params ['username'] = $this->Vals->getVal ( 'username', 'POST', 'string' );
-			$Params ['email'] = $this->Vals->getVal ( 'email', 'POST', 'string' );
-			$Params ['ip'] = $this->Vals->getVal ( 'ip', 'POST', 'string' );
-			$Params ['login'] = $this->Vals->getVal ( 'login', 'POST', 'string' );
-			//			$Params['login'] = $Params['email'];
-			$Params ['pass'] = $this->Vals->getVal ( 'pass', 'POST', 'string' );
-			$Params ['group_id'] = $this->Vals->getVal ( 'group_id', 'POST', 'integer' );
-			$Params ['isAutoPass'] = $this->Vals->getVal ( 'isAutoPass', 'POST', 'integer' );
-			$Params ['tab_no'] = $this->Vals->getVal ( 'tab_no', 'POST', 'string' );
-			
-			if (! $Params ['tab_no'])
-				$Params ['tab_no'] = '0';
-			
-			$users = $this->nModel->userTest ( $Params ['login'] );
-			if ($users > 0) {
-				$this->nView->viewError ( array ('Ошибка добавления пользователя.', 'Пользователь с таким логином существует.', $Params ['login'] ) );
-			} else {
-				// $Params = $this->Vals->getVal('username', 'POST', 'string');
-				if ($Params ['isAutoPass']) {
-					$pass = $this->generatePass ( 6 );
-					$Params ['pass'] = $pass;
-				}
-				
-				// $username, $email, $login, $pass, $ip, $group_id
-				if ($Params ['username'] != '' && $Params ['email'] != '' && $Params ['group_id'] > 0) {
-					$res = $this->nModel->userCreate ( $Params ['username'], $Params ['email'], $Params ['login'], md5 ( $Params ['pass'] ), $Params ['ip'], $Params ['group_id'], $Params ['tab_no'] );
-					if ($res > 0) {
-						//					$this->System->actionLog($this->mod_id, $res, 'Добавлен новый пользователь: '.$Params['username'], dateToDATETIME (date('Y-d-m h-i-s')), $this->User->getUserID(), 1, $action);
-						$this->nView->viewMessage ( 'Добавлен новый пользователь', 'Сообщение' );
-						$message1 = ' Вы были зарегистрированны в системе "Интранет портал РИВЦ-Пулково"<br />' . rn . rn;
-						$message2 = ' Добавлен новый пользователь<br />' . rn . rn;
-						$usInfo = '';
-						foreach ( $Params as $key => $val ) {
-							$usInfo .= $key . ' : ' . $val . '<br />' . rn;
-						}
-						$message1 .= $usInfo;
-						$message2 .= $usInfo;
-					
-						$message = join('<br />'.rn,$Params);
-						 sendMail('Регистрация в системе', $message1, $Params['email'],'Интранет портал');
-						 sendMail('Новый пользователь', $message2.' '.$message, 'djidi@mail.ru','Интранет портал');
-					} else {
-						$this->nView->viewError ( array ('Ошибка добавления пользователя' ) );
-					}
-				} else {
-					$this->nView->viewError ( array ('Заполнены не все обязательные поля! ', $Params ['username'], $Params ['email'], $Params ['group_id'] ) );
-					return true;
-				}
-				$action = 'userList';
-			
-			}
-		
-		//$this->updated = true;
-		}
+
 		
 		if ($action == 'groupHide') {
 			$Params ['group_id'] = $this->Vals->getVal ( 'groupHide', 'GET', 'integer' );

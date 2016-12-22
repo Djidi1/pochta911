@@ -9,8 +9,8 @@ define ('SITE_DIR_ROOT', '');
 define ('SITE_ROOT',  'http://'.$_SERVER["SERVER_NAME"].'/');
 define ('DIR_UPLOAD', 'uploads/');
 
-if ($_SERVER['REMOTE_ADDR'] == '127.0.0.1') define ('CORE_ROOT', __DIR__.'/');
-if ($_SERVER['REMOTE_ADDR'] != '127.0.0.1') define ('CORE_ROOT', '/home/bltur/www/site1/public_html/');
+define ('CORE_ROOT', __DIR__.'/');
+
 
 $SQL_COUNTER = 0;
 include 'config.php';
