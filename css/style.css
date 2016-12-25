@@ -47,6 +47,10 @@ DIV.add_buttons { position: absolute; z-index: 100;  right: 58px; top: 0;}
     bottom: 10px;
     left: 10px;
 }
-input.input-sm {
-    text-align: center;
-}
+input.input-sm { text-align: center;}
+
+TR.group TD.order-group { background: #bce8f1 !important; }
+TD.order-group .btn-group { float: right; }
+TD.order-group .alert { margin: 0; }
+TABLE.orders-data-table .btn-group {display: none;}
+TABLE.orders-data-table tr:hover .btn-group {display: block;}

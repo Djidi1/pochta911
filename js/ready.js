@@ -16,7 +16,53 @@ jQuery(function ($) {
         "url": "//cdn.datatables.net/plug-ins/1.10.13/i18n/Russian.json"
     }});
 
+    $('.logist-data-table').dataTable({
+        "columnDefs": [
+            { "visible": false, "targets": 0 }
+        ],
+        "order": [[ 0, 'asc' ]],
+        "displayLength": 25,
+        "drawCallback": function ( ) {
+            var api = this.api();
+            var rows = api.rows( {page:'current'} ).nodes();
+            var last=null;
+            api.column(0, {page:'current'} ).data().each( function ( group, i ) {
+                if ( last !== group ) {
+                    $(rows).eq( i ).before(
+                        '<tr class="group"><td class="order-group" colspan="6">'+group+'</td></tr>'
+                    );
+                    last = group;
+                }
+            } );
+        },
+        "language": {
+            "url": "//cdn.datatables.net/plug-ins/1.10.13/i18n/Russian.json"
+        }
+    } );
 
+    $('.orders-data-table').dataTable({
+        "columnDefs": [
+            { "visible": false, "targets": 0 }
+        ],
+        "order": [[ 0, 'asc' ]],
+        "displayLength": 25,
+        "drawCallback": function ( ) {
+            var api = this.api();
+            var rows = api.rows( {page:'current'} ).nodes();
+            var last=null;
+            api.column(0, {page:'current'} ).data().each( function ( group, i ) {
+                if ( last !== group ) {
+                    $(rows).eq( i ).before(
+                        '<tr class="group"><td class="order-group" colspan="6">'+group+'</td></tr>'
+                    );
+                    last = group;
+                }
+            } );
+        },
+        "language": {
+            "url": "//cdn.datatables.net/plug-ins/1.10.13/i18n/Russian.json"
+        }
+    } );
 
     $('.thumbnail').click(function () {
         var src = $(this).attr("src");

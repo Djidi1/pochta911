@@ -75,21 +75,23 @@ class adminModel extends module_model {
 		if (is_array($Params ['credit_card'])) {
 			$sql = 'DELETE FROM users_cards WHERE user_id = '.$Params ['user_id'].';';
 			$this->query ( $sql );
-			$sql = 'INSERT INTO users_cards (card_num,comment,user_id) VALUES ';
+            $values = '';
 			foreach ($Params ['credit_card'] as $key => $item) {
-				$sql .= ($key > 0)?',':'';
-				$sql .= ' (\''.$item.'\',\''.$Params ['card_comment'][$key].'\','.$Params ['user_id'].')';
+                $values .= ($key > 0)?',':'';
+                $values .= ' (\''.$item.'\',\''.$Params ['card_comment'][$key].'\','.$Params ['user_id'].')';
 			}
+            $sql = 'INSERT INTO users_cards (card_num,comment,user_id) VALUES '.$values;
 			$this->query ( $sql );
 		}
 		if (is_array($Params ['address'])) {
 			$sql = 'DELETE FROM users_address WHERE user_id = '.$Params ['user_id'].';';
 			$this->query ( $sql );
-			$sql = 'INSERT INTO users_address (address,comment,user_id) VALUES ';
+			$values = '';
 			foreach ($Params ['address'] as $key => $address) {
-				$sql .= ($key > 0)?', ':'';
-				$sql .= ' (\''.$address.'\',\''.$Params ['addr_comment'][$key].'\','.$Params ['user_id'].')';
+                $values .= ($key > 0)?', ':'';
+                $values .= ' (\''.$address.'\',\''.$Params ['addr_comment'][$key].'\','.$Params ['user_id'].')';
 			}
+            $sql = 'INSERT INTO users_address (address,comment,user_id) VALUES '.$values;
 			$this->query ( $sql );
 		}
 	}
@@ -104,35 +106,35 @@ class adminModel extends module_model {
 		$type = 1;
 		if ($full)
 			$type = 2;
-		$sql = 'UPDATE `users`
-				SET `isBan` = %2$u
-                WHERE `id` = %1$u';
-		$this->query ( $sql, $user_id, $type );
+		$sql = "UPDATE `users`
+				SET `isban` = $type
+                WHERE `id` = $user_id";
+		$this->query ( $sql );
 		return true;
 	}
 	
 	public function groupHide($group_id) {
-		$sql = ' UPDATE groups
-                SET [hidden] = 1
-                WHERE id = %1$u';
+		$sql = "UPDATE groups
+                SET hidden = 1
+                WHERE id = $group_id";
 		$this->query ( $sql, $group_id );
 		return true;
 	}
 	public function groupCount($group_id) {
-		$sql = ' SELECT COUNT(group_id) as count
+		$sql = "SELECT COUNT(group_id) as count
   				FROM groups_user
-  				where group_id= %1$u';
-		$this->query ( $sql, $group_id );
+  				where group_id = $group_id";
+		$this->query ( $sql );
 //		$count = array ();
 		$count = $this->fetchOneRowA ();
 		return $count;
 	}
 	
 	public function userUnBan($user_id) {
-		$sql = 'UPDATE `users`
-				SET `isBan` = 0
-                WHERE `id` = %1$u';
-		$this->query ( $sql, $user_id );
+		$sql = "UPDATE `users`
+				SET `isban` = 0
+                WHERE `id` = $user_id";
+		$this->query ( $sql );
 		return true;
 	}
 	
@@ -177,12 +179,12 @@ class adminModel extends module_model {
 		
 		if (! $user_id)
 			return false;
-		$sql = 'SELECT u.id as user_id, u.*,g.id as group_id, g.name as group_name
+		$sql = "SELECT u.id as user_id, u.*,g.id as group_id, g.name as group_name
 				FROM `users` u
 				LEFT JOIN `groups_user` gu ON u.id = gu.user_id
 				LEFT JOIN `groups` g ON gu.group_id = g.id
-				WHERE u.id = %1$u';
-		$this->query ( $sql, $user_id );
+				WHERE u.id = $user_id";
+		$this->query ( $sql );
 		$user = $this->fetchOneRowA ();
 		return $user;
 	}
@@ -211,11 +213,11 @@ class adminModel extends module_model {
 			$order_by = " ORDER BY $order";
 		}
 
-		$sql = 'SELECT u.id as user_id, u.*,g.id as group_id, g.name as group_name
+		$sql = "SELECT u.id as user_id, u.*,g.id as group_id, g.name as group_name
 				FROM `users` u
 				LEFT JOIN `groups_user` gu ON u.id = gu.user_id
 				LEFT JOIN `groups` g ON gu.group_id = g.id
-				WHERE u.isBan<2 ' . $fsql . $order_by;
+				WHERE u.isBan < 2 $fsql $order_by ";
 		$this->query ( $sql, $f_name, $f_tabno, $f_login, $f_group, $f_otdel );
 		$users = array ();
 		while ( ($row = $this->fetchRowA ()) !== false ) {
@@ -231,6 +233,7 @@ class adminModel extends module_model {
 				  fio,
 				  phone,
 				  phone2,
+				  telegram,
 				  car_type,
 				  car_year,
 				  car_firm,
@@ -287,6 +290,7 @@ class adminModel extends module_model {
 			  fio = '".$param['fio']."' -- fio - VARCHAR(255)
 			 ,phone = '".$param['phone']."' -- phone - VARCHAR(255)
 			 ,phone2 = '".$param['phone2']."' -- phone2 - VARCHAR(255)
+			 ,telegram = '".$param['telegram']."' -- phone2 - VARCHAR(255)
 			 ,car_type = ".$param['car_type']." -- car_type - INT(11)
 			 ,car_year = ".$param['car_year']." -- car_year - INT(4)
 			 ,car_firm = '".$param['car_firm']."' -- car_firm - VARCHAR(255)
@@ -304,6 +308,7 @@ class adminModel extends module_model {
 			 fio
 			 ,phone
 			 ,phone2
+			 ,telegram
 			 ,car_type
 			 ,car_year
 			 ,car_firm
@@ -315,6 +320,7 @@ class adminModel extends module_model {
 			 '".$param['fio']."' -- fio - VARCHAR(255)
 			 ,'".$param['phone']."' -- phone - VARCHAR(255)
 			 ,'".$param['phone2']."' -- phone2 - VARCHAR(255)
+			 ,'".$param['telegram']."' -- phone2 - VARCHAR(255)
 			 ,".$param['car_type']." -- car_type - INT(11)
 			 ,".$param['car_year']." -- car_year - INT(4)
 			 ,'".$param['car_firm']."' -- car_firm - VARCHAR(255)
@@ -349,7 +355,7 @@ u.name,lu.ip,lu.date,lu.referer,lu.browser,lu.os,g.name as group_name,
   LEFT JOIN users u ON lu.id_user = u.id
   LEFT JOIN groups_user gu ON u.id = gu.user_id
   LEFT JOIN groups g ON gu.group_id = g.id
-   LIMIT ' . $limStart . ', ' . ($limStart + $limCount) . '';
+   LIMIT ' . $limStart . ', ' . ($limStart + $limCount) . ' ';
 		
 		$this->query ( $sql );
 		
@@ -383,7 +389,8 @@ u.name,lu.ip,lu.date,lu.referer,lu.browser,lu.os,g.name as group_name,
 	public function groupRightUpdate($actions, $group_id) {
 		//foreach($rights as $mod => $action) {
 		foreach ( $actions as $action_id => $access ) {
-			$sql = 'INSERT INTO `module_access` (`group_id`, `action_id`, `access`) VALUES (%1$u, %2$u, %3$u) ON DUPLICATE KEY UPDATE `access` = %3$u';
+			$sql = "INSERT INTO `module_access` (`group_id`, `action_id`, `access`) 
+                    VALUES ($group_id, $action_id, $access) ON DUPLICATE KEY UPDATE `access` = $access";
 			if ($this->query ( $sql, $group_id, $action_id, $access ))
 				$this->Log->addToLog ( 'Задано действие', __LINE__, __METHOD__ );
 			else
@@ -397,8 +404,8 @@ u.name,lu.ip,lu.date,lu.referer,lu.browser,lu.os,g.name as group_name,
 	}
 	
 	public function groupAdd($group_name, $group_name, $parent = 0, $position = 100) {
-		$sql = 'INSERT INTO `groups` (`name`,`name`, `admin`, `parent`) VALUES (\'%1$s\' ,\'%2$s\' , 1, %3$u)';
-		$this->query ( $sql, $group_name, $group_name, $parent );
+		$sql = "INSERT INTO `groups` (`name`, `admin`, `parent`) VALUES ('$group_name', 1, $parent)";
+		$this->query ( $sql );
 		$group_id = $this->insertID ();
 		
 		if ($group_id > 0) {
@@ -412,8 +419,8 @@ u.name,lu.ip,lu.date,lu.referer,lu.browser,lu.os,g.name as group_name,
 	public function groupUpdate($group_name, $group_name, $group_id) {
 		if ($group_id == 0)
 			return false;
-		$sql = 'UPDATE groups SET name = \'%1$s\', name = \'%2$s\' WHERE id = %3$u';
-		return $this->query ( $sql, $group_name, $group_name, $group_id );
+		$sql = "UPDATE groups SET name = '$group_name' WHERE id = $group_id";
+		return $this->query ( $sql );
 	}
 	
 	public function getActions($group_id) {
@@ -503,13 +510,14 @@ u.name,lu.ip,lu.date,lu.referer,lu.browser,lu.os,g.name as group_name,
 		return $actionColl;
 	}
 	public function getGroupName($group_id) {
-		$sql = 'SELECT name FROM groups WHERE id = %1$u';
+		$sql = "SELECT name FROM groups WHERE id = $group_id";
 		$this->query ( $sql, $group_id );
 		return $this->getOne ();
 	}
 	
-	public function gelLogs($type) {
+	public function gelLogs() {
 		$logs = array ();
+		/*
 		if ($type == 'few') {
 			$sql = 'SELECT s.*, CONVERT (char(10), s.`date`, 105) as date, u.name as username
 					FROM `sys_log` s
@@ -519,7 +527,7 @@ u.name,lu.ip,lu.date,lu.referer,lu.browser,lu.os,g.name as group_name,
 			while ( ($row = $this->fetchOneRowA ()) !== false ) {
 				$logs [] = $row;
 			}
-		}
+		}*/
 		return $logs;
 	}
 }
@@ -866,6 +874,7 @@ class adminProcess extends module_process {
 			$param['fio'] = $this->Vals->getVal ( 'fio', 'POST', 'string' );
 			$param['phone'] = $this->Vals->getVal ( 'phone', 'POST', 'string' );
 			$param['phone2'] = $this->Vals->getVal ( 'phone2', 'POST', 'string' );
+			$param['telegram'] = $this->Vals->getVal ( 'telegram', 'POST', 'string' );
 			$param['car_firm'] = $this->Vals->getVal ( 'car_firm', 'POST', 'string' );
 			$param['car_number'] = $this->Vals->getVal ( 'car_number', 'POST', 'string' );
 			$param['car_year'] = $this->Vals->getVal ( 'car_year', 'POST', 'integer' );
@@ -985,7 +994,7 @@ class adminProcess extends module_process {
 		
 		if ($action == 'logs') {
 			$type = 'few';
-			$logs = $this->nModel->gelLogs ( $type );
+			$logs = $this->nModel->gelLogs (  );
 			$this->nView->viewLogs ( $logs, $type );
 			$this->updated = true;
 		}
@@ -995,18 +1004,20 @@ class adminProcess extends module_process {
 			$response =  $this->callApiTlg('getUpdates', array(), TLG_TOKEN);
 			$items = array();
 			foreach ($response->result as $data){
-				$from = $data->message->from;
-				$chat = $data->message->chat;
-				$date = $data->message->date;
-				$text = $data->message->text;
+                if (isset($data->message)) {
+                    $from = $data->message->from;
+                    $chat = $data->message->chat;
+                    $date = $data->message->date;
+                    $text = $data->message->text;
 
-				$row['user_name'] = $from->first_name." ".
-					(isset($from->last_name)?$from->last_name:'').
-					(isset($from->username)?" [".$from->username."]":'');
-				$row['chat_id'] = $chat->id;
-				$row['date'] = date('d.m.Y H:i', $date);
-				$row['text'] = $text;
-				$items[] = $row;
+                    $row['user_name'] = $from->first_name . " " .
+                        (isset($from->last_name) ? $from->last_name : '') .
+                        (isset($from->username) ? " [" . $from->username . "]" : '');
+                    $row['chat_id'] = $chat->id;
+                    $row['date'] = date('d.m.Y H:i', $date);
+                    $row['text'] = $text;
+                    $items[] = $row;
+                }
 			}
 			$this->nView->viewTelegramUpdates ( $items, $users );
 			$this->updated = true;

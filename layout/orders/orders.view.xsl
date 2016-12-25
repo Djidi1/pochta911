@@ -47,65 +47,107 @@
                     </div>
                 </div>
             </form>
-            <table class="table data-table">
+
+            <table class="table table-striped orders-data-table">
                 <thead>
-                    <th>id</th>
-                    <th>Заказчик</th>
-                    <th>Откуда</th>
+                    <th>Заказ</th>
                     <th>Маршрут</th>
-                    <th>Комментарий</th>
-                    <th>Дата заказа</th>
+                    <th>Получатель</th>
+                    <th>Время доставки</th>
+                    <th>Стоимость</th>
                     <th>Статус</th>
-                    <th>Курьер</th>
-                    <th width="160px"> </th>
+                    <th/>
                 </thead>
                 <tbody>
-                    <xsl:for-each select="orders/item">
-                        <tr>
+                    <xsl:for-each select="orders/item/route/array">
+                        <tr class="order_route_{id_route} order_{../../id}" rel="{id_route}">
                             <td>
-                                <xsl:value-of select="id"/>
+                                <div class="row">
+                                    <div class="col-md-2">
+                                        Готовность:<br/>
+                                        <b>
+                                            <xsl:value-of select="../../ready"/>
+                                        </b>
+                                    </div>
+                                    <div class="col-md-3">
+                                        Заказ №
+                                        <xsl:value-of select="../../id"/>
+                                        <br/>
+                                        <b>
+                                            <xsl:value-of select="../../title"/>
+                                        </b>
+                                        <br/>
+                                        <i>
+                                            <xsl:value-of select="../../name"/>
+                                        </i>
+                                    </div>
+                                    <div class="col-md-3">
+                                        Адрес магазина:<br/>
+                                        <b><xsl:value-of select="../../from"/></b>
+                                        <br/>
+                                        <i>
+                                            <xsl:value-of select="../../addr_comment"/>
+                                        </i>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="btn-group" role="group" aria-label="Управление заказом">
+                                            <a href="/orders/order-{../../id}/" title="редактировать" class="btn btn-success btn-sm">
+                                                <span class="glyphicon glyphicon-pencil" aria-hidden="true"> </span>
+                                            </a>
+                                            <a href="/orders/orderBan-{../../id}/" title="удалить" class="btn btn-danger btn-sm">
+                                                <xsl:attribute name="onClick">return confirm('Вы действительно хотите удалить заказ <xsl:value-of select="id"/>?');
+                                                </xsl:attribute>
+                                                <span class="glyphicon glyphicon-remove" aria-hidden="true"> </span>
+                                            </a>
+                                        </div>
+                                        Курьер:<br/>
+                                        <b><xsl:value-of select="../../fio_car"/></b>
+                                        <br/>
+                                        <i>
+                                            За рулем: <xsl:value-of select="../../fio_courier"/>
+                                        </i>
+                                        <div class="btn-group" role="group" aria-label="Изменение курьера">
+                                            <a href="#" title="Назначить курьера" class="btn btn-info btn-sm" onclick="chg_courier({../../id})">
+                                                <i class="fa fa-car" aria-hidden="true"> </i> Курьер
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                                <xsl:if test="../../comment != ''">
+                                    <div class="alert alert-success">
+                                        <xsl:value-of select="../../comment"/>
+                                    </div>
+                                </xsl:if>
+                            </td>
+                            <td class="order_info">
+                                <xsl:attribute name="rel">{"order_id": "<xsl:value-of select="../../id"/>","from": "<xsl:value-of select="../../from"/>","ready": "<xsl:value-of select="../../ready"/>","to_addr": "<xsl:value-of select="to"/>, д.<xsl:value-of select="to_house"/>, корп.<xsl:value-of select="to_corpus"/>, кв.<xsl:value-of select="to_appart"/>","to_time": "<xsl:value-of select="to_time"/>","to_fio": "<xsl:value-of select="to_fio"/>","to_phone": "<xsl:value-of select="to_phone"/>","cost": "<xsl:value-of select="cost_route"/>"}</xsl:attribute>
+                                <xsl:value-of select="to"/>, <xsl:value-of select="to_house"/>, <xsl:value-of select="to_corpus"/>,
+                                <xsl:value-of select="to_appart"/>
                             </td>
                             <td>
-                                <xsl:value-of select="name"/>
+                                <xsl:value-of select="to_fio"/>
+                                <xsl:text> </xsl:text>
+                                <nobr>
+                                    <b>
+                                        <xsl:value-of select="to_phone"/>
+                                    </b>
+                                </nobr>
                             </td>
                             <td>
-                                <xsl:value-of select="from"/>
-                            </td>
-                            <td style="font-size:85%">
-                                <xsl:for-each select="route/array">
-                                    <xsl:value-of select="position()"/>)
-                                    <xsl:value-of select="to"/>, <xsl:value-of select="to_house"/>, <xsl:value-of select="to_corpus"/>,
-                                    <xsl:value-of select="to_appart"/>
-                                    <br/>
-                                </xsl:for-each>
+                                <b>
+                                    <xsl:value-of select="to_time"/>
+                                </b>
                             </td>
                             <td>
-                                <xsl:value-of select="comment"/>
-                            </td>
-                            <td>
-                                <xsl:value-of select="dk"/>
+                                <xsl:value-of select="cost_route"/>
                             </td>
                             <td>
                                 <xsl:value-of select="status"/>
                             </td>
-                            <td>
-                                <xsl:value-of select="courier"/>
-                            </td>
-                            <td width="160px" align="center">
-                                <div class="btn-group" role="group" aria-label="Управление заказом">
-                                    <a href="#" title="Изменить статус" class="btn btn-warning btn-sm" onclick="chg_status({id})">
-                                        <span class="glyphicon glyphicon-flag" aria-hidden="true"> </span>
-                                    </a>
-                                    <a href="#" title="Назначить курьера" class="btn btn-info btn-sm" onclick="chg_courier({id})">
-                                        <i class="fa fa-car" aria-hidden="true"> </i>
-                                    </a>
-                                    <a href="/orders/order-{id}/" title="редактировать" class="btn btn-success btn-sm">
-                                        <span class="glyphicon glyphicon-pencil" aria-hidden="true"> </span>
-                                    </a>
-                                    <a href="/orders/orderBan-{id}/" title="удалить" class="btn btn-danger btn-sm">
-                                        <xsl:attribute name="onClick">return confirm('Вы действительно хотите удалить заказ <xsl:value-of select="id"/>?');
-                                        </xsl:attribute>
-                                        <span class="glyphicon glyphicon-remove" aria-hidden="true"> </span>
+                            <td width="80px" align="center">
+                                <div class="btn-group" role="group" aria-label="Изменение статуса">
+                                    <a href="#" title="Изменить статус" class="btn btn-warning btn-sm" onclick="chg_status({id_route},{../../id})">
+                                        <span class="glyphicon glyphicon-flag" aria-hidden="true"> </span> Стутус
                                     </a>
                                 </div>
                             </td>

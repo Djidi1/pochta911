@@ -39,19 +39,27 @@ class ordersModel extends module_model {
 				FROM orders_status ';
 		return $this->get_assoc_array($sql);
 	}
-	public function getCouriers() {
+	public function getCarCouriers() {
 		$sql = 'SELECT
 				  id,
 				  fio
 				FROM cars_couriers WHERE isBan != 1';
 		return $this->get_assoc_array($sql);
 	}
+	public function getCouriers() {
+		$sql = 'SELECT
+				  id,
+				  fio
+				FROM couriers WHERE isBan != 1';
+		return $this->get_assoc_array($sql);
+	}
 
 	public function getRoutes($order_id) {
-		$sql = 'SELECT `to`,to_house,to_corpus,to_appart,
+		$sql = 'SELECT r.id id_route, `to`,to_house,to_corpus,to_appart,
 					  to_fio,to_phone,to_coord,from_coord,lenght,cost_route,
-					  `to_time`,`comment`
-				FROM orders_routes
+					  `to_time`,r.`comment`, s.status
+				FROM orders_routes r
+				LEFT JOIN orders_status s ON s.id = r.id_status
 				WHERE id_order = '.$order_id;
 		return $this->get_assoc_array($sql);
 	}
@@ -61,11 +69,22 @@ class ordersModel extends module_model {
 		return $this->get_assoc_array($sql);
 	}
 
+	public function getOrderRoute($order_route_id) {
+	    $sql = "SELECT id id_route, id_order, `to`, to_house, to_corpus, to_appart, to_fio, to_phone, to_coord, 
+                      from_coord, lenght, cost_route, to_date, to_time, comment, id_status, dk 
+                FROM orders_routes
+                WHERE id = $order_route_id";
+	    $row = $this->get_assoc_array($sql);
+	    return $row[0];
+    }
+
+
 	public function getOrder($order_id) {
 		$sql = 'SELECT o.id,
 					   o.id_user,
 					   o.id_address,
 					   o.id_car,
+					   o.id_courier,
 					   o.ready,
 					   o.date,
 					   o.cost,
@@ -74,13 +93,12 @@ class ordersModel extends module_model {
 					   u.name,
 					   u.title,
 					   u.phone,
-					   os.status,
-					   cc.fio courier,
-					   o.id_status
+					   cc.fio fio_car,
+					   c.fio fio_courier
 				FROM orders o
-				LEFT JOIN users u ON o.id_user = u.id
-				LEFT JOIN orders_status os ON os.id = o.id_status
 				LEFT JOIN cars_couriers cc ON cc.id = o.id_car
+				LEFT JOIN couriers c ON c.id = o.id_car
+				LEFT JOIN users u ON o.id_user = u.id
 				WHERE o.id = '.$order_id;
 		$this->query ( $sql );
 		$items = array ();
@@ -92,29 +110,50 @@ class ordersModel extends module_model {
 		return $items;
 	}
 
-	public function getChatIdByOrder($order_id) {
-		$sql = 'SELECT u.phone_mess,
-					   os.status
+	public function getChatIdByOrder($order_route_id) {
+		$sql = 'SELECT u.phone_mess
 				FROM orders o
+				LEFT JOIN orders_routes r ON o.id = r.id_order
 				LEFT JOIN users u ON o.id_user = u.id
-				LEFT JOIN orders_status os ON os.id = o.id_status
-				WHERE o.id = '.$order_id;
-		$this->query ( $sql );
-		$items = array ();
-		// один заказ
-		while ( ($row = $this->fetchRowA ()) !== false ) {
-			$items = $row;
-		}
-		return $items;
+				WHERE r.id = '.$order_route_id;
+		$row = $this->get_assoc_array($sql);
+		return $row[0]['phone_mess'];
 	}
 
+	public function getChatIdByCourier($courier_id) {
+		$sql = "SELECT c.telegram
+				FROM couriers c
+				WHERE c.id = $courier_id";
+		$row = $this->get_assoc_array($sql);
+		return $row[0]['telegram'];
+	}
+
+    public function getChatIdByCarCourier($courier_id) {
+        $sql = "SELECT c.telegram
+				FROM cars_couriers c
+				WHERE c.id = $courier_id";
+        $row = $this->get_assoc_array($sql);
+        return $row[0]['telegram'];
+    }
+
+    public function getStatusName($status_id) {
+        $sql = 'SELECT s.status
+				FROM orders_status s
+				WHERE s.id = '.$status_id;
+        $row = $this->get_assoc_array($sql);
+        return $row[0]['status'];
+    }
+
 	public function getOrdersList($from, $to) {
-		$sql = 'SELECT o.id, o.comment, o.cost, a.address `from`,
-					   c.fio courier, s.status, u.name, u.title, o.dk, o.id_user
+		$sql = 'SELECT o.id, o.comment, o.cost, o.ready, a.address `from`, a.comment addr_comment,
+					   u.name, u.title, o.dk, o.id_user,
+					   o.id_courier, o.id_car,
+					   cc.fio fio_car,
+					   c.fio fio_courier
                   FROM orders o
                 LEFT JOIN users_address a ON a.id = o.id_address
-                LEFT JOIN orders_status s ON s.id = o.id_status
-                LEFT JOIN cars_couriers c ON c.id = o.id_car
+				LEFT JOIN cars_couriers cc ON cc.id = o.id_car
+				LEFT JOIN couriers c ON c.id = o.id_car
                 LEFT JOIN users u ON u.id = o.id_user
                   WHERE o.dk BETWEEN \''.$this->dmy_to_mydate($from).'\' AND \''.$this->dmy_to_mydate($to).' 23:59:59\'
                   and o.isBan = 0
@@ -129,12 +168,10 @@ class ordersModel extends module_model {
 	}
 
 	public function getLogistList($from, $to) {
-		$sql = 'SELECT o.id, ua.address,ua.comment addr_comment, u.name,u.title, o.ready, o.date, os.status, cc.fio car, o.comment
+		$sql = 'SELECT o.id, ua.address,ua.comment addr_comment, u.name,u.title, o.ready, o.date, o.comment
 			  FROM orders o
 			  LEFT JOIN users_address ua ON o.id_address = ua.id
 			  LEFT JOIN users u ON u.id = o.id_user
-			  LEFT JOIN orders_status os ON o.id_status = os.id
-			  LEFT JOIN cars_couriers cc ON o.id_car = cc.id
                   WHERE o.dk BETWEEN \''.$this->dmy_to_mydate($from).'\' AND \''.$this->dmy_to_mydate($to).' 23:59:59\'
                 LIMIT 0,1000';
 		$orders = $this->get_assoc_array($sql);
@@ -156,8 +193,8 @@ class ordersModel extends module_model {
 
 	public function orderInsert($id_user, $params) {
 		$sql = "
-		INSERT INTO orders (id_user, ready, `date`, comment, id_address, id_status, dk)
-		VALUES ($id_user,'".$params['ready']."','".$this->dmy_to_mydate($params['date'])."','".$params['order_comment']."','".$params['store_id']."','1',NOW());
+		INSERT INTO orders (id_user, ready, `date`, comment, id_address, dk)
+		VALUES ($id_user,'".$params['ready']."','".$this->dmy_to_mydate($params['date'])."','".$params['order_comment']."','".$params['store_id']."',NOW());
 		";
 		$this->query($sql);
 
@@ -184,21 +221,21 @@ class ordersModel extends module_model {
 		return $params['order_id'];
 	}
 
-	public function updOrderStatus($user_id, $order_id, $new_status, $stat_comment){
-		$sql = "UPDATE orders SET id_status = $new_status, `dk` = NOW()	WHERE id = ".$order_id." ";
+	public function updOrderStatus($user_id, $order_route_id, $new_status, $stat_comment){
+		$sql = "UPDATE orders_routes SET id_status = $new_status, `dk` = NOW()	WHERE id = $order_route_id ";
 		$this->query($sql);
 
-		$sql = "INSERT INTO order_status_history (user_id, order_id, new_status, comment, dk)
-				VALUES ($user_id, $order_id, $new_status, '$stat_comment', NOW())";
+		$sql = "INSERT INTO order_status_history (user_id, order_route_id, new_status, comment, dk)
+				VALUES ($user_id, $order_route_id, $new_status, '$stat_comment', NOW())";
 		$this->query($sql);
 	}
 
-	public function updOrderCourier($user_id, $order_id, $new_courier){
-		$sql = "UPDATE orders SET id_car = $new_courier, `dk` = NOW() WHERE id = ".$order_id." ";
+	public function updOrderRouteCourier($user_id, $order_id, $new_courier, $new_car_courier, $courier_comment){
+		$sql = "UPDATE orders SET id_courier = $new_courier, id_car = $new_car_courier, `dk` = NOW() WHERE id = ".$order_id." ";
 		$this->query($sql);
 
-		$sql = "INSERT INTO order_courier_history (user_id, order_id, new_courier, dk)
-				VALUES ($user_id, $order_id, $new_courier, NOW())";
+		$sql = "INSERT INTO order_courier_history (user_id, order_route_id, new_courier, new_car, comment, dk)
+				VALUES ($user_id, $order_id, $new_courier, $new_car_courier, '$courier_comment', NOW())";
 		$this->query($sql);
 	}
 
@@ -206,14 +243,17 @@ class ordersModel extends module_model {
 		if (is_array($params ['to'])) {
 			$sql = 'DELETE FROM orders_routes WHERE id_order = '.$order_id.';';
 			$this->query ( $sql );
-			$sql = 'INSERT INTO orders_routes (id_order,`to`,`to_house`,`to_corpus`,`to_appart`,`to_fio`,`to_phone`,`cost_route`,`to_time`,`comment`) VALUES ';
+            $sql_values = '';
 			foreach ($params ['to'] as $key => $item) {
-				$sql .= ($key > 0)?',':'';
-				$sql .= ' (\''.$order_id.'\',\''.$params ['to'][$key].'\',\''.$params ['to_house'][$key].'\',\''.$params ['to_corpus'][$key].'\',
+				$sql_values .= ($key > 0)?',':'';
+                $sql_values .= ' (\''.$order_id.'\',\''.$params ['to'][$key].'\',\''.$params ['to_house'][$key].'\',\''.$params ['to_corpus'][$key].'\',
 							\''.$params ['to_appart'][$key].'\',\''.$params ['to_fio'][$key].'\',\''.$params ['to_phone'][$key].'\',
 							\''.$params ['cost_route'][$key].'\',\''.$params ['to_time'][$key].'\',\''.$params ['comment'][$key].'\'	)';
 			}
-			$this->query ( $sql );
+			if ($sql_values != '') {
+                $sql = "INSERT INTO orders_routes (id_order,`to`,`to_house`,`to_corpus`,`to_appart`,`to_fio`,`to_phone`,`cost_route`,`to_time`,`comment`) VALUES $sql_values";
+                $this->query($sql);
+            }
 		}
 	}
 
@@ -402,36 +442,87 @@ class ordersProcess extends module_process {
 			$this->nView->viewMessage('Заказ успешно сохранен. Номер для отслеживания: '.$id_code, 'Сообщение');
 			$action = 'view';
 		}
+/*
+ *
+ * Array
+(
+    [0] => stdClass Object
+        (
+            [from] => Пилотов, 24
+        )
 
+    [1] => stdClass Object
+        (
+            [ready] => 17:00
+        )
+
+    [2] => stdClass Object
+        (
+            [to_addr] => Ветеранов пр-кт (Кировский), д.36, корп.2, кв.100
+        )
+
+    [3] => stdClass Object
+        (
+            [to_time] => 16:05
+        )
+
+    [4] => stdClass Object
+        (
+            [to_fio] => Инкогнито
+        )
+
+    [5] => stdClass Object
+        (
+            [to_phone] => +7999-555-2222
+        )
+
+)
+ */
 		if ($action == 'chg_status'){
-			$order_id = $this->Vals->getVal ( 'order_id', 'POST', 'integer' );
+            $order_route_id = $this->Vals->getVal ( 'order_route_id', 'POST', 'integer' );
 			$new_status = $this->Vals->getVal ( 'new_status', 'POST', 'integer' );
 			$stat_comment = $this->Vals->getVal ( 'stat_comment', 'POST', 'string' );
+			$order_info = $this->Vals->getVal ( 'order_info', 'POST', 'string' );
+			$order_info_message = $this->Vals->getVal ( 'order_info_message', 'POST', 'string' );
+			if ($order_info_message == '') {
+                $order_info = json_decode($order_info);
+                $order_info_message = "<b>Заказ №</b> " . $order_info->order_id . "\r\n";
+                $order_info_message .= "<b>Откуда:</b> " . $order_info->from . "\r\n";
+                $order_info_message .= "<b>Готовность:</b> " . $order_info->ready . "\r\n";
+                $order_info_message .= "<b>Время получения:</b> " . $order_info->to_time . "\r\n";
+                $order_info_message .= "<b>Адрес доставки:</b> " . $order_info->to_addr . "\r\n";
+                $order_info_message .= "<b>Получатель:</b> " . $order_info->to_fio . " [" . $order_info->to_phone . "]\r\n";
+                $order_info_message .= "<b>Стоимость заказа:</b> " . $order_info->cost . " ";
+            }
 			if ($new_status > 0){
-				$this->nModel->updOrderStatus($user_id, $order_id, $new_status, $stat_comment);
+				$this->nModel->updOrderStatus($user_id, $order_route_id, $new_status, $stat_comment);
 				$result = 'Статус успешно изменен. ';
-				$inform = $this->nModel->getChatIdByOrder($order_id);
-				if (isset($inform['phone_mess']) and $inform['phone_mess'] != '') {
+				$chat_id = $this->nModel->getChatIdByOrder($order_route_id);
+				$status_name = $this->nModel->getStatusName($new_status);
+				if (isset($chat_id) and $chat_id != '') {
 					$result .= ' Сообщение клиенту отправлено.';
-					$message = 'Статус вашего заказа: '.$inform['status'].''."\r\n";
+					$message = $order_info_message."\r\n";
+					$message .= '<b>Статус вашего заказа:</b> '.$status_name.''."\r\n";
 					if (trim($stat_comment) != '') {
-						$message .= 'Сообщение с сайта: ' . $stat_comment . '';
+						$message .= '<b>Сообщение с сайта:</b> ' . $stat_comment . '';
 					}
-					$this->telegram($message, $inform['phone_mess']);
+					$this->telegram($message, $chat_id);
 				}
 				echo $result;
 			}else {
-				$order = $this->nModel->getOrder($order_id);
+				$order_route = $this->nModel->getOrderRoute($order_route_id);
 				$statuses = $this->nModel->getStatuses();
 				$select = "<select class='form-control' name='new_status' >";
 				foreach ($statuses as $status) {
-					$selected = ($order['id_status'] == $status['id']) ? 'selected=""' : '';
+					$selected = ($order_route['id_status'] == $status['id']) ? 'selected=""' : '';
 					$select .= "<option value='" . $status['id'] . "' $selected>" . $status['status'] . "</option>";
 				}
 				$select .= "</select>";
 				$comment = "<textarea class='form-control' name='comment_status' placeholder='Комментарий для клиента'></textarea>";
-				$info = "<div class='alert alert-info'>Выберите новый статус и введите комментарий для клиента.</div>
-						<input type='hidden' name='order_id' value='$order_id' />";
+				$info = "<div class='alert alert-success'>".str_replace("\r\n","<br/>",$order_info_message)."</div>";
+				$info .= "<div class='alert alert-info'>Выберите новый статус и введите комментарий для клиента.</div>
+						<input type='hidden' name='order_route_id' value='$order_route_id' />
+						<input type='hidden' name='order_info_message' value='$order_info_message' />";
 				echo $info . "<br/>" . $select . "<br/>" . $comment;
 			}
 			exit();
@@ -440,22 +531,66 @@ class ordersProcess extends module_process {
 		if ($action == 'chg_courier'){
 			$order_id = $this->Vals->getVal ( 'order_id', 'POST', 'integer' );
 			$new_courier = $this->Vals->getVal ( 'new_courier', 'POST', 'integer' );
-			if ($new_courier > 0){
-				$this->nModel->updOrderCourier($user_id, $order_id, $new_courier);
+			$new_car_courier = $this->Vals->getVal ( 'new_car_courier', 'POST', 'integer' );
+            $courier_comment = $this->Vals->getVal ( 'courier_comment', 'POST', 'string' );
+            $order_info = $this->Vals->getVal ( 'order_info', 'POST', 'string' );
+            $order_info_message = $this->Vals->getVal ( 'order_info_message', 'POST', 'string' );
+            if ($order_info_message == '') {
+                $order_info = json_decode($order_info);
+                $order_info_message = "<b>Заказ №</b> " . $order_info->order_id . "\r\n";
+                $order_info_message .= "<b>Откуда:</b> " . $order_info->from . "\r\n";
+                $order_info_message .= "<b>Готовность:</b> " . $order_info->ready . "\r\n";
+                $order_info_message .= "<b>Время получения:</b> " . $order_info->to_time . "\r\n";
+                $order_info_message .= "<b>Адрес доставки:</b> " . $order_info->to_addr . "\r\n";
+                $order_info_message .= "<b>Получатель:</b> " . $order_info->to_fio . " [" . $order_info->to_phone . "]\r\n";
+                $order_info_message .= "<b>Стоимость заказа:</b> " . $order_info->cost . " ";
+            }
+			if ($new_courier > 0 and $new_car_courier > 0){
+				$this->nModel->updOrderRouteCourier($user_id, $order_id, $new_courier, $new_car_courier, $courier_comment);
 				$result = 'Курьер успешно назначен.';
+                $chat_id= ($new_courier == 1)?$this->nModel->getChatIdByCarCourier($new_car_courier):$this->nModel->getChatIdByCourier($new_courier);
+                if (isset($chat_id) and $chat_id != '') {
+                    $result .= ' Сообщение курьеру отправлено.';
+                    $message = '<i>Вы назначены на заказ</i>'."\r\n";
+                    $message .= $order_info_message."\r\n";
+                    if (trim($courier_comment) != '') {
+                        $message .= 'Сообщение с сайта: ' . $courier_comment . '';
+                    }
+                    $menu = array('inline_keyboard' => array(
+                        array(
+                            array(
+                                'text' => 'принять заказ', 'callback_data' => '/order_accepted_'.$order_id,
+                            ),
+                        ),
+                    ),
+                    );
+                    $this->telegram($message, $chat_id, $menu);
+                }
 				echo $result;
 			}else {
 				$order = $this->nModel->getOrder($order_id);
-				$couriers = $this->nModel->getCouriers();
-				$select = "<select class='form-control' name='new_courier' >";
-				foreach ($couriers as $courier) {
-					$selected = ($order['id_car'] == $courier['id']) ? 'selected=""' : '';
-					$select .= "<option value='" . $courier['id'] . "' $selected>" . $courier['fio'] . "</option>";
+				$car_couriers = $this->nModel->getCarCouriers();
+                $select = '<div class="input-group"><span class="input-group-addon">Курьер:</span>';
+				$select .= "<select class='form-control' name='new_car_courier' >";
+				foreach ($car_couriers as $car) {
+					$selected = ($order['id_car'] == $car['id']) ? 'selected=""' : '';
+					$select .= "<option value='" . $car['id'] . "' $selected>" . $car['fio'] . "</option>";
 				}
-				$select .= "</select>";
-				$info = "<div class='alert alert-info'>Выберите курьера для данного заказа.</div>
-						<input type='hidden' name='order_id' value='$order_id' />";
-				echo $info . "<br/>" . $select;
+                $select .= "</select></div>";
+                $couriers = $this->nModel->getCouriers();
+                $select2 = '<div class="input-group"><span class="input-group-addon">За рулем:</span>';
+                $select2 .= "<select class='form-control' name='new_courier' >";
+                foreach ($couriers as $courier) {
+                    $selected = ($order['id_car'] == $courier['id']) ? 'selected=""' : '';
+                    $select2 .= "<option value='" . $courier['id'] . "' $selected>" . $courier['fio'] . "</option>";
+                }
+				$select2 .= "</select></div>";
+                $comment = "<textarea class='form-control' name='courier_comment' placeholder='Комментарий для курьера'></textarea>";
+                $info = "<div class='alert alert-success'>".str_replace("\r\n","<br/>",$order_info_message)."</div>";
+				$info .= "<div class='alert alert-info'>Выберите курьера для данного заказа.</div>
+						<input type='hidden' name='order_id' value='$order_id' />
+						<input type='hidden' name='order_info_message' value='$order_info_message' />";
+				echo $info . "<br/>" . $select . $select2 . $comment;
 			}
 			exit();
 		}
@@ -521,7 +656,7 @@ class ordersProcess extends module_process {
 
 	}
 
-	public function telegram($message,$chat_id)
+	public function telegram($message,$chat_id,$menu = array())
 	{
 		/**
 		 * Задаём основные переменные.
@@ -534,11 +669,17 @@ class ordersProcess extends module_process {
 		$message_id = $output['message']['message_id'];
 */
 		//https://api.telegram.org/bot<YourBOTToken>/getUpdates
-		$this->callApiTlg('sendMessage', array(
-			'chat_id' => $chat_id,
-			'text' => "" . $message . ""
-			//,'reply_to_message_id' => $message_id,
-		), TLG_TOKEN);
+
+        $encodedMarkup = json_encode($menu);
+
+        $params = array(
+            'chat_id' => $chat_id,
+            'parse_mode' => 'HTML',
+            'text' => '' . $message . '',
+            'reply_markup' => $encodedMarkup
+            //,'reply_to_message_id' => $message_id,
+        );
+		$this->callApiTlg('sendMessage', $params, TLG_TOKEN);
 
 	}
 	public function callApiTlg( $method, $params, $access_token) {

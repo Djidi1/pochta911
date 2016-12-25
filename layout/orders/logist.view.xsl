@@ -12,9 +12,9 @@
                     </div>
                     <div class="col-md-3">
                         <div class="input-daterange input-group" id="datepicker">
-                            <input type="text" class="input-sm form-control" id="start_date" name="from" value="{@from}" />
+                            <input type="text" class="input-sm form-control" id="start_date" name="from" value="{@from}"/>
                             <span class="input-group-addon">to</span>
-                            <input type="text" class="input-sm form-control" id="end_date" name="to" value="{@to}" />
+                            <input type="text" class="input-sm form-control" id="end_date" name="to" value="{@to}"/>
                         </div>
                         <script type="text/javascript">
                             $(function () {
@@ -42,61 +42,82 @@
                     </div>
                 </div>
             </form>
-            <table class="table table-striped data-table">
+            <table class="table table-striped logist-data-table">
                 <thead>
-                    <th>id</th>
-                    <th>Компания</th>
-                    <th>Адрес приема</th>
-                    <th>Время готовности</th>
-                    <th>Маршрут/Получатель/Время доставки/Стоимость</th>
+                    <th>Заказ</th>
+                    <th>Маршрут</th>
+                    <th>Получатель</th>
+                    <th>Время доставки</th>
+                    <th>Стоимость</th>
                     <th>Статус</th>
                     <th>Курьер</th>
-                    <th>Комментарий</th>
                 </thead>
                 <tbody>
-                    <xsl:for-each select="orders/item">
+                    <xsl:for-each select="orders/item/route/array">
                         <tr>
-                            <td><xsl:value-of select="id"/></td>
                             <td>
-                                <b><xsl:value-of select="title"/></b><br/>
-                                <xsl:value-of select="name"/>
+                                <div class="row">
+                                    <div class="col-md-2">
+                                        Готовность:<br/>
+                                        <b>
+                                            <xsl:value-of select="../../ready"/>
+                                        </b>
+                                    </div>
+                                    <div class="col-md-3">
+                                        Заказ №
+                                        <xsl:value-of select="../../id"/>
+                                        <br/>
+                                        <b>
+                                            <xsl:value-of select="../../title"/>
+                                        </b>
+                                        <br/>
+                                        <i>
+                                            <xsl:value-of select="../../name"/>
+                                        </i>
+                                    </div>
+                                    <div class="col-md-3">
+                                        Адрес магазина:<br/>
+                                        <b><xsl:value-of select="../../address"/></b>
+                                        <br/>
+                                        <i>
+                                            <xsl:value-of select="../../addr_comment"/>
+                                        </i>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="alert alert-success">
+                                            <xsl:value-of select="../../comment"/>
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+
+                            <td>
+                                <xsl:value-of select="to"/>, <xsl:value-of select="to_house"/>, <xsl:value-of select="to_corpus"/>,
+                                <xsl:value-of select="to_appart"/>
                             </td>
                             <td>
-                                <xsl:value-of select="address"/><br/>
-                                <i><xsl:value-of select="addr_comment"/></i>
+                                <xsl:value-of select="to_fio"/>
+                                <xsl:text> </xsl:text>
+                                <nobr>
+                                    <b>
+                                        <xsl:value-of select="to_phone"/>
+                                    </b>
+                                </nobr>
                             </td>
-                            <td><b><xsl:value-of select="ready"/></b></td>
-                            <td style="font-size:85%">
-                                <table class="table table-hover table-condensed">
-                                    <tbody>
-                                        <xsl:for-each select="route/array">
-                                            <tr>
-                                                <td>
-                                                    <xsl:value-of select="to"/>, <xsl:value-of select="to_house"/>, <xsl:value-of select="to_corpus"/>,
-                                                    <xsl:value-of select="to_appart"/>
-                                                </td>
-                                                <td>
-                                                    <xsl:value-of select="to_fio"/>
-                                                    <xsl:text> </xsl:text>
-                                                    <nobr><xsl:value-of select="to_phone"/></nobr>
-                                                </td>
-                                                <td><xsl:value-of select="to_time"/></td>
-                                                <td><xsl:value-of select="cost_route"/></td>
-                                            </tr>
-                                        </xsl:for-each>
-                                    </tbody>
-                                </table>
+                            <td>
+                                <b>
+                                    <xsl:value-of select="to_time"/>
+                                </b>
+                            </td>
+                            <td>
+                                <xsl:value-of select="cost_route"/>
                             </td>
                             <td>
                                 <xsl:value-of select="status"/>
                             </td>
                             <td>
-                                <xsl:value-of select="car"/>
+                                <xsl:value-of select="fio"/>
                             </td>
-                            <td>
-                                <xsl:value-of select="comment"/>
-                            </td>
-
                         </tr>
                     </xsl:for-each>
                 </tbody>

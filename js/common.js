@@ -62,9 +62,11 @@ function check_user(obj){
 }
 
 function chg_courier(order_id){
-    $.post("/orders/chg_courier-1/", {order_id:order_id},  function(data) {
+    var order_route_id = $('tr.order_'+order_id).first().attr('rel');
+    var order_info = $('.order_route_'+order_route_id+' .order_info').attr('rel');
+    $.post("/orders/chg_courier-1/", {order_id:order_id,order_info:order_info},  function(data) {
         bootbox.confirm({
-            title: "Изменение курьера",
+            title: "Изменение курьера в заказе № "+order_id,
             message: data,
             callback: function(result){ if(result){send_new_courier()} }
         });
@@ -73,18 +75,23 @@ function chg_courier(order_id){
 }
 function send_new_courier(){
     var order_id = $('.bootbox-body').find('input[name=order_id]').val();
+    var order_route_id = $('.bootbox-body').find('input[name=order_route_id]').val();
     var new_courier = $('.bootbox-body').find('select[name=new_courier]').val();
+    var new_car_courier = $('.bootbox-body').find('select[name=new_car_courier]').val();
+    var courier_comment = $('.bootbox-body').find('textarea[name=courier_comment]').val();
+    var order_info_message = $('.bootbox-body').find('input[name=order_info_message]').val();
 
-    $.post("/orders/chg_courier-1/", {order_id:order_id,new_courier:new_courier},  function(data) {
-          bootbox.alert(data,location.reload());
-        //bootbox.alert(data);
+    $.post("/orders/chg_courier-1/", {order_id:order_id,order_route_id:order_route_id,new_courier:new_courier,new_car_courier:new_car_courier,courier_comment:courier_comment,order_info_message:order_info_message},  function(data) {
+          // bootbox.alert(data,location.reload());
+        bootbox.alert(data);
     });
 
 }
-function chg_status(order_id){
-    $.post("/orders/chg_status-1/", {order_id:order_id},  function(data) {
+function chg_status(order_route_id, order_id){
+    var order_info = $('.order_route_'+order_route_id+' .order_info').attr('rel');
+    $.post("/orders/chg_status-1/", {order_route_id:order_route_id,order_info:order_info},  function(data) {
         bootbox.confirm({
-            title: "Изменение статуса",
+            title: "Изменение статуса доставки в заказе № "+order_id,
             message: data,
             callback: function(result){ if(result){send_new_status()} }
         });
@@ -93,13 +100,14 @@ function chg_status(order_id){
 }
 
 function send_new_status(){
-    var order_id = $('.bootbox-body').find('input[name=order_id]').val();
+    var order_route_id = $('.bootbox-body').find('input[name=order_route_id]').val();
     var new_status = $('.bootbox-body').find('select[name=new_status]').val();
     var stat_comment = $('.bootbox-body').find('textarea[name=comment_status]').val();
+    var order_info_message = $('.bootbox-body').find('input[name=order_info_message]').val();
 
-    $.post("/orders/chg_status-1/", {order_id:order_id,new_status:new_status,stat_comment:stat_comment},  function(data) {
-        bootbox.alert(data,location.reload());
-        //bootbox.alert(data);
+    $.post("/orders/chg_status-1/", {order_route_id:order_route_id,new_status:new_status,stat_comment:stat_comment,order_info_message:order_info_message},  function(data) {
+        // bootbox.alert(data,location.reload());
+        bootbox.alert(data);
     });
 
 }

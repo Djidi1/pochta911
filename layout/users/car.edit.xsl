@@ -38,6 +38,13 @@
                                         </td>
                                     </tr>
                                     <tr>
+                                        <td>Телеграмм:</td>
+                                        <td>
+                                            <input class="form-control" type="text" name="telegram"
+                                                   value="{car/telegram}" size="30" />
+                                        </td>
+                                    </tr>
+                                    <tr>
                                         <td>Марка:</td>
                                         <td>
                                             <input class="form-control" type="phone" name="car_firm"
