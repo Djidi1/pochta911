@@ -618,6 +618,7 @@ class adminProcess extends module_process {
 		
 		$user_id = $this->User->getUserID ();
 		$user_right = $this->User->getRight ( $this->modName, 'useAdmin' );
+
 		
 		if ($user_right == 0) {
 			$p = array ('У Вас отсутствуют административные права' );

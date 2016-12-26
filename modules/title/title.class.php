@@ -60,6 +60,12 @@ class titleProcess extends module_process {
 			$this->Vals->URLparams ( $this->sysMod->defQueryString );
 			$action = $this->actionDefault;
 		}
+        $user_id = $this->User->getUserID ();
+        $user_right = $this->User->getRight ( $this->modName, $action );
+        if ($user_right == 0 && ! $_action) {
+            $this->User->nView->viewLoginParams ( '', '', $user_id, array (), array () );
+            $this->updated = true;
+        }
 		
 		/********************************************************************************/
 		if ($action == 'view') {

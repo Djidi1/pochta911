@@ -390,6 +390,12 @@ class ordersProcess extends module_process {
 			$this->User->nView->viewLoginParams ( 'Доставка', '', $user_id, array (), array (), $this->User->getRight ( 'admin', 'view' ) );
 		}
 
+        $user_right = $this->User->getRight ( $this->modName, $action );
+        if ($user_right == 0 && ! $_action) {
+            $this->User->nView->viewLoginParams ( '', '', $user_id, array (), array () );
+            $this->updated = true;
+            return;
+        }
 
 
 		if ($action == 'get_data'){
