@@ -61,12 +61,10 @@ class titleProcess extends module_process {
 			$action = $this->actionDefault;
 		}
         $user_id = $this->User->getUserID ();
-        $user_right = $this->User->getRight ( $this->modName, $action );
-        if ($user_right == 0 && ! $_action) {
-            $this->User->nView->viewLoginParams ( '', '', $user_id, array (), array () );
-            $this->updated = true;
-        }
-		
+
+        $this->User->nView->viewLoginParams ( '', '', $user_id, array (), array () );
+        $this->updated = true;
+
 		/********************************************************************************/
 		if ($action == 'view') {
             $news = $this->nModel->getNewsList(3);

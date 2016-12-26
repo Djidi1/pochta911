@@ -92,18 +92,14 @@
 					<thead>
 						<tr>
 							<th>№  [ID]</th>
-							<th style="cursor:pointer" onclick="document.langFilter.srt.value='name'; sendFilter('/admin/userList-1/', 'langFilter', 'viewListlang');" title="Сортировка">Ф.И.О. <xsl:if test="users/@order='name'">^</xsl:if>
-							</th>
+							<th>Ф.И.О.</th>
 							<th>Агент</th>
+                            <th>Логин</th>
+                            <th>Группа</th>
 							<th>Телефон</th>
-							<th style="cursor:pointer" onclick="document.langFilter.srt.value='email'; sendFilter('/admin/userList-1/', 'langFilter', 'viewListlang');" title="Сортировка">Почта <xsl:if test="users/@order='email'">^</xsl:if>
-							</th>
-							<th style="cursor:pointer" onclick="document.langFilter.srt.value='login'; sendFilter('/admin/userList-1/', 'langFilter', 'viewListlang');" title="Сортировка">Логин <xsl:if test="users/@order='login'">^</xsl:if>
-							</th>
-							<th style="cursor:pointer" onclick="document.langFilter.srt.value='group_name'; sendFilter('/admin/userList-1/', 'langFilter', 'viewListlang');" title="Сортировка">Группа <xsl:if test="users/@order='group_name'">^</xsl:if>
-							</th>
-							<th style="cursor:pointer" onclick="document.langFilter.srt.value='date_reg'; sendFilter('/admin/userList-1/', 'langFilter', 'viewListlang');" title="Сортировка">Дата регистрации <xsl:if test="users/@order='date_reg'">^</xsl:if>
-							</th>
+							<th>Телеграмм id</th>
+							<th>Почта</th>
+							<th>Дата регистрации</th>
 							<xsl:if test="count(//page/@xls)=0">
 							<th colspan="3" align="center">*</th>
 							</xsl:if>
@@ -122,20 +118,21 @@
 									<td>
 										<xsl:value-of select="title"/>
 									</td>
+                                    <td>
+                                        <xsl:value-of select="login"/>
+                                    </td>
+                                    <td>
+                                        <xsl:value-of select="group_name"/>
+                                    </td>
 									<td>
 										<xsl:value-of select="phone"/>
+                                    </td>
+                                    <td>
                                         <xsl:value-of select="phone_mess"/>
 									</td>
 									<td>
 										<xsl:value-of select="email"/>
 									</td>
-									<td>
-										<xsl:value-of select="login"/>
-									</td>
-									<td>
-										<xsl:value-of select="group_name"/>
-									</td>
-									
 									<td>
 										<xsl:value-of select="date_reg"/>
 									</td>
