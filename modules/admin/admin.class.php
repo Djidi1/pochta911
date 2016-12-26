@@ -8,7 +8,64 @@ class adminModel extends module_model {
 	
 		// stop($this->System);
 	}
-	
+
+	/*
+	 * $row['user_name'] = $from->first_name . " " .
+                        (isset($from->last_name) ? $from->last_name : '') .
+                        (isset($from->username) ? " [" . $from->username . "]" : '');
+                    $row['chat_id'] = $chat->id;
+                    $row['date'] = date('d.m.Y H:i', $date);
+                    $row['text'] = $text;
+	 */
+	public function saveTelegramUpdates($items){
+
+	    // проверка на наличие записи в БД
+        $upd_ids = array();
+        foreach ($items as $key => $item) {
+            $upd_ids[] = $item['update_id'];
+        }
+        $upd_ids = implode("','",$upd_ids);
+	    $sql = "SELECT update_id FROM log_telegram WHERE update_id IN ('$upd_ids')";
+        $this->query ( $sql );
+        $upd_ids = array ();
+        while ( ($row = $this->fetchRowA ()) !== false ) {
+            $upd_ids [] = $row['update_id'];
+        }
+
+        // Подготовка данных для записи
+        $sql_values = '';
+        foreach ($items as $key => $item) {
+            if (!in_array($item['update_id'],$upd_ids)) {
+                $sql_values .= ($key > 0) ? ',' : '';
+                $sql_values .= "
+            (
+                 '" . $item['user_name'] . "'
+                 ,'" . $item['chat_id'] . "'
+                 ,'" . $item['update_id'] . "'
+                 ,'" . $item['message_id'] . "'
+                 ,'" . $item['text'] . "'
+                 ,'" . $item['date'] . "'
+                 ,NOW()
+                )";
+            }
+        }
+        if ($sql_values != '') {
+            $sql = "INSERT INTO log_telegram
+                (
+                  sender
+                 ,chat_id
+                 ,update_id
+                 ,message_id
+                 ,text
+                 ,date
+                 ,dk
+                )
+                VALUES $sql_values
+                ;";
+            $this->query($sql);
+        }
+
+    }
 
 	public function userInsert($Params) {
 		$passi = md5 ( $Params ['pass'] );
@@ -1015,11 +1072,14 @@ class adminProcess extends module_process {
                         (isset($from->last_name) ? $from->last_name : '') .
                         (isset($from->username) ? " [" . $from->username . "]" : '');
                     $row['chat_id'] = $chat->id;
+                    $row['update_id'] = $data->update_id;
+                    $row['message_id'] = $data->message->message_id;
                     $row['date'] = date('d.m.Y H:i', $date);
                     $row['text'] = $text;
                     $items[] = $row;
                 }
 			}
+			$this->nModel->saveTelegramUpdates ($items);
 			$this->nView->viewTelegramUpdates ( $items, $users );
 			$this->updated = true;
 		}
