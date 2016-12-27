@@ -82,9 +82,20 @@
 						</script>
 
 
-						<div class="moduletable_LoginForm navbar-form navbar-right">
+						<div class="moduletable_LoginForm navbar-right">
 							<xsl:apply-templates select="//page/body/module[@name = 'CurentUser']/container[@module = 'login']"/>
 						</div>
+						<!--<div class="phoneheader navbar-form navbar-right">-->
+							<!--<span class="phone" style="">-->
+								<!--<ins/>8 812 222-2222-->
+							<!--</span>-->
+							<!--<span class="address" style="">-->
+								<!--<ins/>-->
+								<!--<a href="/pages/view-29/">м.Невский Проспект,-->
+									<!--<nobr>Адрес</nobr>-->
+								<!--</a>-->
+							<!--</span>-->
+						<!--</div>-->
 					</div><!-- /.navbar-collapse -->
 				</div><!-- /.container-fluid -->
 			</nav>

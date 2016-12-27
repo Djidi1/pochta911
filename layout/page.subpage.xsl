@@ -41,33 +41,7 @@
                             </div>
                         </div>
                         <div class="clear"/>
-                        <div id="foot">
-                            <p id="back-top" style="display: none;">
-                                <a href="#top">
-                                    <span/>
-                                </a>
-                            </p>
-                            <div class="well wrapper">
-                                <div class="moduletable">
-                                    <ul class="bottom-menu navbar-nav">
-                                        <li class="item-207">
-                                            <a href="#">О компании</a>
-                                        </li>
-                                        <li class="item-471">
-                                            <a href="#">Акции</a>
-                                        </li>
-                                        <li class="item-470">
-                                            <a href="#">Контакты</a>
-                                        </li>
-                                    </ul>
-                                </div>
-                                <div class="footerText">
-                                    <div class="footer1">Copyright © <xsl:value-of select="//@year"/> Доставка
-                                        цветов. Все права защищены.
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                        <xsl:call-template name="bottom_block"/>
                     </div>
                 </div>
             </body>

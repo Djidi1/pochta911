@@ -69,7 +69,7 @@ class adminModel extends module_model {
 
 	public function userInsert($Params) {
 		$passi = md5 ( $Params ['pass'] );
-		$sql = 'INSERT INTO `users` (name,email,login,phone,phone_mess,title,isBan,pass,date_reg)
+		$sql = 'INSERT INTO `users` (name,email,login,phone,phone_mess,title,isBan,inkass_proc,pass,date_reg)
 				VALUES (
 				    \'%1$s\',
 				    \'%2$s\',
@@ -78,12 +78,13 @@ class adminModel extends module_model {
 				    \'%5$s\',
 				    \'%6$s\',
 				    \'%7$u\',
+				    \'%8$s\',
 				    \'' . $passi . '\',
 				    NOW()
 				    )';
 
 		$test = $this->query ( $sql, $Params ['username'], $Params ['email'], $Params ['login'], $Params ['phone'],
-			$Params ['phone_mess'], $Params ['title'], $Params ['isBan'] );
+			$Params ['phone_mess'], $Params ['title'], $Params ['isBan'], $Params ['inkass_proc'] );
 
 //        stop($this->sql);
 		$user_id = $this->insertID();
@@ -106,7 +107,8 @@ class adminModel extends module_model {
 				    phone = \'%4$s\',
 				    phone_mess = \'%5$s\',
 				    title = \'%6$s\',
-				    isBan = \'%7$u\'
+				    isBan = \'%7$u\',
+				    inkass_proc = \'%8$s\'
 				    ';
 
 		if ($Params ['pass'] != '') {
@@ -114,9 +116,9 @@ class adminModel extends module_model {
 			$sql .= ' ,pass = \''.$passi.'\' ';
 		}
 //		$this->Log->addToLog ( array ($pass, $passi ), __LINE__, __METHOD__ );
-		$sql .= ' WHERE `id` = %8$u';
+		$sql .= ' WHERE `id` = %9$u';
 		$test = $this->query ( $sql, $Params ['username'], $Params ['email'], $Params ['login'], $Params ['phone'],
-            $Params ['phone_mess'], $Params ['title'], $Params ['isBan'], $Params ['user_id'] );
+            $Params ['phone_mess'], $Params ['title'], $Params ['isBan'], $Params ['inkass_proc'], $Params ['user_id'] );
 
 //        stop($this->sql);
 
@@ -832,7 +834,8 @@ class adminProcess extends module_process {
 			$Params ['card_comment'] = $this->Vals->getVal ( 'card_comment', 'POST', 'array' );
 			$Params ['isAutoPass'] = $this->Vals->getVal ( 'isAutoPass', 'POST', 'integer' );
 			$Params ['isBan'] = $this->Vals->getVal ( 'isBan', 'POST', 'integer' );
-			
+			$Params ['inkass_proc'] = $this->Vals->getVal ( 'inkass_proc', 'POST', 'string' );
+
 			if ($Params ['isAutoPass'] > 0) {
 				$pass = $this->generatePass ( 6 );
 				$Params ['pass'] = $pass;

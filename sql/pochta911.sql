@@ -1,7 +1,7 @@
 ﻿--
 -- Скрипт сгенерирован Devart dbForge Studio for MySQL, Версия 7.2.53.0
 -- Домашняя страница продукта: http://www.devart.com/ru/dbforge/mysql/studio
--- Дата скрипта: 25.12.2016 23:28:35
+-- Дата скрипта: 27.12.2016 23:47:53
 -- Версия сервера: 5.5.5-10.1.19-MariaDB
 -- Версия клиента: 4.1
 --
@@ -188,6 +188,27 @@ CHARACTER SET utf8
 COLLATE utf8_general_ci;
 
 --
+-- Описание для таблицы log_telegram
+--
+DROP TABLE IF EXISTS log_telegram;
+CREATE TABLE log_telegram (
+  id INT(11) NOT NULL AUTO_INCREMENT,
+  sender VARCHAR(255) DEFAULT NULL,
+  chat_id INT(11) DEFAULT NULL,
+  update_id INT(11) DEFAULT NULL,
+  message_id INT(11) DEFAULT NULL,
+  text VARCHAR(1024) DEFAULT NULL,
+  date DATETIME DEFAULT NULL,
+  dk DATETIME DEFAULT NULL,
+  PRIMARY KEY (id)
+)
+ENGINE = INNODB
+AUTO_INCREMENT = 27
+AVG_ROW_LENGTH = 630
+CHARACTER SET utf8
+COLLATE utf8_general_ci;
+
+--
 -- Описание для таблицы logins
 --
 DROP TABLE IF EXISTS logins;
@@ -204,7 +225,7 @@ CREATE TABLE logins (
   INDEX id_user (id_user)
 )
 ENGINE = MYISAM
-AUTO_INCREMENT = 1851
+AUTO_INCREMENT = 1852
 AVG_ROW_LENGTH = 185
 CHARACTER SET cp1251
 COLLATE cp1251_general_ci;
@@ -297,7 +318,7 @@ CREATE TABLE modules (
 )
 ENGINE = MYISAM
 AUTO_INCREMENT = 17
-AVG_ROW_LENGTH = 93
+AVG_ROW_LENGTH = 92
 CHARACTER SET utf8
 COLLATE utf8_general_ci;
 
@@ -503,18 +524,19 @@ CREATE TABLE users (
   email VARCHAR(45) NOT NULL DEFAULT '',
   login VARCHAR(45) NOT NULL DEFAULT '',
   pass VARCHAR(45) NOT NULL DEFAULT '',
-  date_reg DATETIME NOT NULL,
   isban INT(1) UNSIGNED NOT NULL DEFAULT 0,
   prior INT(11) DEFAULT NULL COMMENT 'приоритет сортировки',
   title VARCHAR(255) DEFAULT NULL,
   phone VARCHAR(45) DEFAULT NULL,
   phone_mess VARCHAR(255) DEFAULT NULL,
+  inkass_proc FLOAT DEFAULT 1,
+  date_reg DATETIME NOT NULL,
   PRIMARY KEY (id),
   UNIQUE INDEX login (login, email)
 )
 ENGINE = MYISAM
 AUTO_INCREMENT = 96
-AVG_ROW_LENGTH = 142
+AVG_ROW_LENGTH = 133
 CHARACTER SET utf8
 COLLATE utf8_general_ci;
 
@@ -784,6 +806,37 @@ INSERT INTO groups_user VALUES
 (1, 3),
 (2, 83),
 (2, 95);
+
+-- 
+-- Вывод данных для таблицы log_telegram
+--
+INSERT INTO log_telegram VALUES
+(1, 'Daniil Pugach [Djidi]', 243045100, 280067780, 51, 'Test', '0000-00-00 00:00:00', '2016-12-27 23:37:54'),
+(2, 'Daniil Pugach [Djidi]', 243045100, 280067781, 52, 'Test2', '0000-00-00 00:00:00', '2016-12-27 23:37:54'),
+(3, 'Daniil Pugach [Djidi]', 243045100, 280067782, 53, '2222', '0000-00-00 00:00:00', '2016-12-27 23:37:54'),
+(4, 'Daniil Pugach [Djidi]', 243045100, 280067783, 54, 'test222', '0000-00-00 00:00:00', '2016-12-27 23:37:54'),
+(5, 'Daniil Pugach [Djidi]', 243045100, 280067784, 55, 'A', '0000-00-00 00:00:00', '2016-12-27 23:37:54'),
+(6, 'Daniil Pugach [Djidi]', 243045100, 280067785, 56, 'B', '0000-00-00 00:00:00', '2016-12-27 23:37:54'),
+(7, 'Daniil Pugach [Djidi]', 243045100, 280067786, 57, 'test', '0000-00-00 00:00:00', '2016-12-27 23:37:54'),
+(8, 'Daniil Pugach [Djidi]', 243045100, 280067787, 58, 'A', '0000-00-00 00:00:00', '2016-12-27 23:37:54'),
+(9, 'Daniil Pugach [Djidi]', 243045100, 280067788, 59, 'B', '0000-00-00 00:00:00', '2016-12-27 23:37:54'),
+(10, 'Daniil Pugach [Djidi]', 243045100, 280067789, 60, 'A', '0000-00-00 00:00:00', '2016-12-27 23:37:54'),
+(11, 'Daniil Pugach [Djidi]', 243045100, 280067790, 61, 'B', '0000-00-00 00:00:00', '2016-12-27 23:37:54'),
+(12, 'Daniil Pugach [Djidi]', 243045100, 280067791, 62, '333', '0000-00-00 00:00:00', '2016-12-27 23:37:54'),
+(13, 'Daniil Pugach [Djidi]', 243045100, 280067792, 63, '333', '0000-00-00 00:00:00', '2016-12-27 23:37:54'),
+(14, 'Daniil Pugach [Djidi]', 243045100, 280067793, 64, '111', '0000-00-00 00:00:00', '2016-12-27 23:37:54'),
+(15, 'Daniil Pugach [Djidi]', 243045100, 280067794, 65, '/start', '0000-00-00 00:00:00', '2016-12-27 23:37:54'),
+(16, 'Daniil Pugach [Djidi]', 243045100, 280067795, 66, '/start', '0000-00-00 00:00:00', '2016-12-27 23:37:54'),
+(17, 'Daniil Pugach [Djidi]', 243045100, 280067796, 67, '/start', '0000-00-00 00:00:00', '2016-12-27 23:37:54'),
+(18, 'Daniil Pugach [Djidi]', 243045100, 280067797, 68, '/start', '0000-00-00 00:00:00', '2016-12-27 23:37:54'),
+(19, 'Daniil Pugach [Djidi]', 243045100, 280067799, 70, '222', '0000-00-00 00:00:00', '2016-12-27 23:37:54'),
+(20, 'Daniil Pugach [Djidi]', 243045100, 280067800, 71, '111', '0000-00-00 00:00:00', '2016-12-27 23:37:54'),
+(21, 'Daniil Pugach [Djidi]', 243045100, 280067801, 72, '3333', '0000-00-00 00:00:00', '2016-12-27 23:37:54'),
+(22, 'Daniil Pugach [Djidi]', 243045100, 280067802, 73, '444', '0000-00-00 00:00:00', '2016-12-27 23:37:54'),
+(23, 'Daniil Pugach [Djidi]', 243045100, 280067803, 74, '333', '0000-00-00 00:00:00', '2016-12-27 23:37:54'),
+(24, 'Daniil Pugach [Djidi]', 243045100, 280067804, 75, '444', '0000-00-00 00:00:00', '2016-12-27 23:37:54'),
+(25, 'Daniil Pugach [Djidi]', 243045100, 280067805, 76, '333', '0000-00-00 00:00:00', '2016-12-27 23:37:54'),
+(26, 'kirillpochta911 ', 196962258, 280067806, 77, '/start', '0000-00-00 00:00:00', '2016-12-27 23:37:54');
 
 -- 
 -- Вывод данных для таблицы logins
@@ -2639,7 +2692,8 @@ INSERT INTO logins VALUES
 (1847, 82, '89.223.47.198', '2016-12-09 19:20:01', 'http://bltur.ru/', 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.99 Safari/537.36 OPR/41.0.2353.69', '', 'FreeBSD'),
 (1848, 3, '127.0.0.1', '2016-12-10 18:41:53', 'http://pochta911.loc/admin/', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.14 Safari/537.36', '', 'WINNT'),
 (1849, 3, '127.0.0.1', '2016-12-10 18:44:06', 'http://pochta911.loc/admin/', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.14 Safari/537.36', '', 'WINNT'),
-(1850, 3, '127.0.0.1', '2016-12-10 18:45:12', 'http://pochta911.loc/admin/', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.14 Safari/537.36', '', 'WINNT');
+(1850, 3, '127.0.0.1', '2016-12-10 18:45:12', 'http://pochta911.loc/admin/', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.14 Safari/537.36', '', 'WINNT'),
+(1851, 3, '127.0.0.1', '2016-12-27 22:24:07', 'http://pochta911.loc/', 'Mozilla/5.0 (Windows NT 10.0.14986; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/57.0.2950.4 Safari/537.36', '', 'WINNT');
 
 -- 
 -- Вывод данных для таблицы module_access
@@ -3602,10 +3656,9 @@ INSERT INTO module_addons_assign VALUES
 INSERT INTO modules VALUES
 (1, 'Настройка модулей (modset)', 'modset', 'modsetProcess', 'page.index.xsl', 'modset', 0, 'modset', 0, 'view', 'view=1&', 0),
 (2, 'pages', 'pages', 'pageProcess', 'page.subpage.xsl', 'pages', 0, 'pages', 0, 'line', 'line-1&', 0),
-(3, 'admin', 'admin', 'adminProcess', 'page.index.xsl', 'admin', 0, 'admin', 0, 'useAdmin', 'useAdmin-1&', 0),
+(3, 'admin', 'admin', 'adminProcess', 'page.subpage.xsl', 'admin', 0, 'admin', 0, 'useAdmin', 'useAdmin-1&', 0),
 (5, 'Главная страница', 'title', 'titleProcess', 'page.index.xsl', 'title', 0, 'title', 0, 'view', 'view-1&', 0),
 (7, 'Счетчик', 'counter', 'counterProcess', 'counter', 'counter', 0, 'counter', 0, 'view', 'view-1&', 1),
-(11, 'Управление турами', 'tc', 'tcProcess', 'page.index.xsl', 'tc', 0, 'tc', 0, 'viewlist', 'viewlist-1&', 0),
 (12, 'Информация', 'info', 'pageProcess', 'page.subpage.xsl', 'pages', 0, 'pages', 0, 'info', 'info-1&', 0),
 (13, 'Заказы', 'orders', 'ordersProcess', 'page.subpage.xsl', 'orders', 0, 'orders', 0, 'view', 'view-1&', 0),
 (14, 'Новости', 'news', 'newsProcess', 'page.subpage.xsl', 'news', 0, 'news', 0, 'view', 'view-1&', 0),
@@ -5718,9 +5771,9 @@ INSERT INTO tree_nodes VALUES
 -- Вывод данных для таблицы users
 --
 INSERT INTO users VALUES
-(3, 'admin', 'djidi@mail.ru', 'admin', 'fb95df9a09040fe9e40f9a4095421815', '2013-02-11 00:00:00', 0, NULL, 'Администратор', '9215754387', '243045100'),
-(83, 'Иванов Иван', 'djidi@mail.ru', 'rik', '496b7e6d1d1eb11c52e5e01947b22b96', '2014-12-14 23:09:33', 0, NULL, 'Рога и Копыта', '+79215754387', '301288944'),
-(95, 'Иванов Иван', '4sez@ona.ru', '4sizon', '202cb962ac59075b964b07152d234b70', '2016-12-14 23:10:52', 0, NULL, '4сезона', '+7921 123-45-67', '243045100');
+(3, 'admin', 'djidi@mail.ru', 'admin', 'fb95df9a09040fe9e40f9a4095421815', 0, NULL, 'Администратор', '9215754387', '243045100', 1, '2013-02-11 00:00:00'),
+(83, 'Иванов Иван', 'djidi@mail.ru', 'rik', '496b7e6d1d1eb11c52e5e01947b22b96', 0, NULL, 'Рога и Копыта', '+79215754387', '301288944', 1, '2014-12-14 23:09:33'),
+(95, 'Иванов Иван', '4sez@ona.ru', '4sizon', '202cb962ac59075b964b07152d234b70', 0, NULL, '4сезона', '+7921 123-45-67', '243045100', 1, '2016-12-14 23:10:52');
 
 -- 
 -- Вывод данных для таблицы users_address

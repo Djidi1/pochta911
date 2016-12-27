@@ -168,7 +168,7 @@ class ordersModel extends module_model {
 	}
 
 	public function getLogistList($from, $to) {
-		$sql = 'SELECT o.id, ua.address,ua.comment addr_comment, u.name,u.title, o.ready, o.date, o.comment
+		$sql = 'SELECT o.id, ua.address,ua.comment addr_comment, u.name,u.title, o.ready, o.date, o.comment, u.inkass_proc
 			  FROM orders o
 			  LEFT JOIN users_address ua ON o.id_address = ua.id
 			  LEFT JOIN users u ON u.id = o.id_user
@@ -448,42 +448,7 @@ class ordersProcess extends module_process {
 			$this->nView->viewMessage('Заказ успешно сохранен. Номер для отслеживания: '.$id_code, 'Сообщение');
 			$action = 'view';
 		}
-/*
- *
- * Array
-(
-    [0] => stdClass Object
-        (
-            [from] => Пилотов, 24
-        )
 
-    [1] => stdClass Object
-        (
-            [ready] => 17:00
-        )
-
-    [2] => stdClass Object
-        (
-            [to_addr] => Ветеранов пр-кт (Кировский), д.36, корп.2, кв.100
-        )
-
-    [3] => stdClass Object
-        (
-            [to_time] => 16:05
-        )
-
-    [4] => stdClass Object
-        (
-            [to_fio] => Инкогнито
-        )
-
-    [5] => stdClass Object
-        (
-            [to_phone] => +7999-555-2222
-        )
-
-)
- */
 		if ($action == 'chg_status'){
             $order_route_id = $this->Vals->getVal ( 'order_route_id', 'POST', 'integer' );
 			$new_status = $this->Vals->getVal ( 'new_status', 'POST', 'integer' );
@@ -610,29 +575,13 @@ class ordersProcess extends module_process {
 		}
 */
 		if ($action == 'view') {
-			$from = $this->Vals->getVal ( 'from', 'POST', 'string' );
-			$to = $this->Vals->getVal ( 'to', 'POST', 'string' );
-			if ($from == '') {
-				$from = (isset($_SESSION['from']) and $_SESSION['from'] != '') ? $_SESSION['from'] : date('01.m.Y');
-				$to = (isset($_SESSION['to']) and $_SESSION['to'] != '') ? $_SESSION['to'] : date('d.m.Y');
-			}else{
-				$_SESSION['from'] = $from;
-				$_SESSION['to'] = $to;
-			}
+            list($from, $to) = $this->get_post_date();
 			$orders = $this->nModel->getOrdersList($from, $to);
 			$this->nView->viewOrders ($from, $to, $orders);
 		}
 
 		if ($action == 'LogistList') {
-			$from = $this->Vals->getVal ( 'from', 'POST', 'string' );
-			$to = $this->Vals->getVal ( 'to', 'POST', 'string' );
-			if ($from == '') {
-				$from = (isset($_SESSION['from']) and $_SESSION['from'] != '') ? $_SESSION['from'] : date('01.m.Y');
-				$to = (isset($_SESSION['to']) and $_SESSION['to'] != '') ? $_SESSION['to'] : date('d.m.Y');
-			}else{
-				$_SESSION['from'] = $from;
-				$_SESSION['to'] = $to;
-			}
+            list($from, $to) = $this->get_post_date();
 			$orders = $this->nModel->getLogistList($from, $to);
 			$this->nView->viewLogistList ($from, $to, $orders);
 		}
@@ -661,6 +610,22 @@ class ordersProcess extends module_process {
 
 
 	}
+
+	public function get_post_date(){
+        //			$from = $this->Vals->getVal ( 'from', 'POST', 'string' );
+        $to = $this->Vals->getVal ( 'to', 'POST', 'string' );
+        $from = $to;
+        if ($to == '') {
+//				$from = (isset($_SESSION['from']) and $_SESSION['from'] != '') ? $_SESSION['from'] : date('01.m.Y');
+            $to = (isset($_SESSION['to']) and $_SESSION['to'] != '') ? $_SESSION['to'] : date('d.m.Y');
+            $from = $to;
+        }else{
+            $_SESSION['from'] = $from;
+            $_SESSION['to'] = $to;
+        }
+        return array($from,$to);
+    }
+
 
 	public function telegram($message,$chat_id,$menu = array())
 	{

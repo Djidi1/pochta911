@@ -2,48 +2,26 @@
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
     <xsl:template match="container[@module = 'list']">
         <xsl:if test="//page/@isAjax != 1">
-            <h2>Ваши заказы</h2>
-            <div>
-                <a class="btn btn-success" href="/orders/order-0/" title="Добавить заказ">
-                    <span class="glyphicon glyphicon-flag"> </span>
-                    <span>Новый заказ</span>
-                </a>
-            </div>
-            <hr/>
-            <form method="post">
+            <form method="post" style="margin-bottom: 2px;">
                 <div class="row">
-                    <div class="col-md-4">
-
+                    <div class="col-sm-9">
+                        <a class="btn btn-success" href="/orders/order-0/" title="Добавить заказ">
+                            <span class="glyphicon glyphicon-flag"> </span>
+                            <span>Новый заказ</span>
+                        </a>
                     </div>
-                    <div class="col-md-3">
-                        <div class="input-daterange input-group" id="datepicker">
-                            <input type="text" class="input-sm form-control" id="start_date" name="from" value="{@from}" />
-                            <span class="input-group-addon">to</span>
-                            <input type="text" class="input-sm form-control" id="end_date" name="to" value="{@to}" />
+                    <div class="col-sm-3">
+                        <div class="input-group" style="float:right">
+                            <input type="text" class="form-control" id="end_date" name="to" value="{@to}" style="text-align:center" />
+                            <span class="input-group-btn">
+                                <button class="btn btn-info">Обновить</button>
+                            </span>
                         </div>
-                        <script type="text/javascript">
+                        <script>
                             $(function () {
-                            $('#start_date').datetimepicker({format: 'L', locale: 'ru'});
-                            $('#end_date').datetimepicker({format: 'L', locale: 'ru',
-                            useCurrent: false //Important! See issue #1075
-                            });
-                            $("#start_date").on("dp.change", function (e) {
-                            $('#end_date').data("DateTimePicker").minDate(e.date);
-                            });
-                            $("#end_date").on("dp.change", function (e) {
-                            $('#start_date').data("DateTimePicker").maxDate(e.date);
-                            });
-                            $("#start_date").on("dp.show", function (e) {
-                            $('#start_date').data("DateTimePicker").maxDate(e.date);
-                            });
-                            $("#end_date").on("dp.show", function (e) {
-                            $('#end_date').data("DateTimePicker").minDate(e.date);
-                            });
+                                $('#end_date').datetimepicker({format: 'L', locale: 'ru'});
                             });
                         </script>
-                    </div>
-                    <div class="col-md-1">
-                        <button class="btn btn-info btn-sm">Обновить</button>
                     </div>
                 </div>
             </form>
@@ -159,5 +137,32 @@
         <xsl:if test="//page/@isAjax = 1">
             Ajax!
         </xsl:if>
+    </xsl:template>
+    <xsl:template name="datepickers">
+        <div class="input-daterange input-group" id="datepicker">
+            <input type="text" class="input-sm form-control" id="start_date" name="from" value="{@from}" />
+            <span class="input-group-addon">to</span>
+            <input type="text" class="input-sm form-control" id="end_date" name="to" value="{@to}" />
+        </div>
+        <script type="text/javascript">
+            $(function () {
+            $('#start_date').datetimepicker({format: 'L', locale: 'ru'});
+            $('#end_date').datetimepicker({format: 'L', locale: 'ru',
+            useCurrent: false //Important! See issue #1075
+            });
+            $("#start_date").on("dp.change", function (e) {
+            $('#end_date').data("DateTimePicker").minDate(e.date);
+            });
+            $("#end_date").on("dp.change", function (e) {
+            $('#start_date').data("DateTimePicker").maxDate(e.date);
+            });
+            $("#start_date").on("dp.show", function (e) {
+            $('#start_date').data("DateTimePicker").maxDate(e.date);
+            });
+            $("#end_date").on("dp.show", function (e) {
+            $('#end_date').data("DateTimePicker").minDate(e.date);
+            });
+            });
+        </script>
     </xsl:template>
 </xsl:stylesheet>

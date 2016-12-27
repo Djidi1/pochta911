@@ -26,7 +26,7 @@ class modsetModel extends module_model {
 
     if ($item->parentMod != 0) {
     	$actionsColl = $this->getActions($item->parentMod);
-    	$i = $actionsColl->getIterator();
+//    	$i = $actionsColl->getIterator();
     	foreach($actionsColl as $action) {    		
     		$action->mod_id = $item->id;
     		//$action = new moduleAction();
@@ -60,13 +60,13 @@ class modsetModel extends module_model {
     $Params = $item->toArray();
     if ($item->name == '' || $item->codename = '') return false;
 
-    $sql ='UPDATE modules SET `name` = \'%2$s\', `codename` = \'%3$s\',  `processName` = \'%4$s\', `xsl` = \'%5$s\', defModName =  \'%6$s\', parentMod = \'%7$u\', layoutPref = \'%8$s\', `isSystem` = %9$u WHERE `id` = \'%1$u\'';
+    $sql ='UPDATE modules SET `name` = \'%2$s\', `codename` = \'%3$s\',  `processName` = \'%4$s\', `xsl` = \'%5$s\', defModName =  \'%6$s\', parentMod = \'%7$u\', layoutPref = \'%8$s\', `isSystem` = \'%9$u\' WHERE `id` = \'%1$u\'';
     $this->query($sql, $Params['id'], $Params['name'], $Params['codename'], $Params['processName'], $Params['xsl'], $Params['defModName'], $Params['parentMod'], $Params['layoutPref'], $Params['isSystem']);
     return true;
   }
 
   public function get($id) {
-    $sql = 'SELECT * FROM modules WHERE id = %1$u';
+    $sql = 'SELECT * FROM modules WHERE id = \'%1$u\' ';
     $this->query($sql, $id);
     $row = $this->fetchOneRowA();
     $item = new modsetItem($row);
@@ -78,9 +78,7 @@ class modsetModel extends module_model {
 
   }
 
-  public function getList($codename) {
-    return $collect;
-  }
+
 
 public function getModulesFULL($mod_id = 0) {
 	$sql = 'SELECT
@@ -129,29 +127,18 @@ public function getModulesFULL($mod_id = 0) {
 
     $lastID = 0;
     $lastActID = 0;
-    $lastGroupID = 0;
     $lastAddonID = 0;
     $lastAddonModuleID = 0;
     while ($row = $this->fetchRowA()) {
     	$Params = array();
+        $actionColl = new actionColl();
+        $module = new modsetItem($Params);
     	if ($lastID != $row['id']) {
-    		$actionColl = new actionColl();
-    		/*
-    		 $Params['id'] = $row['id'];
-    		 $Params['name'] = $row['name'];
-    		 $Params['codename'] = $row['codename'];
-    		 $Params['processName'] = $row['processName'];
-    		 $Params['xsl'] = $row['xsl'];
-    		 $Params['isSystem'] = $row['isSystem'];
-    		 */
     		$Params = $row;
     		$Params['actions'] = $actionColl;
     		$addonsItem = new addonsSet($Params);
     		$Params['addonsItem'] = $addonsItem;
 
-
-
-    		$module = new modsetItem($Params);
     		$modules->add($module);
 
     	}
@@ -182,6 +169,7 @@ public function getModulesFULL($mod_id = 0) {
     		$groupColl->addItem($gr);
     	}
 //stop($gr['group_name'],0);
+        $modulesAddons = new modsetColl();
     	if($lastAddonID != $row['addon_id'] && $row['addon_id'] > 0) {
     		$Params['addon_id'] = $row['addon_id'];
     		$Params['addon_codename'] = $row['addon_codename'];
@@ -199,10 +187,9 @@ public function getModulesFULL($mod_id = 0) {
     		 $addonsItem = new addonsSet($Params);
     		 $module->addonsItem = $addonsItem;
     		 */
-    		$modulesAddons = new modsetColl();
     		$module->addonsItem->modules = $modulesAddons;
     			
-    		$a = true;
+//    		$a = true;
     		//print_r ($module->addonsItem->modules); //exit;
     	}
 
@@ -225,7 +212,7 @@ public function getModulesFULL($mod_id = 0) {
     	}
 	      $lastID = $row['id'];
 	      $lastActID = $row['maid'];
-	      $lastGroupID = $row['group_id'];
+//	      $lastGroupID = $row['group_id'];
 	      $lastAddonID = $row['addon_id'];
 	      $lastAddonModuleID = $row['addon_module_id'];
 	      //echo $lastAddonID.' '.$lastAddonID.'<br />'.rn;
@@ -263,25 +250,16 @@ public function getModulesFULL($mod_id = 0) {
     $lastID = 0;
     $lastActID = 0;
     while ($row = $this->fetchRowA()) {
-      if ($lastID != $row['id']) {
         $actionColl = new actionColl();
-        /*
-        $Params['id'] = $row['id'];
-        $Params['name'] = $row['name'];
-        $Params['codename'] = $row['codename'];
-        $Params['processName'] = $row['processName'];
-        $Params['xsl'] = $row['xsl'];
-        $Params['isSystem'] = $row['isSystem'];
-        */
+      if ($lastID != $row['id']) {
         $Params = $row;
         $Params['actions'] = $actionColl;
 
         $module = new modsetItem($Params);
         $modules->add($module);
       }
-      if ($lastActID != $row['maid']) {
         $groupColl = new mcColl();
-
+      if ($lastActID != $row['maid']) {
         $Params = array();
         $Params['id'] = $row['maid'];
         $Params['mod_id'] = $row['id'];
@@ -329,10 +307,10 @@ public function getModulesFULL($mod_id = 0) {
    */
   public function chActionGroup($action_id, $group_id, $access) {
   	if ($action_id == 0 || $access == 0 || $group_id == 0) return false;
-  	$sql = 'UPDATE module_access SET access = %3$u WHERE action_id = %1$u AND group_id = %2$u';
+  	$sql = 'UPDATE module_access SET access = \'%3$u\' WHERE action_id = \'%1$u\' AND group_id = \'%2$u\' ';
   	$this->query($sql, $action_id, $group_id, $access);
   	if ($this->affectedRows() == 0) {
-  		$sql = 'INSERT INTO module_access VALUES (%1$u, %2$u, %3$u)';
+  		$sql = 'INSERT INTO module_access VALUES (\'%1$u\', \'%2$u\', \'%3$u\')';
   		if ($this->query($sql, $action_id, $group_id, $access)) return true;
   	} else return true;
   	return false;
@@ -345,7 +323,7 @@ public function getModulesFULL($mod_id = 0) {
    */
   public function chActionAccess($action_id, $access) {
   	if ($action_id == 0 || $access == 0) return false; 
-  	$sql = 'UPDATE module_actions SET access = %2$u WHERE id = %1$u';
+  	$sql = 'UPDATE module_actions SET access = \'%2$u\' WHERE id = \'%1$u\' ';
   	$this->query($sql, $action_id, $access);
   	if ($this->affectedRows() == 1) return true;
   	return false;
@@ -379,7 +357,7 @@ class modsetProcess extends module_process {
     $this->Log->addToLog('Модули', __LINE__, __METHOD__);
     
   if ($_action) $this->action = $_action;
-	$action = $this->actionDefault;
+//	$action = $this->actionDefault;
 	if ($this->action) $action = $this->action;
 	else $action = $this->checkAction();
 	if (!$action) {
@@ -551,8 +529,8 @@ class modsetProcess extends module_process {
     if ($action == 'line') {
       /* показать список */
       if ($user_right > 0) {
-        $coll = $this->nModel->getModules();
-        $this->nView->viewList($coll);
+//        $coll = $this->nModel->getModules();
+//        $this->nView->viewList($coll);
       }
       $this->updated = true;
     }
@@ -560,8 +538,8 @@ class modsetProcess extends module_process {
 	 * ******************************************************************************************************
 	 */
 	
-    $modColl = $this->nModel->modMenu();
-    $this->nView->modMenu($modColl);
+//    $modColl = $this->nModel->modMenu();
+//    $this->nView->modMenu($modColl);
 	$this->Log->addCheckPoint(array('Действие'=>$action),__LINE__, __METHOD__);
 	/**
 	 * ******************************************************************************************************
@@ -597,7 +575,7 @@ class modsetProcess extends module_process {
     if ($action == 'edit') {
       $modID = $this->vals->getVal('edit', 'GET', 'integer');
       if ($modID > 0 && $user_right > 0) {
-        $item = $this->nModel->get($modID, '', '');
+        $item = $this->nModel->get($modID);
         $this->nView->viewEdit($item, $user_id);
       } else {
         $p = 'У Вас нет прав для редактирования модуля';
@@ -655,7 +633,6 @@ class modsetView extends module_view {
 	 * 
 	 * @param $modName
 	 * @param $sysMod
-	 * @return unknown_type
 	 */
   public function __construct ($modName,$sysMod) {
     parent::__construct($modName,$sysMod);
@@ -672,7 +649,7 @@ class modsetView extends module_view {
       $form->addHidden('add', '1', 'add');
       $form->addHidden('user_id', $user_id, 'user_id');
       
-      $form->addHidden('parentMod', '','XSL построения страницы', 'xsl', '', 30);
+      $form->addHidden('parentMod', '','XSL построения страницы');
       
       $form->addText('name', '','Название модуля', 'name', '', 30);
       $form->addText('codename', '','Уникальное имя модуля', 'codename', '', 30);
@@ -698,7 +675,7 @@ $Container = $this->newContainer('form');
       $form = new CFormGenerator($this->modName, SITE_ROOT.$this->modName.'/update-'.$item->id.'/', 'POST', 0);
       $form->addHidden('update', $item->id, 'update');
       $form->addHidden('user_id', $user_id, 'user_id');
-      $form->addHidden('parentMod', '','XSL построения страницы', 'xsl', '', 30);
+      $form->addHidden('parentMod', '','XSL построения страницы');
       $form->addText('name', $item->name,'Название модуля', 'name', '', 30);
       $form->addText('codename', $item->codename,'Уникальное имя модуля', 'codename', '', 30);
       $form->addText('processName', $item->processName,'Class Proccess', 'processName', '', 30);
@@ -723,7 +700,7 @@ $form->addBox('isSystem', $item->isSystem,  'Системный модуль', '
       $form->addHidden('addChild', $item->id, 'add');
       $form->addHidden('id', $item->id, 'add');
       $form->addHidden('user_id', $user_id, 'user_id');
-      $form->addHidden('parentMod', '','XSL построения страницы', 'xsl', '', 30);
+      $form->addHidden('parentMod', '','XSL построения страницы');
       $form->addMessage('parentname', 'Родительский модуль: '.$item->name, 'name');
       $form->addText('name', '','Название модуля', 'name', '', 30);
       $form->addText('codename', 'new_'.$item->codename,'Уникальное имя модуля', 'codename', '', 30);
@@ -758,12 +735,12 @@ $form->addBox('isSystem', $item->isSystem,  'Системный модуль', '
       foreach ($iterator as $item) {
         $gr = '';
         $groups = $item->groups->getIterator();
-        if ($groups->count() > 0) {
+        if (count($groups) > 0) {
           foreach ($groups as $group)
             $gr.= $group->group_id.' ';
         } else $gr = 'нет групп';
         $array = array_merge($item->toArray(), array('groups'=>$gr));
-        $action = $this->arrToXML($array, $actions, 'action');
+        $this->arrToXML($array, $actions, 'action');
       }
 
       return true;
@@ -867,34 +844,7 @@ $form->addBox('isSystem', $item->isSystem,  'Системный модуль', '
       return true;
     }
     
-    
-    public function modMenu($modColl) {
-      $Container = $this->newContainer($this->modName);
-      $this->pXSL[] = RIVC_ROOT.'layout/'.$this->modName.'.menu.xsl';
-      $menuRoot = $this->xml->createElement('menuRoot', '');
-      $Container->appendChild($menuRoot);
-      $this->addAttr('selected', $this->modName, $menuRoot);
-      $iterator = $modColl->getIterator();
-      foreach ($iterator as $item) {
-      	if ($item->parentMod == 0) {
-      		$menu[$item->id] = $this->addToNode($menuRoot, 'menuItem');
-      		$this->addToNode($menu[$item->id], 'name', $item->codename);
-        	$this->addAttr('title', $item->name, $menu[$item->id]);
-        	$this->addAttr('href', $item->codename, $menu[$item->id]);
-      	}
-      	if ($item->parentMod > 0) {
-      		$menu[$item->id] = $this->addToNode($menu[$item->parentMod], 'menuItem', '');
-      		$this->addToNode($menu[$item->id], 'name', $item->codename);
-        	$this->addAttr('title', $item->name, $menu[$item->id]);
-        	$this->addAttr('href', $item->codename, $menu[$item->id]);
-      	}
-      }
-      $s = iconv('utf-8','utf-8', 'Добавить модуль');
-      $menuItem = $this->addToNode($menuRoot, 'menuItem', 'Добавить модуль');      
-      $this->addAttr('title', 'Добавить модуль', $menuItem);
-      $this->addAttr('href', $this->modName.'/new-1', $menuItem);
-      $this->addToNode($menuItem, 'name', $s);
-    }
+
     
     public function viewNewAction(modsetItem $moduleItem, $groups) {
     	$this->pXSL[] = RIVC_ROOT.'layout/form.xsl';
@@ -919,5 +869,3 @@ $form->addBox('isSystem', $item->isSystem,  'Системный модуль', '
       return $form;   	
     }
 }
-
-?>

@@ -84,13 +84,21 @@
                                             </select>
                                         </td>
                                     </tr>
-                                    <tr>
-                                        <td>Заблокировать:</td>
-                                        <td>
-                                            <input type="hidden" name="isBan" value="0"/>
-                                            <input type="checkbox" name="isBan" value="1" id="isBan"/>
-                                        </td>
-                                    </tr>
+                                    <xsl:if test="/page/body/module[@name='CurentUser']/container/group_id = 1">
+                                        <tr>
+                                            <td>Процент инкассации:</td>
+                                            <td>
+                                                <input class="form-control" type="text" name="inkass_proc" id="inkass_proc" value="{user/inkass_proc}"/>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>Заблокировать:</td>
+                                            <td>
+                                                <input type="hidden" name="isBan" value="0"/>
+                                                <input type="checkbox" name="isBan" value="1" id="isBan"/>
+                                            </td>
+                                        </tr>
+                                    </xsl:if>
                                 </tbody>
                             </table>
                             <!--<font color="red">* Поля обязательны для заполнения.</font>-->

@@ -2,43 +2,22 @@
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
     <xsl:template match="container[@module = 'list']">
         <xsl:if test="//page/@isAjax != 1">
-            <h2>Логист</h2>
-
-            <hr/>
-            <form method="post">
+            <form method="post" style="margin-bottom: 2px;">
                 <div class="row">
-                    <div class="col-md-4">
-
+                    <div class="col-sm-9">
                     </div>
-                    <div class="col-md-3">
-                        <div class="input-daterange input-group" id="datepicker">
-                            <input type="text" class="input-sm form-control" id="start_date" name="from" value="{@from}"/>
-                            <span class="input-group-addon">to</span>
-                            <input type="text" class="input-sm form-control" id="end_date" name="to" value="{@to}"/>
+                    <div class="col-sm-3">
+                        <div class="input-group" style="float:right">
+                            <input type="text" class="form-control" id="end_date" name="to" value="{@to}" style="text-align:center" />
+                            <span class="input-group-btn">
+                                <button class="btn btn-info">Обновить</button>
+                            </span>
                         </div>
-                        <script type="text/javascript">
+                        <script>
                             $(function () {
-                            $('#start_date').datetimepicker({format: 'L', locale: 'ru'});
-                            $('#end_date').datetimepicker({format: 'L', locale: 'ru',
-                            useCurrent: false //Important! See issue #1075
-                            });
-                            $("#start_date").on("dp.change", function (e) {
-                            $('#end_date').data("DateTimePicker").minDate(e.date);
-                            });
-                            $("#end_date").on("dp.change", function (e) {
-                            $('#start_date').data("DateTimePicker").maxDate(e.date);
-                            });
-                            $("#start_date").on("dp.show", function (e) {
-                            $('#start_date').data("DateTimePicker").maxDate(e.date);
-                            });
-                            $("#end_date").on("dp.show", function (e) {
-                            $('#end_date').data("DateTimePicker").minDate(e.date);
-                            });
+                            $('#end_date').datetimepicker({format: 'L', locale: 'ru'});
                             });
                         </script>
-                    </div>
-                    <div class="col-md-1">
-                        <button class="btn btn-info btn-sm">Обновить</button>
                     </div>
                 </div>
             </form>
@@ -56,10 +35,12 @@
                     <th>Статус</th>
                     <th>Курьер и телефон</th>
                     <th>Стоимость</th>
-                    <th>Инкассация</th>
-                    <th>% инкассации</th>
-                    <th>Заработок курьера</th>
-                    <th>Заработок компании</th>
+                    <xsl:if test="/page/body/module[@name='CurentUser']/container/group_id = 1">
+                        <th>Инкассация</th>
+                        <th>% инкассации</th>
+                        <th>Заработок курьера</th>
+                        <th>Заработок компании</th>
+                    </xsl:if>
                     <th>Прим. заказ</th>
                     <th>Прим. адрес</th>
                 </thead>
@@ -90,11 +71,15 @@
                             <td><xsl:value-of select="cost_route"/></td>
 
 
-
-                            <td>-</td>
-                            <td>1%</td>
-                            <td>-</td>
-                            <td>-</td>
+                            <xsl:if test="/page/body/module[@name='CurentUser']/container/group_id = 1">
+                                <td>-</td>
+                                <td>
+                                    <xsl:value-of select="(number(cost_route) * number(../../inkass_proc)) div 100"/>
+                                    (<xsl:value-of select="../../inkass_proc"/>%)
+                                </td>
+                                <td>-</td>
+                                <td>-</td>
+                            </xsl:if>
                             <td>
                                 <xsl:value-of select="../../comment"/>
                             </td>

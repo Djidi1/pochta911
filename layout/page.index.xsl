@@ -14,14 +14,12 @@
 				<div id="loadingDiv"><div class="dumbBoxOverlay"/><div class="vertical-offset"><div class="dumbBox"/></div></div>
 				<div class="body-top">
 					<div class="main" style="width:90%;">
-						<xsl:choose>
-						  <xsl:when test="//page/body/module/container/@module = 'agentlist'">
-								<xsl:call-template name="main_headWrap"/>
-						  </xsl:when>
-						  <xsl:otherwise>
-								<xsl:call-template name="headWrap"/>
-						  </xsl:otherwise>
-						</xsl:choose>
+						  <xsl:if test="/page/body/module[@name='CurentUser']/container/login = 1">
+							<xsl:call-template name="main_headWrap"/>
+						  </xsl:if>
+						  <xsl:if test="/page/body/module[@name='CurentUser']/container/login != 1">
+							  <xsl:call-template name="headWrap"/>
+						  </xsl:if>
 						<div id="content">
 							<div class="wrapper2">
 							<xsl:choose>
@@ -46,33 +44,7 @@
 							</div>
 						</div>
 						<div class="clear"/>
-						<div id="foot">
-							<p id="back-top" style="display: none;">
-								<a href="#top">
-									<span/>
-								</a>
-							</p>
-							<div class="well wrapper">
-								<div class="moduletable">
-									<ul class="bottom-menu navbar-nav">
-										<li class="item-207">
-											<a href="#">О компании</a>
-										</li>
-										<li class="item-471">
-											<a href="#">Акции</a>
-										</li>
-										<li class="item-470">
-											<a href="#">Контакты</a>
-										</li>
-									</ul>
-								</div>
-								<div class="footerText">
-									<div class="footer1">Copyright © <xsl:value-of select="//@year"/> Доставка
-										цветов. Все права защищены.
-									</div>
-								</div>
-							</div>
-						</div>
+						<xsl:call-template name="bottom_block"/>
 					</div>
 				</div>
 			</body>

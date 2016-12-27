@@ -67,7 +67,7 @@
                             <span class="icon-bar"/>
                             <span class="icon-bar"/>
                         </button>
-                        <a class="navbar-brand" href="#" title="Доставка цветов">
+                        <a class="navbar-brand" href="/title/" title="Доставка цветов">
                             <img src="./images/logo.png" alt="Logo"/>
                             <span class="header1" style="display:none;">Доставка цветов</span>
                         </a>
@@ -77,19 +77,16 @@
                     <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                         <ul class="nav navbar-nav">
                             <li>
-                                <a href="/">Главная</a>
-                            </li>
-                            <li class="item-207">
-                                <a href="/pages/view-28/">О нас</a>
+                                <a href="/orders/"><i class="fa fa-flag" aria-hidden="true"> </i> Заказы</a>
                             </li>
                             <li>
-                                <a href="/pages/view-49/">Акции</a>
+                                <a href="/orders/LogistList-1"><i class="fa fa-bus" aria-hidden="true"> </i> Логист</a>
                             </li>
                             <li>
-                                <a href="/pages/view-52/">Услуги</a>
+                                <a href="/admin/carsList-1/"><i class="fa fa-car" aria-hidden="true"> </i> Автоштат</a>
                             </li>
                             <li>
-                                <a href="#">Контакты</a>
+                                <a href="/admin/userList-1/"><span class="glyphicon glyphicon-user"> </span> Клиенты</a>
                             </li>
                         </ul>
                         <script>
@@ -103,18 +100,8 @@
                             <!--</div>-->
                             <!--<button type="submit" class="btn btn-default">Submit</button>-->
                         <!--</form>-->
-                        <div class="phoneheader navbar-form navbar-right">
-                            <span class="phone" style="">
-                                <ins/>8 812 222-2222
-                            </span>
-                            <span class="address" style="">
-                                <ins/>
-                                <a href="/pages/view-29/">м.Невский Проспект,
-                                    <nobr>Адрес</nobr>
-                                </a>
-                            </span>
-                        </div>
-                        <div class="moduletable_LoginForm navbar-form navbar-right">
+
+                        <div class="moduletable_LoginForm navbar-right">
                             <xsl:apply-templates
                                     select="//page/body/module[@name = 'CurentUser']/container[@module = 'login']"/>
                             <!--				<div xmlns="" class="form"><div class="poping_links"><a href="/admin/" style="padding-right: 0px;">Менеджерам</a></div></div>-->
@@ -129,6 +116,46 @@
                     <br/>
                     <img src="/images/anim_load.gif"/>
                 </p>
+            </div>
+        </div>
+    </xsl:template>
+    <xsl:template name="bottom_block">
+        <div id="foot">
+            <p id="back-top" style="display: none;">
+                <a href="#top">
+                    <span/>
+                </a>
+            </p>
+            <div class="well wrapper">
+                <div class="moduletable">
+                    <ul class="bottom-menu navbar-nav">
+                        <li>
+                            <a class="btn btn-default btn-xs" href="/pages/">
+                                <span class="glyphicon glyphicon-file"> </span> Страницы
+                            </a>
+                        </li>
+                        <li>
+                            <a class="btn btn-default btn-xs" href="/news/newsadmin-1/">
+                                <span class="glyphicon glyphicon-bullhorn"> </span> Новости
+                            </a>
+                        </li>
+                        <li>
+                            <a class="btn btn-default btn-xs" href="/admin/groupList-1/">
+                                <i class="fa fa-users" aria-hidden="true"> </i> Группы
+                            </a>
+                        </li>
+                        <li>
+                            <a class="btn btn-default btn-xs" href="/admin/getTelegramUpdates-1/">
+                                <i class="fa fa-telegram" aria-hidden="true"> </i> Телеграмм
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="footerText">
+                    <div class="footer1">Copyright © <xsl:value-of select="//@year"/> Доставка
+                        цветов. Все права защищены.
+                    </div>
+                </div>
             </div>
         </div>
     </xsl:template>
