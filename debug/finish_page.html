@@ -1,152 +1,103 @@
-<!DOCTYPE html><html xmlns="http://www.w3.org/1999/xhtml"><head xmlns="http://www.w3.org/TR/xhtml1/strict"><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"></meta><base href="."></base><title>Балтик Лайнс Тур</title><link href="./images/favicon.ico" rel="shortcut icon" type="image/vnd.microsoft.icon"></link><link rel="stylesheet" href="./css/facebox.css" type="text/css"></link><link rel="stylesheet" href="./css/camera.css" type="text/css"></link><link rel="stylesheet" href="./css/bootstrap.min.css?v2" type="text/css"></link><link rel="stylesheet" href="./css/jquery-ui.css" type="text/css"></link><link rel="stylesheet" href="./css/style.css?v2" type="text/css"></link><link rel="stylesheet" href="./css/custom.css" type="text/css"></link><link rel="stylesheet" href="./css/stylesheet.css" type="text/css"></link><link rel="stylesheet" href="./css/system.css" type="text/css"></link><link rel="stylesheet" href="./css/position.css" type="text/css" media="screen,projection"></link><link rel="stylesheet" href="./css/layout.css" type="text/css" media="screen,projection"></link><link rel="stylesheet" href="./css/print.css" type="text/css" media="Print"></link><link rel="stylesheet" href="./css/virtuemart.css?v2" type="text/css"></link><link rel="stylesheet" href="./css/products.css" type="text/css"></link><link rel="stylesheet" href="./css/personal.css" type="text/css"></link><link rel="stylesheet" href="//cdn.datatables.net/plug-ins/3cfcc339e89/integration/bootstrap/3/dataTables.bootstrap.css" type="text/css"></link><link rel="stylesheet" href="./css/colorPicker.css" type="text/css"></link><script src="./js/jquery.min.js" type="text/javascript"></script><script src="./js/jquery-ui.min.js" type="text/javascript"></script><script src="./js/bootstrap.min.js" type="text/javascript"></script><script src="./js/bootbox.min.js" type="text/javascript"></script><script src="./js/jquery.multiselect.min.js?v1" type="text/javascript"></script><script src="./js/jquery.maskinput.min.js" type="text/javascript"></script><script type="text/javascript" src="./js/ready.js?v1"></script><script type="text/javascript" src="./js/script.js?v3"></script><script type="text/javascript" src="./js/jquery.colorPicker.min.js"></script><script type="text/javascript" language="javascript" src="//cdn.datatables.net/1.10.4/js/jquery.dataTables.min.js"></script><script type="text/javascript" language="javascript" src="//cdn.datatables.net/plug-ins/3cfcc339e89/integration/bootstrap/3/dataTables.bootstrap.js"></script><script src="/ckeditor/ckeditor.js?v1"></script><script> 
-var roxyFileman = '/fileman/index.html'; 
-$(function(){
-if ($('#edit_content').length){
-   CKEDITOR.replace( 'edit_content',{filebrowserBrowseUrl:roxyFileman, 
-                                filebrowserUploadUrl:roxyFileman,
-                                filebrowserImageBrowseUrl:roxyFileman+'?type=image',
-                                filebrowserImageUploadUrl:roxyFileman+'?type=image'}); 
-}
-});
- </script></head><body id="tc"><div id="loadingDiv"><div class="dumbBoxOverlay"></div><div class="vertical-offset"><div class="dumbBox"></div></div></div><div class="body-top"><div class="main" style="width:90%;"><div xmlns="http://www.w3.org/TR/xhtml1/strict" id="header"><div class="row-head"><div class="relative"><div id="topmenu"><div class="moduletable-nav"><nav class="navbar navbar-default"><div class="container-fluid"><div class="collapse navbar-collapse" id="navbar-collapse"><ul class="nav navbar-nav"><li><a href="/admin/">Главная М</a></li><li><a href="/tc/search_order-1/">Поиск</a></li><li><a href="/tc/">Туристы</a></li><li><a href="/tc/viewTur-1/">Туры</a></li><li><a href="/tc/viewStoryList-1/">Программы</a></li><li><a href="/tc/viewTurList-1/">Списки заказов</a></li><li><a href="/tc/dobList-1/">Дни рожденья</a></li></ul><script>
-											var now_path = window.location.pathname;
-											$('ul li a[href="'+now_path+'"]').parent().addClass('active');
-										</script></div></div></nav></div></div></div></div><div class="logoheader"><h5 id="logo"><a href="/"><img src="./images/logo.png" alt="Logo"></img></a><span class="header1">БАЛТИК ЛАЙНС ТУР </span></h5></div><div class="moduletable_LoginForm"><div xmlns="" class="form"><div class="poping_links">
-<span style="display: inline-block; padding: 0 10px;">Вы вошли как: admin</span><a href="?logout" id="openLogin">Выйти</a><br><a href="/admin/" style="padding-right: 0px;">Администрирование</a>
-</div></div></div></div><div xmlns="http://www.w3.org/TR/xhtml1/strict" id="loading2" style="display:none;"><div class="loading-block"><p class="title" style="text-align:center;">Пожалуйста, подождите...<br></br><img src="/images/anim_load.gif"></img></p></div></div><div id="content"><div class="wrapper2"><div xmlns="" class="panel panel-default">
-<div class="panel-heading"><h3 class="panel-title">Редактор туров</h3></div>
-<div class="panel-body"><form action="http://bltur.ru/tc/turUpdate-1065/" method="post" name="main_form"><div>
-<input type="hidden" name="tur_id" value="1065"><table class="table table-condensed table-striped"><tbody>
-<tr>
-<th>Название:</th>
-<td><input type="text" name="name" value="НАРВА - ПЮХТИЦЫ (Купчино)" size="30" style="width: 100%;"></td>
-</tr>
-<tr>
-<th>Тип тура:</th>
-<td><select class="" name="id_type"><option value="1" selected>Групповой</option>
-<option value="2">Индивидуальный</option>
-<option value="3">Своей компанией</option>
-<option value="4">Праздничный тур</option></select></td>
-</tr>
-<tr>
-<th>Страна:</th>
-<td><select class="" name="id_loc"><option value="1" selected>Россия</option>
-<option value="6">Финляндия</option>
-<option value="3">Латвия</option>
-<option value="4">Чехия</option>
-<option value="5">Эстония</option>
-<option value="7">Швеция</option>
-<option value="8">Литва</option></select></td>
-</tr>
-<tr>
-<th>Транспорт:</th>
-<td><select class="" name="id_transport"><option value="1" selected>Автобус</option>
-<option value="2">Автобус+Паром</option>
-<option value="3">Ж/Д</option>
-<option value="4">Авиа</option>
-<option value="5">Паром</option></select></td>
-</tr>
-<tr>
-<th>Цель поездки:</th>
-<td><select class="" name="id_target"><option value="1" selected>Экскурсия</option>
-<option value="2">Шопинг</option>
-<option value="3">Спорт</option>
-<option value="4">С детьми</option>
-<option value="5">Путешествие</option>
-<option value="7">Каникулы</option>
-<option value="8">Круиз</option></select></td>
-</tr>
-<tr>
-<th>Даты тура:</th>
-<td class="form-inline"><table><tr>
-<td>с <input class="daty_from" type="text" name="date[]" value="30.05.2015" size="30" style="width: 40%;position: relative; z-index: 100000;">
-											   по <input class="daty_to" type="text" name="date_to[]" value="30.05.2015" size="30" style="width: 40%;position: relative; z-index: 100000;">
-</td>
-<td width="20%"><div class="input-group">
-<input type="text" name="days[]" value="1" size="30"><span class="input-group-addon">дней.</span>
-</div></td>
-<td></td>
-<td></td>
-</tr></table></td>
-</tr>
-<tr>
-<th>Стоимость:</th>
-<td><div class="input-group">
-<input type="text" name="cost" value="900" size="30" style="width: 185px;text-align: right;"><select name="currency" class="input-group-addon" style="width:70px;"><option value="руб." selected>руб.</option>
-<option value="у.е.">у.е.</option></select>
-</div></td>
-</tr>
-<tr>
-<th>Вместимость автобуса:</th>
-<td><div class="input-group">
-<input type="text" name="bus_size" value="27" size="30"><span class="input-group-addon">мест.</span>
-</div></td>
-</tr>
-<tr>
-<th>Горящий:</th>
-<td>
-<input type="checkbox" onclick="if (this.checked) $('#fire').val('1'); else $('#fire').val('0');"><input id="fire" class="" type="hidden" name="fire" value="0">
-</td>
-</tr>
-<tr>
-<th>Описание тура:</th>
-<td><textarea id="edit_content" name="overview" class="form-control" rows="4">&lt;h2&gt;&lt;span style="color:#FF8C00"&gt;&lt;strong&gt;ЭСТОНИЯ&lt;/strong&gt;&lt;/span&gt;&lt;br /&gt;
-&lt;br /&gt;
-&lt;span style="color:#000080"&gt;&lt;strong&gt;НАРВА - ПЮХТИЦЫ*&amp;nbsp;&lt;/strong&gt;&lt;/span&gt;&lt;br /&gt;
-&lt;span style="color:#FF8C00"&gt;1 день&lt;/span&gt;&lt;/h2&gt;
-
-&lt;p&gt;&lt;span style="color:#000080"&gt;16 мая, &amp;nbsp;30 мая, 27 июня, 25 июля, 29 августа, 26 сентября, 24 октября, &amp;nbsp;21 ноября, 19 декабря.&lt;/span&gt;&lt;/p&gt;
-
-&lt;p&gt;&lt;span style="color:#FF8C00"&gt;&lt;strong&gt;Культуры разных стран, средневековье и современность, придают г. Нарве уникальный колорит.&amp;nbsp;&amp;nbsp;&lt;/strong&gt;&lt;br /&gt;
-* Для желающих поездка в Пюхтицкий женский монастырь (доп. плата)&lt;/span&gt;&lt;/p&gt;
-
-&lt;p&gt;&lt;span style="color:#000080"&gt;Отправление из СПб в 5.30 из Купчино.&amp;nbsp;Прохождение границы. Посещение магазина &amp;quot;Дьюти-Фри&amp;quot;&lt;br /&gt;
-&lt;strong&gt;Прибытие в Нарву. &lt;/strong&gt;&lt;/span&gt;&lt;/p&gt;
-
-&lt;p&gt;&lt;span style="color:#000080"&gt;&lt;strong&gt;Обзорная экскурсия по городу:&lt;/strong&gt;&lt;br /&gt;
-&amp;bull; Осмотр замка Герман (за доп. плату осмотр экспозиции музея и подъем на башню Герман)&lt;br /&gt;
-&amp;bull; Панорама Ивангородской крепости и реки Наровы.&lt;br /&gt;
-&amp;bull; Осмотр бастионов XVII века.&lt;br /&gt;
-&amp;bull; Ратушная площадь, Темный сад.&lt;br /&gt;
-&amp;bull; Памятники героям трех воин&lt;br /&gt;
-&amp;bull; Воскресенский православный собор и Александровская лютеранская церковь&lt;br /&gt;
-&amp;bull; Кренгольм&lt;br /&gt;
-&lt;br /&gt;
-Свободное время. Возможность посетить торговые центры.&lt;br /&gt;
-Для желающих 3-х часовая экскурсия в Пюхтицкий женский монастырь (доп плата)&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;/span&gt;&lt;/p&gt;
-
-&lt;p&gt;&lt;span style="color:#000080"&gt;В &lt;strong&gt;16.00&lt;/strong&gt; сбор группы у торгового&amp;nbsp; центра &amp;laquo;FAMA&amp;raquo;.&amp;nbsp;Прохождение границы. Возвращение в Петербург (в свой район)&lt;/span&gt;&lt;br /&gt;
-&lt;br /&gt;
-&lt;span style="color:#FF8C00"&gt;&lt;strong&gt;Стоимость тура: &amp;nbsp;900 руб.&lt;/strong&gt;&lt;/span&gt;&lt;br /&gt;
-&lt;br /&gt;
-&lt;span style="color:#000080"&gt;&lt;strong&gt;В стоимость тура включено:&lt;/strong&gt;&lt;/span&gt;&lt;/p&gt;
-
-&lt;ul&gt;
-	&lt;li&gt;&lt;span style="color:#000080"&gt;Транспортное обслуживание СПб &amp;ndash; Нарва - СПб&lt;/span&gt;&lt;/li&gt;
-	&lt;li&gt;&lt;span style="color:#000080"&gt;Сопровождение гида-экскурсовода&lt;/span&gt;&lt;/li&gt;
-	&lt;li&gt;&lt;span style="color:#000080"&gt;Экскурсия по Нарве&lt;/span&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;&lt;span style="color:#FF8C00"&gt;&lt;strong&gt;Дополнительно оплачивается: &lt;/strong&gt;&lt;/span&gt;&lt;/p&gt;
-
-&lt;ul&gt;
-	&lt;li&gt;&lt;span style="color:#000080"&gt;входные билеты в замок (10 у.е&amp;nbsp;взрослый / 7 у.е&amp;nbsp;ребенок)&lt;/span&gt;&lt;/li&gt;
-	&lt;li&gt;&lt;span style="color:#000080"&gt;автобусная обзорная экскурсия в Пюхтицы - взр.250 руб./ дети до 14 лет - 150&amp;nbsp;руб.&lt;/span&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;&amp;nbsp;&lt;/p&gt;
-</textarea></td>
-</tr>
-<tr>
-<th>Дополнительная информация:</th>
-<td><textarea id="dop_info" name="dop_info" class="form-control" rows="4"></textarea></td>
-</tr>
-<tr>
-<th>Информация по выезду:</th>
-<td><textarea name="comment" class="form-control" rows="4"></textarea></td>
-</tr>
-<tr><td colspan="2"><input class="btn btn-success" type="submit" value="сохранить" name="submit"></td></tr>
-</tbody></table>
-<font color="red">Все поля обязательны для заполнения.</font>
-</div></form></div>
-</div></div></div><div class="clear"></div><div id="foot"><p id="back-top" style="display: none;"><a href="#top"><span></span></a></p><div class="wrapper"><div class="moduletable"><ul class="menu"><li class="item-207"><a href="#">О компании</a></li><li class="item-471"><a href="#">Условия</a></li><li class="item-472"><a href="#">Отзывы</a></li><li class="item-470"><a href="#">Контакты</a></li></ul></div></div><div class="space"><div class="wrapper"><div class="footerText"><div class="footer1">Copyright © 2013-2015 БАЛТИК ЛАЙНС ТУР. Все права защищены.</div></div></div></div></div></div></div></body></html>
+<!DOCTYPE html><html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><base href="."><title>Доставка цветов</title><link href="/images/favicon.png" rel="shortcut icon" type="image/vnd.microsoft.icon"><link rel="stylesheet" href="/css/camera.css"><link rel="stylesheet" href="/css/style.css"><link rel="stylesheet" href="/css/font-awesome.min.css"><link rel="stylesheet" href="/css/print.css" media="Print"><link rel="stylesheet" href="/css/bootstrap.min.css"><link rel="stylesheet" href="/css/bootstrap-datetimepicker.min.css"><link rel="stylesheet" href="//cdn.datatables.net/plug-ins/3cfcc339e89/integration/bootstrap/3/dataTables.bootstrap.css"><script src="/js/jquery.min.js"></script><script src="/js/jquery-ui.min.js"></script><script src="/js/bootstrap.min.js"></script><script src="/js/bootbox.min.js"></script><script src="/js/jquery.multiselect.min.js?v1"></script><script src="/js/jquery.maskinput.min.js"></script><script src="/js/moment.min.js"></script><script src="/js/moment.ru.js"></script><script src="/js/bootstrap-datetimepicker.js"></script><script src="/js/bootstrap-typeahead.min.js"></script><script src="/js/camera.min.js"></script><script src="/js/ready.js?v1"></script><script src="/js/common.js?v1"></script><script src="/js/script.js?v1"></script><script src="//cdn.ckeditor.com/4.6.1/full/ckeditor.js"></script><script src="//cdn.datatables.net/1.10.4/js/jquery.dataTables.min.js"></script><script src="//cdn.datatables.net/plug-ins/3cfcc339e89/integration/bootstrap/3/dataTables.bootstrap.js"></script><script>
+            $(function(){
+            if ($('#edit_content').length){CKEDITOR.replace( 'edit_content');}
+            
+            });
+            </script></head><body id="orders"><div class="body-top"><div class="main" style="width:90%;"><div id="header"><nav class="navbar navbar-default"><div class="container-fluid"><div class="navbar-header"><button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false"><span class="sr-only">Toggle navigation</span><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span></button><a class="navbar-brand" href="#" title="Доставка цветов"><img src="./images/logo.png" alt="Logo"><span class="header1" style="display:none;">Доставка цветов</span></a></div><div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1"><ul class="nav navbar-nav"><li><a href="/">Главная</a></li><li class="item-207"><a href="/pages/view-28/">О нас</a></li><li><a href="/pages/view-49/">Акции</a></li><li><a href="/pages/view-52/">Услуги</a></li><li><a href="#">Контакты</a></li></ul><script>
+                            var now_path = window.location.pathname;
+                            $('ul li a[href="'+now_path+'"]').parent().addClass('active');
+                        </script><div class="phoneheader navbar-form navbar-right"><span class="phone" style=""><ins></ins>8 812 222-2222
+                            </span><span class="address" style=""><ins></ins><a href="/pages/view-29/">м.Невский Проспект,
+                                    <nobr>Адрес</nobr></a></span></div><div class="moduletable_LoginForm navbar-form navbar-right"><div class="form"><div class="poping_links"><span style="display: inline-block; padding: 0 10px;">Вы вошли как: admin</span><a href="?logout" id="openLogin">Выйти</a><br><a href="/admin/" style="padding-right: 0px;">Администрирование</a></div></div></div></div></div></nav></div><div id="loading2" style="display:none;"><div class="loading-block"><p class="title" style="text-align:center;">Пожалуйста, подождите...
+                    <br><img src="/images/anim_load.gif"></p></div></div><div id="content"><div class="wrapper2"><h2>Ваши заказы</h2><div><a class="btn btn-success" href="/orders/order-0/" title="Добавить заказ"><span class="glyphicon glyphicon-flag"></span><span>Новый заказ</span></a></div><hr><form method="post"><div class="row"><div class="col-md-4"></div><div class="col-md-3"><div class="input-daterange input-group" id="datepicker"><input type="text" class="input-sm form-control" id="start_date" name="from" value="01.12.2016"><span class="input-group-addon">to</span><input type="text" class="input-sm form-control" id="end_date" name="to" value="26.12.2016"></div><script type="text/javascript">
+                            $(function () {
+                            $('#start_date').datetimepicker({format: 'L', locale: 'ru'});
+                            $('#end_date').datetimepicker({format: 'L', locale: 'ru',
+                            useCurrent: false //Important! See issue #1075
+                            });
+                            $("#start_date").on("dp.change", function (e) {
+                            $('#end_date').data("DateTimePicker").minDate(e.date);
+                            });
+                            $("#end_date").on("dp.change", function (e) {
+                            $('#start_date').data("DateTimePicker").maxDate(e.date);
+                            });
+                            $("#start_date").on("dp.show", function (e) {
+                            $('#start_date').data("DateTimePicker").maxDate(e.date);
+                            });
+                            $("#end_date").on("dp.show", function (e) {
+                            $('#end_date').data("DateTimePicker").minDate(e.date);
+                            });
+                            });
+                        </script></div><div class="col-md-1"><button class="btn btn-info btn-sm">Обновить</button></div></div></form><table class="table table-striped orders-data-table"><thead><th>Заказ</th><th>Маршрут</th><th>Получатель</th><th>Время доставки</th><th>Стоимость</th><th>Статус</th><th></th></thead><tbody><tr class="order_route_179 order_3" rel="179"><td><div class="row"><div class="col-md-2">
+                                        Готовность:<br><b>17:23</b></div><div class="col-md-3">
+                                        Заказ №
+                                        3<br><b>Администратор</b><br><i>admin</i></div><div class="col-md-3">
+                                        Адрес магазина:<br><b>Пилотов</b><br><i></i></div><div class="col-md-4"><div class="btn-group" role="group" aria-label="Управление заказом"><a href="/orders/order-3/" title="редактировать" class="btn btn-success btn-sm"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span></a><a href="/orders/orderBan-3/" title="удалить" class="btn btn-danger btn-sm" onClick="return confirm('Вы действительно хотите удалить заказ ?');
+                                                "><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></a></div>
+                                        Курьер:<br><b></b><br><i>
+                                            За рулем: </i><div class="btn-group" role="group" aria-label="Изменение курьера"><a href="#" title="Назначить курьера" class="btn btn-info btn-sm" onclick="chg_courier(3)"><i class="fa fa-car" aria-hidden="true"></i> Курьер
+                                            </a></div></div></div><div class="alert alert-success">Тестовый заказ</div></td><td class="order_info" rel='{"order_id": "3","from": "Пилотов","ready": "17:23","to_addr": "Орджоникидзе ул, д.1, корп.2, кв.3","to_time": "17:23","to_fio": "Иванов Иван","to_phone": "911","cost": "500.00"}'>Орджоникидзе ул, 1, 2,
+                                3</td><td>Иванов Иван <nobr><b>911</b></nobr></td><td><b>17:23</b></td><td>500.00</td><td></td><td width="80px" align="center"><div class="btn-group" role="group" aria-label="Изменение статуса"><a href="#" title="Изменить статус" class="btn btn-warning btn-sm" onclick="chg_status(179,3)"><span class="glyphicon glyphicon-flag" aria-hidden="true"></span> Стутус
+                                    </a></div></td></tr><tr class="order_route_180 order_3" rel="180"><td><div class="row"><div class="col-md-2">
+                                        Готовность:<br><b>17:23</b></div><div class="col-md-3">
+                                        Заказ №
+                                        3<br><b>Администратор</b><br><i>admin</i></div><div class="col-md-3">
+                                        Адрес магазина:<br><b>Пилотов</b><br><i></i></div><div class="col-md-4"><div class="btn-group" role="group" aria-label="Управление заказом"><a href="/orders/order-3/" title="редактировать" class="btn btn-success btn-sm"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span></a><a href="/orders/orderBan-3/" title="удалить" class="btn btn-danger btn-sm" onClick="return confirm('Вы действительно хотите удалить заказ ?');
+                                                "><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></a></div>
+                                        Курьер:<br><b></b><br><i>
+                                            За рулем: </i><div class="btn-group" role="group" aria-label="Изменение курьера"><a href="#" title="Назначить курьера" class="btn btn-info btn-sm" onclick="chg_courier(3)"><i class="fa fa-car" aria-hidden="true"></i> Курьер
+                                            </a></div></div></div><div class="alert alert-success">Тестовый заказ</div></td><td class="order_info" rel='{"order_id": "3","from": "Пилотов","ready": "17:23","to_addr": "Славы пр-кт (Фрунзенский), д.4, корп.5, кв.6","to_time": "17:23","to_fio": "Сидоров","to_phone": "222-55-55","cost": "1000.00"}'>Славы пр-кт (Фрунзенский), 4, 5,
+                                6</td><td>Сидоров <nobr><b>222-55-55</b></nobr></td><td><b>17:23</b></td><td>1000.00</td><td></td><td width="80px" align="center"><div class="btn-group" role="group" aria-label="Изменение статуса"><a href="#" title="Изменить статус" class="btn btn-warning btn-sm" onclick="chg_status(180,3)"><span class="glyphicon glyphicon-flag" aria-hidden="true"></span> Стутус
+                                    </a></div></td></tr><tr class="order_route_98 order_2" rel="98"><td><div class="row"><div class="col-md-2">
+                                        Готовность:<br><b>17:23</b></div><div class="col-md-3">
+                                        Заказ №
+                                        2<br><b>Администратор</b><br><i>admin</i></div><div class="col-md-3">
+                                        Адрес магазина:<br><b>Пилотов</b><br><i></i></div><div class="col-md-4"><div class="btn-group" role="group" aria-label="Управление заказом"><a href="/orders/order-2/" title="редактировать" class="btn btn-success btn-sm"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span></a><a href="/orders/orderBan-2/" title="удалить" class="btn btn-danger btn-sm" onClick="return confirm('Вы действительно хотите удалить заказ ?');
+                                                "><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></a></div>
+                                        Курьер:<br><b></b><br><i>
+                                            За рулем: </i><div class="btn-group" role="group" aria-label="Изменение курьера"><a href="#" title="Назначить курьера" class="btn btn-info btn-sm" onclick="chg_courier(2)"><i class="fa fa-car" aria-hidden="true"></i> Курьер
+                                            </a></div></div></div><div class="alert alert-success">Тестовый заказ</div></td><td class="order_info" rel='{"order_id": "2","from": "Пилотов","ready": "17:23","to_addr": "Ветеранов пр-кт (Кировский), д.1, корп.2, кв.3","to_time": "17:23","to_fio": "Иванов Иван","to_phone": "911","cost": "500.00"}'>Ветеранов пр-кт (Кировский), 1, 2,
+                                3</td><td>Иванов Иван <nobr><b>911</b></nobr></td><td><b>17:23</b></td><td>500.00</td><td></td><td width="80px" align="center"><div class="btn-group" role="group" aria-label="Изменение статуса"><a href="#" title="Изменить статус" class="btn btn-warning btn-sm" onclick="chg_status(98,2)"><span class="glyphicon glyphicon-flag" aria-hidden="true"></span> Стутус
+                                    </a></div></td></tr><tr class="order_route_99 order_2" rel="99"><td><div class="row"><div class="col-md-2">
+                                        Готовность:<br><b>17:23</b></div><div class="col-md-3">
+                                        Заказ №
+                                        2<br><b>Администратор</b><br><i>admin</i></div><div class="col-md-3">
+                                        Адрес магазина:<br><b>Пилотов</b><br><i></i></div><div class="col-md-4"><div class="btn-group" role="group" aria-label="Управление заказом"><a href="/orders/order-2/" title="редактировать" class="btn btn-success btn-sm"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span></a><a href="/orders/orderBan-2/" title="удалить" class="btn btn-danger btn-sm" onClick="return confirm('Вы действительно хотите удалить заказ ?');
+                                                "><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></a></div>
+                                        Курьер:<br><b></b><br><i>
+                                            За рулем: </i><div class="btn-group" role="group" aria-label="Изменение курьера"><a href="#" title="Назначить курьера" class="btn btn-info btn-sm" onclick="chg_courier(2)"><i class="fa fa-car" aria-hidden="true"></i> Курьер
+                                            </a></div></div></div><div class="alert alert-success">Тестовый заказ</div></td><td class="order_info" rel='{"order_id": "2","from": "Пилотов","ready": "17:23","to_addr": "Пятилеток пр-кт, д.4, корп.5, кв.6","to_time": "17:23","to_fio": "Сидоров","to_phone": "222-55-55","cost": "1000.00"}'>Пятилеток пр-кт, 4, 5,
+                                6</td><td>Сидоров <nobr><b>222-55-55</b></nobr></td><td><b>17:23</b></td><td>1000.00</td><td></td><td width="80px" align="center"><div class="btn-group" role="group" aria-label="Изменение статуса"><a href="#" title="Изменить статус" class="btn btn-warning btn-sm" onclick="chg_status(99,2)"><span class="glyphicon glyphicon-flag" aria-hidden="true"></span> Стутус
+                                    </a></div></td></tr><tr class="order_route_95 order_1" rel="95"><td><div class="row"><div class="col-md-2">
+                                        Готовность:<br><b>17:00</b></div><div class="col-md-3">
+                                        Заказ №
+                                        1<br><b>Рога и Копыта</b><br><i>Иванов Иван</i></div><div class="col-md-3">
+                                        Адрес магазина:<br><b>Пилотов, 24</b><br><i>Первый</i></div><div class="col-md-4"><div class="btn-group" role="group" aria-label="Управление заказом"><a href="/orders/order-1/" title="редактировать" class="btn btn-success btn-sm"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span></a><a href="/orders/orderBan-1/" title="удалить" class="btn btn-danger btn-sm" onClick="return confirm('Вы действительно хотите удалить заказ ?');
+                                                "><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></a></div>
+                                        Курьер:<br><b>Иванов Иван</b><br><i>
+                                            За рулем: Владелец</i><div class="btn-group" role="group" aria-label="Изменение курьера"><a href="#" title="Назначить курьера" class="btn btn-info btn-sm" onclick="chg_courier(1)"><i class="fa fa-car" aria-hidden="true"></i> Курьер
+                                            </a></div></div></div><div class="alert alert-success">Доставка тестовой продукции</div></td><td class="order_info" rel='{"order_id": "1","from": "Пилотов, 24","ready": "17:00","to_addr": "Ветеранов пр-кт (Кировский), д.36, корп.2, кв.100","to_time": "16:05","to_fio": "Инкогнито","to_phone": "+7999-555-2222","cost": "200.00"}'>Ветеранов пр-кт (Кировский), 36, 2,
+                                100</td><td>Инкогнито <nobr><b>+7999-555-2222</b></nobr></td><td><b>16:05</b></td><td>200.00</td><td>принят</td><td width="80px" align="center"><div class="btn-group" role="group" aria-label="Изменение статуса"><a href="#" title="Изменить статус" class="btn btn-warning btn-sm" onclick="chg_status(95,1)"><span class="glyphicon glyphicon-flag" aria-hidden="true"></span> Стутус
+                                    </a></div></td></tr><tr class="order_route_96 order_1" rel="96"><td><div class="row"><div class="col-md-2">
+                                        Готовность:<br><b>17:00</b></div><div class="col-md-3">
+                                        Заказ №
+                                        1<br><b>Рога и Копыта</b><br><i>Иванов Иван</i></div><div class="col-md-3">
+                                        Адрес магазина:<br><b>Пилотов, 24</b><br><i>Первый</i></div><div class="col-md-4"><div class="btn-group" role="group" aria-label="Управление заказом"><a href="/orders/order-1/" title="редактировать" class="btn btn-success btn-sm"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span></a><a href="/orders/orderBan-1/" title="удалить" class="btn btn-danger btn-sm" onClick="return confirm('Вы действительно хотите удалить заказ ?');
+                                                "><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></a></div>
+                                        Курьер:<br><b>Иванов Иван</b><br><i>
+                                            За рулем: Владелец</i><div class="btn-group" role="group" aria-label="Изменение курьера"><a href="#" title="Назначить курьера" class="btn btn-info btn-sm" onclick="chg_courier(1)"><i class="fa fa-car" aria-hidden="true"></i> Курьер
+                                            </a></div></div></div><div class="alert alert-success">Доставка тестовой продукции</div></td><td class="order_info" rel='{"order_id": "1","from": "Пилотов, 24","ready": "17:00","to_addr": "Саблинская ул, д.34, корп.1, кв.5","to_time": "16:07","to_fio": "Кто-то","to_phone": "8 952 4567895","cost": "300.00"}'>Саблинская ул, 34, 1,
+                                5</td><td>Кто-то <nobr><b>8 952 4567895</b></nobr></td><td><b>16:07</b></td><td>300.00</td><td>в исполнении</td><td width="80px" align="center"><div class="btn-group" role="group" aria-label="Изменение статуса"><a href="#" title="Изменить статус" class="btn btn-warning btn-sm" onclick="chg_status(96,1)"><span class="glyphicon glyphicon-flag" aria-hidden="true"></span> Стутус
+                                    </a></div></td></tr><tr class="order_route_97 order_1" rel="97"><td><div class="row"><div class="col-md-2">
+                                        Готовность:<br><b>17:00</b></div><div class="col-md-3">
+                                        Заказ №
+                                        1<br><b>Рога и Копыта</b><br><i>Иванов Иван</i></div><div class="col-md-3">
+                                        Адрес магазина:<br><b>Пилотов, 24</b><br><i>Первый</i></div><div class="col-md-4"><div class="btn-group" role="group" aria-label="Управление заказом"><a href="/orders/order-1/" title="редактировать" class="btn btn-success btn-sm"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span></a><a href="/orders/orderBan-1/" title="удалить" class="btn btn-danger btn-sm" onClick="return confirm('Вы действительно хотите удалить заказ ?');
+                                                "><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></a></div>
+                                        Курьер:<br><b>Иванов Иван</b><br><i>
+                                            За рулем: Владелец</i><div class="btn-group" role="group" aria-label="Изменение курьера"><a href="#" title="Назначить курьера" class="btn btn-info btn-sm" onclick="chg_courier(1)"><i class="fa fa-car" aria-hidden="true"></i> Курьер
+                                            </a></div></div></div><div class="alert alert-success">Доставка тестовой продукции</div></td><td class="order_info" rel='{"order_id": "1","from": "Пилотов, 24","ready": "17:00","to_addr": "Ивановская ул, д.34, корп.1, кв.5","to_time": "16:05","to_fio": "Кто-то2","to_phone": "8 952 4567895","cost": "300.00"}'>Ивановская ул, 34, 1,
+                                5</td><td>Кто-то2 <nobr><b>8 952 4567895</b></nobr></td><td><b>16:05</b></td><td>300.00</td><td></td><td width="80px" align="center"><div class="btn-group" role="group" aria-label="Изменение статуса"><a href="#" title="Изменить статус" class="btn btn-warning btn-sm" onclick="chg_status(97,1)"><span class="glyphicon glyphicon-flag" aria-hidden="true"></span> Стутус
+                                    </a></div></td></tr></tbody></table></div></div><div class="clear"></div><div id="foot"><p id="back-top" style="display: none;"><a href="#top"><span></span></a></p><div class="well wrapper"><div class="moduletable"><ul class="bottom-menu navbar-nav"><li class="item-207"><a href="#">О компании</a></li><li class="item-471"><a href="#">Акции</a></li><li class="item-470"><a href="#">Контакты</a></li></ul></div><div class="footerText"><div class="footer1">Copyright © 2016 Доставка
+                                        цветов. Все права защищены.
+                                    </div></div></div></div></div></div></body></html>

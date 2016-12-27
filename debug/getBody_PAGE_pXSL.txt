@@ -1,2 +1,2 @@
 layout/viewLoginBar.xsl
- layout/tc/tc.turedit.xsl
+ layout/orders/orders.view.xsl
