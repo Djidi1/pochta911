@@ -67,6 +67,21 @@ class adminModel extends module_model {
 
     }
 
+    public function loadTelegramUpdates(){
+
+	    $sql = "SELECT id, sender, chat_id, update_id, message_id, text, date, dk 
+                FROM log_telegram 
+                ";
+        $this->query ( $sql );
+        $items = array ();
+        while ( ($row = $this->fetchRowA ()) !== false ) {
+            $items [] = $row;
+        }
+
+        return $items;
+
+    }
+
 	public function userInsert($Params) {
 		$passi = md5 ( $Params ['pass'] );
 		$sql = 'INSERT INTO `users` (name,email,login,phone,phone_mess,title,isBan,inkass_proc,pass,date_reg)
@@ -1062,27 +1077,28 @@ class adminProcess extends module_process {
 
 		if ($action == 'getTelegramUpdates') {
 			$users = $this->nModel->userList();
-			$response =  $this->callApiTlg('getUpdates', array(), TLG_TOKEN);
-			$items = array();
-			foreach ($response->result as $data){
-                if (isset($data->message)) {
-                    $from = $data->message->from;
-                    $chat = $data->message->chat;
-                    $date = $data->message->date;
-                    $text = $data->message->text;
-
-                    $row['user_name'] = $from->first_name . " " .
-                        (isset($from->last_name) ? $from->last_name : '') .
-                        (isset($from->username) ? " [" . $from->username . "]" : '');
-                    $row['chat_id'] = $chat->id;
-                    $row['update_id'] = $data->update_id;
-                    $row['message_id'] = $data->message->message_id;
-                    $row['date'] = date('d.m.Y H:i', $date);
-                    $row['text'] = $text;
-                    $items[] = $row;
-                }
-			}
-			$this->nModel->saveTelegramUpdates ($items);
+//			$response =  $this->callApiTlg('getUpdates', array(), TLG_TOKEN);
+//			$items = array();
+//			foreach ($response->result as $data){
+//                if (isset($data->message)) {
+//                    $from = $data->message->from;
+//                    $chat = $data->message->chat;
+//                    $date = $data->message->date;
+//                    $text = $data->message->text;
+//
+//                    $row['user_name'] = $from->first_name . " " .
+//                        (isset($from->last_name) ? $from->last_name : '') .
+//                        (isset($from->username) ? " [" . $from->username . "]" : '');
+//                    $row['chat_id'] = $chat->id;
+//                    $row['update_id'] = $data->update_id;
+//                    $row['message_id'] = $data->message->message_id;
+//                    $row['date'] = date('d.m.Y H:i', $date);
+//                    $row['text'] = $text;
+//                    $items[] = $row;
+//                }
+//			}
+//			$this->nModel->saveTelegramUpdates ($items);
+            $items = $this->nModel->loadTelegramUpdates ();
 			$this->nView->viewTelegramUpdates ( $items, $users );
 			$this->updated = true;
 		}

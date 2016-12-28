@@ -76,14 +76,15 @@ function chg_courier(order_id){
 function send_new_courier(){
     var order_id = $('.bootbox-body').find('input[name=order_id]').val();
     var order_route_id = $('.bootbox-body').find('input[name=order_route_id]').val();
-    var new_courier = $('.bootbox-body').find('select[name=new_courier]').val();
+    // var new_courier = $('.bootbox-body').find('select[name=new_courier]').val();
+    var new_courier = $('.bootbox-body').find('input[name=new_courier]').val();
     var new_car_courier = $('.bootbox-body').find('select[name=new_car_courier]').val();
     var courier_comment = $('.bootbox-body').find('textarea[name=courier_comment]').val();
     var order_info_message = $('.bootbox-body').find('input[name=order_info_message]').val();
 
     $.post("/orders/chg_courier-1/", {order_id:order_id,order_route_id:order_route_id,new_courier:new_courier,new_car_courier:new_car_courier,courier_comment:courier_comment,order_info_message:order_info_message},  function(data) {
-          // bootbox.alert(data,location.reload());
-        bootbox.alert(data);
+          bootbox.alert(data,location.reload());
+        // bootbox.alert(data);
     });
 
 }
@@ -95,7 +96,7 @@ function chg_status(order_route_id, order_id){
             message: data,
             callback: function(result){ if(result){send_new_status()} }
         });
-        //bootbox.alert(data,send_new_status(this));
+        // bootbox.alert(data,send_new_status(this));
     });
 }
 
@@ -106,8 +107,8 @@ function send_new_status(){
     var order_info_message = $('.bootbox-body').find('input[name=order_info_message]').val();
 
     $.post("/orders/chg_status-1/", {order_route_id:order_route_id,new_status:new_status,stat_comment:stat_comment,order_info_message:order_info_message},  function(data) {
-        // bootbox.alert(data,location.reload());
-        bootbox.alert(data);
+        bootbox.alert(data,location.reload());
+        // bootbox.alert(data);
     });
 
 }
@@ -123,4 +124,25 @@ function autoc_spb_streets(){
         var localData = JSON.parse(localStorage.getItem('spb_street_data'));
         $(".spb-streets").typeahead({ source: localData, hint: true });
     }
+}
+
+
+
+function filter_table(){
+    $('TABLE.new-logist-data-table TBODY tr').hide();
+    var i = 0;
+    $('input.statuses').each(function() {
+        if ( $(this).is(':visible') && $(this).prop('checked') ) {
+            var chk_val = $(this).val();
+            $('TABLE.new-logist-data-table TBODY tr.status_'+chk_val).show();
+            // Если статус выбран, но таких строк нет, то показывать все.
+            // if ($('.new-logist-data-table tr.status_'+chk_val).length){
+                i++;
+            // }
+        }
+    });
+    if (i == 0){
+        $('.new-logist-data-table TBODY tr').show();
+    }
+
 }

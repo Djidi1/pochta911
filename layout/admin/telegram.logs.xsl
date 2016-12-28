@@ -9,17 +9,20 @@
             <hr/>
             <table class="table table-hover table-striped data-table">
                 <thead>
+                    <th>Дата</th>
                     <th>Отправитель</th>
                     <th>Идентификатор чата</th>
                     <th>Связанный пользователь</th>
-                    <th>Дата</th>
                     <th>Сообщение</th>
                 </thead>
                 <tbody>
                     <xsl:for-each select="item">
                         <tr>
                             <td>
-                                <xsl:value-of select="user_name"/>
+                                <xsl:value-of select="date"/>
+                            </td>
+                            <td>
+                                <xsl:value-of select="sender"/>
                             </td>
                             <td>
                                 <xsl:value-of select="chat_id"/>
@@ -30,9 +33,6 @@
                                         <xsl:value-of select="chat_id"/>
                                     </xsl:with-param>
                                 </xsl:call-template>
-                            </td>
-                            <td>
-                                <xsl:value-of select="date"/>
                             </td>
                             <td>
                                 <xsl:value-of select="text"/>

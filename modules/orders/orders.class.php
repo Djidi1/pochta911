@@ -42,7 +42,7 @@ class ordersModel extends module_model {
 	public function getCarCouriers() {
 		$sql = 'SELECT
 				  id,
-				  fio
+				  fio, car_number
 				FROM cars_couriers WHERE isBan != 1';
 		return $this->get_assoc_array($sql);
 	}
@@ -57,7 +57,7 @@ class ordersModel extends module_model {
 	public function getRoutes($order_id) {
 		$sql = 'SELECT r.id id_route, `to`,to_house,to_corpus,to_appart,
 					  to_fio,to_phone,to_coord,from_coord,lenght,cost_route,
-					  `to_time`,r.`comment`, s.status
+					  `to_time`,r.`comment`, s.status, s.id status_id
 				FROM orders_routes r
 				LEFT JOIN orders_status s ON s.id = r.id_status
 				WHERE id_order = '.$order_id;
@@ -94,6 +94,7 @@ class ordersModel extends module_model {
 					   u.title,
 					   u.phone,
 					   cc.fio fio_car,
+					   cc.car_number,
 					   c.fio fio_courier
 				FROM orders o
 				LEFT JOIN cars_couriers cc ON cc.id = o.id_car
@@ -149,6 +150,7 @@ class ordersModel extends module_model {
 					   u.name, u.title, o.dk, o.id_user,
 					   o.id_courier, o.id_car,
 					   cc.fio fio_car,
+					   cc.car_number,
 					   c.fio fio_courier
                   FROM orders o
                 LEFT JOIN users_address a ON a.id = o.id_address
@@ -545,23 +547,24 @@ class ordersProcess extends module_process {
 				$select .= "<select class='form-control' name='new_car_courier' >";
 				foreach ($car_couriers as $car) {
 					$selected = ($order['id_car'] == $car['id']) ? 'selected=""' : '';
-					$select .= "<option value='" . $car['id'] . "' $selected>" . $car['fio'] . "</option>";
+					$select .= "<option value='" . $car['id'] . "' $selected>" . $car['fio'] . " (" . $car['car_number'] . ")</option>";
 				}
                 $select .= "</select></div>";
-                $couriers = $this->nModel->getCouriers();
+               /* $couriers = $this->nModel->getCouriers();
                 $select2 = '<div class="input-group"><span class="input-group-addon">За рулем:</span>';
                 $select2 .= "<select class='form-control' name='new_courier' >";
                 foreach ($couriers as $courier) {
                     $selected = ($order['id_car'] == $courier['id']) ? 'selected=""' : '';
                     $select2 .= "<option value='" . $courier['id'] . "' $selected>" . $courier['fio'] . "</option>";
                 }
-				$select2 .= "</select></div>";
+				$select2 .= "</select></div>";*/
+                $input2 = "<input type='hidden' name='new_courier' value='1'/>";
                 $comment = "<textarea class='form-control' name='courier_comment' placeholder='Комментарий для курьера'></textarea>";
                 $info = "<div class='alert alert-success'>".str_replace("\r\n","<br/>",$order_info_message)."</div>";
 				$info .= "<div class='alert alert-info'>Выберите курьера для данного заказа.</div>
 						<input type='hidden' name='order_id' value='$order_id' />
 						<input type='hidden' name='order_info_message' value='$order_info_message' />";
-				echo $info . "<br/>" . $select . $select2 . $comment;
+				echo $info . "<br/>" . $select . $input2 . $comment;
 			}
 			exit();
 		}
@@ -582,8 +585,9 @@ class ordersProcess extends module_process {
 
 		if ($action == 'LogistList') {
             list($from, $to) = $this->get_post_date();
+            $statuses = $this->nModel->getStatuses();
 			$orders = $this->nModel->getLogistList($from, $to);
-			$this->nView->viewLogistList ($from, $to, $orders);
+			$this->nView->viewLogistList ($from, $to, $orders,$statuses);
 		}
 
 
@@ -612,16 +616,16 @@ class ordersProcess extends module_process {
 	}
 
 	public function get_post_date(){
-        //			$from = $this->Vals->getVal ( 'from', 'POST', 'string' );
-        $to = $this->Vals->getVal ( 'to', 'POST', 'string' );
+        //			$from = $this->Vals->getVal ( 'date_from', 'POST', 'string' );
+        $to = $this->Vals->getVal ( 'date_to', 'POST', 'string' );
         $from = $to;
         if ($to == '') {
-//				$from = (isset($_SESSION['from']) and $_SESSION['from'] != '') ? $_SESSION['from'] : date('01.m.Y');
-            $to = (isset($_SESSION['to']) and $_SESSION['to'] != '') ? $_SESSION['to'] : date('d.m.Y');
+//				$from = (isset($_SESSION['date_from']) and $_SESSION['date_from'] != '') ? $_SESSION['date_from'] : date('01.m.Y');
+            $to = (isset($_SESSION['date_to']) and $_SESSION['date_to'] != '') ? $_SESSION['date_to'] : date('d.m.Y');
             $from = $to;
         }else{
-            $_SESSION['from'] = $from;
-            $_SESSION['to'] = $to;
+            $_SESSION['date_from'] = $from;
+            $_SESSION['date_to'] = $to;
         }
         return array($from,$to);
     }
@@ -689,8 +693,8 @@ class ordersView extends module_View {
 		$this->pXSL [] = RIVC_ROOT . 'layout/orders/orders.view.xsl';
 		$Container = $this->newContainer ( 'list' );
 
-        $this->addAttr('from', $from, $Container);
-        $this->addAttr('to', $to, $Container);
+        $this->addAttr('date_from', $from, $Container);
+        $this->addAttr('date_to', $to, $Container);
 
         $ContainerNews = $this->addToNode ( $Container, 'orders', '' );
 		foreach ( $orders as $item ) {
@@ -699,17 +703,22 @@ class ordersView extends module_View {
 		return true;
 	}
 
-	public function viewLogistList($from, $to, $orders) {
+	public function viewLogistList($from, $to, $orders, $statuses) {
 		$this->pXSL [] = RIVC_ROOT . 'layout/orders/logist.view.xsl';
 		$Container = $this->newContainer ( 'list' );
 
-		$this->addAttr('from', $from, $Container);
-		$this->addAttr('to', $to, $Container);
+		$this->addAttr('date_from', $from, $Container);
+		$this->addAttr('date_to', $to, $Container);
 
-		$ContainerNews = $this->addToNode ( $Container, 'orders', '' );
+		$ContainerOrders = $this->addToNode ( $Container, 'orders', '' );
 		foreach ( $orders as $item ) {
-			$this->arrToXML ( $item, $ContainerNews, 'item' );
+			$this->arrToXML ( $item, $ContainerOrders, 'item' );
 		}
+
+        $ContainerStatuses = $this->addToNode ( $Container, 'statuses', '' );
+        foreach ( $statuses as $item ) {
+            $this->arrToXML ( $item, $ContainerStatuses, 'item' );
+        }
 		return true;
 	}
 
@@ -754,6 +763,7 @@ class ordersView extends module_View {
 	public function viewOrderEdit($order, $stores, $routes, $client_title) {
 		$this->pXSL [] = RIVC_ROOT . 'layout/orders/order.edit.xsl';
 		$Container = $this->newContainer ( 'order' );
+        $this->addAttr ( 'today', date('d.m.Y'), $Container );
 
 		$this->arrToXML ( $order, $Container, 'order' );
 

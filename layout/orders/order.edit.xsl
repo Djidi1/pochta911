@@ -42,7 +42,13 @@
                             <div class="row">
                                 <div class="col-sm-2"><label>Дата:</label></div>
                                 <div class="col-sm-4">
-                                    <input class="form-control date-picker" type="text" name="date" onkeyup="check_user(this)" value="{order/date}" size="30" required=""/>
+                                    <input class="form-control date-picker" type="text" name="date" onkeyup="check_user(this)" value="{order/date}" size="30" required="">
+                                        <xsl:if test="not(order/date)">
+                                            <xsl:attribute name="value">
+                                                <xsl:value-of select="@today"/>
+                                            </xsl:attribute>
+                                        </xsl:if>
+                                    </input>
                                 </div>
                                 <div class="col-sm-2"><label>Готовность:</label></div>
                                 <div class="col-sm-4">

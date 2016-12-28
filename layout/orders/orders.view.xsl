@@ -12,7 +12,7 @@
                     </div>
                     <div class="col-sm-3">
                         <div class="input-group" style="float:right">
-                            <input type="text" class="form-control" id="end_date" name="to" value="{@to}" style="text-align:center" />
+                            <input type="text" class="form-control" id="end_date" name="date_to" value="{@date_to}" style="text-align:center" />
                             <span class="input-group-btn">
                                 <button class="btn btn-info">Обновить</button>
                             </span>
@@ -81,9 +81,11 @@
                                         Курьер:<br/>
                                         <b><xsl:value-of select="../../fio_car"/></b>
                                         <br/>
-                                        <i>
-                                            За рулем: <xsl:value-of select="../../fio_courier"/>
-                                        </i>
+                                        <i><xsl:value-of select="../../car_number"/></i>
+                                        <!--<br/>-->
+                                        <!--<i>-->
+                                            <!--За рулем: <xsl:value-of select="../../fio_courier"/>-->
+                                        <!--</i>-->
                                         <div class="btn-group" role="group" aria-label="Изменение курьера">
                                             <a href="#" title="Назначить курьера" class="btn btn-info btn-sm" onclick="chg_courier({../../id})">
                                                 <i class="fa fa-car" aria-hidden="true"> </i> Курьер
