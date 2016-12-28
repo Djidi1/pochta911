@@ -54,13 +54,17 @@
                 </thead>
                 <tbody>
                     <xsl:for-each select="orders/item/route/array">
-                        <tr class="status_{status_id} order_route_{id_route}">
+                        <tr class="status_{status_id} order_route_{id_route} order_{../../id}" rel="{id_route}">
+                            <xsl:attribute name="class">
+                                status_<xsl:value-of select="status_id"/> order_route_<xsl:value-of select="id_route"/> order_<xsl:value-of select="../../id"/>
+                                <xsl:if test="../../car_accept != ''"> info</xsl:if>
+                            </xsl:attribute>
                             <td class="text text-muted"><xsl:value-of select="position()"/></td>
                             <td>
-                                <xsl:value-of select="../../id"/>
                                 <a href="/orders/order-{../../id}/" title="редактировать" class="btn btn-success btn-sm chg-status">
                                     <span class="glyphicon glyphicon-pencil" aria-hidden="true"> </span> Изм.
                                 </a>
+                                <xsl:value-of select="../../id"/>
                             </td>
                             <td><xsl:value-of select="../../ready"/></td>
                             <td><xsl:value-of select="to_time"/></td>
@@ -79,28 +83,35 @@
                             </nobr></td>
                             <td><xsl:value-of select="to_fio"/></td>
                             <td class="order_info">
-                                <xsl:attribute name="rel">{"order_id": "<xsl:value-of select="../../id"/>","from": "<xsl:value-of select="../../from"/>","ready": "<xsl:value-of select="../../ready"/>","to_addr": "<xsl:value-of select="to"/>, д.<xsl:value-of select="to_house"/>, корп.<xsl:value-of select="to_corpus"/>, кв.<xsl:value-of select="to_appart"/>","to_time": "<xsl:value-of select="to_time"/>","to_fio": "<xsl:value-of select="to_fio"/>","to_phone": "<xsl:value-of select="to_phone"/>","cost": "<xsl:value-of select="cost_route"/>"}</xsl:attribute>
-                                <xsl:value-of select="status"/>
+                                <xsl:attribute name="rel">{"order_id": "<xsl:value-of select="../../id"/>","from": "<xsl:value-of select="../../address"/>","ready": "<xsl:value-of select="../../ready"/>","to_addr": "<xsl:value-of select="to"/>, д.<xsl:value-of select="to_house"/>, корп.<xsl:value-of select="to_corpus"/>, кв.<xsl:value-of select="to_appart"/>","to_time": "<xsl:value-of select="to_time"/>","to_fio": "<xsl:value-of select="to_fio"/>","to_phone": "<xsl:value-of select="to_phone"/>","cost": "<xsl:value-of select="cost_route"/>"}</xsl:attribute>
+                                <xsl:attribute name="class">
+                                    order_info
+                                    <xsl:if test="status_id = 3"> warning</xsl:if>
+                                    <xsl:if test="status_id = 4"> success</xsl:if>
+                                    <xsl:if test="status_id = 5"> danger</xsl:if>
+                                </xsl:attribute>
                                 <div title="Изменить статус" class="btn btn-warning btn-sm chg-status" onclick="chg_status({id_route},{../../id})">
                                     <span class="glyphicon glyphicon-flag" aria-hidden="true"> </span> Стутус
                                 </div>
+                                <xsl:value-of select="status"/>
                             </td>
-                            <td><xsl:value-of select="../../car_fio"/>
-                                <a href="#" title="Назначить курьера" class="btn btn-info btn-sm chg-status" onclick="chg_courier({../../id})">
+                            <td>
+                                <div title="Назначить курьера" class="btn btn-info btn-sm chg-status" onclick="chg_courier({../../id})">
                                     <i class="fa fa-car" aria-hidden="true"> </i> Курьер
-                                </a>
+                                </div>
+                                <xsl:value-of select="../../fio_car"/> (<xsl:value-of select="../../car_number"/>)
                             </td>
-                            <td><xsl:value-of select="cost_route"/></td>
+                            <td><xsl:value-of select="cost_tovar"/></td>
 
 
                             <xsl:if test="/page/body/module[@name='CurentUser']/container/group_id = 1">
-                                <td>-</td>
+                                <td><xsl:value-of select="number(cost_route)+number(cost_tovar)"/></td>
                                 <td>
-                                    <xsl:value-of select="(number(cost_route) * number(../../inkass_proc)) div 100"/>
+                                    <xsl:value-of select="((number(cost_route)+number(cost_tovar)) * number(../../inkass_proc)) div 100"/>
                                     (<xsl:value-of select="../../inkass_proc"/>%)
                                 </td>
-                                <td>-</td>
-                                <td>-</td>
+                                <td><xsl:value-of select="number(cost_route) * 0.75"/></td>
+                                <td><xsl:value-of select="number(cost_route) * 0.25"/></td>
                             </xsl:if>
                             <td>
                                 <xsl:value-of select="../../comment"/>

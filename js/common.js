@@ -144,5 +144,10 @@ function filter_table(){
     if (i == 0){
         $('.new-logist-data-table TBODY tr').show();
     }
+}
 
+function re_calc(obj){
+    var cost_tovar = $(obj).parent().find('.cost_tovar').val();
+    var cost_route = $(obj).parent().find('.cost_route').val();
+    $(obj).parent().find('.cost_all').val(Number(cost_tovar)+Number(cost_route));
 }

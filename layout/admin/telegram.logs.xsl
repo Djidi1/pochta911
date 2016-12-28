@@ -14,6 +14,7 @@
                     <th>Идентификатор чата</th>
                     <th>Связанный пользователь</th>
                     <th>Сообщение</th>
+                    <th>Ответ</th>
                 </thead>
                 <tbody>
                     <xsl:for-each select="item">
@@ -36,6 +37,9 @@
                             </td>
                             <td>
                                 <xsl:value-of select="text"/>
+                            </td>
+                            <td>
+                                <xsl:value-of select="data"/>
                             </td>
                         </tr>
                     </xsl:for-each>

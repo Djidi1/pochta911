@@ -56,7 +56,7 @@ class ordersModel extends module_model {
 
 	public function getRoutes($order_id) {
 		$sql = 'SELECT r.id id_route, `to`,to_house,to_corpus,to_appart,
-					  to_fio,to_phone,to_coord,from_coord,lenght,cost_route,
+					  to_fio,to_phone,to_coord,from_coord,lenght,cost_route,cost_tovar,
 					  `to_time`,r.`comment`, s.status, s.id status_id
 				FROM orders_routes r
 				LEFT JOIN orders_status s ON s.id = r.id_status
@@ -71,7 +71,7 @@ class ordersModel extends module_model {
 
 	public function getOrderRoute($order_route_id) {
 	    $sql = "SELECT id id_route, id_order, `to`, to_house, to_corpus, to_appart, to_fio, to_phone, to_coord, 
-                      from_coord, lenght, cost_route, to_date, to_time, comment, id_status, dk 
+                      from_coord, lenght, cost_route,cost_tovar, to_date, to_time, comment, id_status, dk 
                 FROM orders_routes
                 WHERE id = $order_route_id";
 	    $row = $this->get_assoc_array($sql);
@@ -170,9 +170,15 @@ class ordersModel extends module_model {
 	}
 
 	public function getLogistList($from, $to) {
-		$sql = 'SELECT o.id, ua.address,ua.comment addr_comment, u.name,u.title, o.ready, o.date, o.comment, u.inkass_proc
+		$sql = 'SELECT o.id, ua.address,ua.comment addr_comment, u.name,u.title, o.ready, o.date, o.comment, u.inkass_proc, o.id_car,
+					   cc.fio fio_car,
+					   cc.car_number,
+					   c.fio fio_courier,
+					   o.car_accept
 			  FROM orders o
 			  LEFT JOIN users_address ua ON o.id_address = ua.id
+			  LEFT JOIN cars_couriers cc ON cc.id = o.id_car
+			  LEFT JOIN couriers c ON c.id = o.id_car
 			  LEFT JOIN users u ON u.id = o.id_user
                   WHERE o.dk BETWEEN \''.$this->dmy_to_mydate($from).'\' AND \''.$this->dmy_to_mydate($to).' 23:59:59\'
                 LIMIT 0,1000';
@@ -250,10 +256,10 @@ class ordersModel extends module_model {
 				$sql_values .= ($key > 0)?',':'';
                 $sql_values .= ' (\''.$order_id.'\',\''.$params ['to'][$key].'\',\''.$params ['to_house'][$key].'\',\''.$params ['to_corpus'][$key].'\',
 							\''.$params ['to_appart'][$key].'\',\''.$params ['to_fio'][$key].'\',\''.$params ['to_phone'][$key].'\',
-							\''.$params ['cost_route'][$key].'\',\''.$params ['to_time'][$key].'\',\''.$params ['comment'][$key].'\'	)';
+							\''.$params ['cost_route'][$key].'\',\''.$params ['cost_tovar'][$key].'\',\''.$params ['to_time'][$key].'\',\''.$params ['comment'][$key].'\'	)';
 			}
 			if ($sql_values != '') {
-                $sql = "INSERT INTO orders_routes (id_order,`to`,`to_house`,`to_corpus`,`to_appart`,`to_fio`,`to_phone`,`cost_route`,`to_time`,`comment`) VALUES $sql_values";
+                $sql = "INSERT INTO orders_routes (id_order,`to`,`to_house`,`to_corpus`,`to_appart`,`to_fio`,`to_phone`,`cost_route`,`cost_tovar`,`to_time`,`comment`) VALUES $sql_values";
                 $this->query($sql);
             }
 		}
@@ -441,6 +447,7 @@ class ordersProcess extends module_process {
 			$params['to_phone'] = $this->Vals->getVal ( 'to_phone', 'POST', 'array' );
 			$params['to_time'] = $this->Vals->getVal ( 'to_time', 'POST', 'array' );
 			$params['cost_route'] = $this->Vals->getVal ( 'cost_route', 'POST', 'array' );
+			$params['cost_tovar'] = $this->Vals->getVal ( 'cost_tovar', 'POST', 'array' );
 			$params['comment'] = $this->Vals->getVal ( 'comment', 'POST', 'array' );
 			if ($params['order_id'] > 0) {
 				$id_code = $this->nModel->orderUpdate($params);

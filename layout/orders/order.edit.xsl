@@ -79,8 +79,10 @@
                                     <input type="text" class="form-control" name="to_appart[]" placeholder="Квартира" title="Квартира" value="{to_appart}" style="width: 33%;"/>
                                     <input type="text" class="form-control" name="to_fio[]" placeholder="Получатель" title="Получатель" value="{to_fio}" style="width: 50%;"/>
                                     <input type="text" class="form-control" name="to_phone[]" placeholder="Телефон получателя" title="Телефон получателя" value="{to_phone}" style="width: 50%;"/>
-                                    <input type="text" class="form-control time-picker" name="to_time[]" placeholder="Время доставки" title="Время доставки" value="{to_time}" style="width: 50%;"/>
-                                    <input type="text" class="form-control" name="cost_route[]" placeholder="Инкассация" title="Инкассация" value="{cost_route}" style="width: 50%;"/>
+                                    <input type="text" class="form-control time-picker" name="to_time[]" placeholder="Время доставки" title="Время доставки" value="{to_time}" style="width: 25%;"/>
+                                    <input type="text" class="form-control cost_tovar" name="cost_tovar[]" placeholder="Стоимость товара" title="Стоимость товара" value="{cost_tovar}" style="width: 25%;" onkeyup="re_calc(this)"/>
+                                    <input type="text" class="form-control cost_route" name="cost_route[]" placeholder="Стоимость доставки" title="Стоимость доставки" value="{cost_route}" style="width: 25%;" onkeyup="re_calc(this)"/>
+                                    <input type="text" class="form-control cost_all" placeholder="Инкассация" title="Инкассация" value="{number(cost_route)+number(cost_tovar)}" style="width: 25%;" disabled=""/>
                                     <br/>
                                     <textarea name="comment[]" class="form-control" placeholder="Комментарий" title="Комментарий">
                                         <xsl:value-of select="comment"/>
@@ -111,8 +113,10 @@
                                     <input type="text" class="form-control" name="to_appart[]" placeholder="Квартира" value="" style="width: 33%;"/>
                                     <input type="text" class="form-control" name="to_fio[]" placeholder="Получатель" value="" style="width: 50%;"/>
                                     <input type="text" class="form-control" name="to_phone[]" placeholder="Телефон получателя" value="" style="width: 50%;"/>
-                                    <input type="text" class="form-control time-picker" name="to_time[]" placeholder="Время доставки" value="" style="width: 50%;"/>
-                                    <input type="text" class="form-control" name="cost_route[]" placeholder="Инкассация" value="" style="width: 50%;"/>
+                                    <input type="text" class="form-control time-picker" name="to_time[]" placeholder="Время доставки" value="" style="width: 25%;"/>
+                                    <input type="text" class="form-control cost_tovar" name="cost_tovar[]" placeholder="Стоимость товара" title="Стоимость товара" value="" style="width: 25%;" onkeyup="re_calc(this)"/>
+                                    <input type="text" class="form-control cost_route" name="cost_route[]" placeholder="Стоимость доставки" title="Стоимость доставки" value="" style="width: 25%;" onkeyup="re_calc(this)"/>
+                                    <input type="text" class="form-control cost_all" placeholder="Инкассация" title="Инкассация" value="" style="width: 25%;" disabled=""/>
                                     <br/>
                                     <textarea name="comment[]" class="form-control"  placeholder="Комментарий" title="Комментарий">
                                         <xsl:value-of select="comment"/>

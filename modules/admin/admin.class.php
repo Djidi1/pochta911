@@ -69,8 +69,10 @@ class adminModel extends module_model {
 
     public function loadTelegramUpdates(){
 
-	    $sql = "SELECT id, sender, chat_id, update_id, message_id, text, date, dk 
+	    $sql = "SELECT id, sender, chat_id, update_id, message_id, text, data, date, dk 
                 FROM log_telegram 
+                ORDER BY dk DESC 
+                LIMIT 0,200
                 ";
         $this->query ( $sql );
         $items = array ();

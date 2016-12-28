@@ -34,7 +34,7 @@
                     <th>Время доставки</th>
                     <th>Стоимость</th>
                     <th>Статус</th>
-                    <th/>
+                    <!--<th/>-->
                 </thead>
                 <tbody>
                     <xsl:for-each select="orders/item/route/array">
@@ -68,6 +68,7 @@
                                         </i>
                                     </div>
                                     <div class="col-md-4">
+                                        <xsl:if test="status_id = 1">
                                         <div class="btn-group" role="group" aria-label="Управление заказом">
                                             <a href="/orders/order-{../../id}/" title="редактировать" class="btn btn-success btn-sm">
                                                 <span class="glyphicon glyphicon-pencil" aria-hidden="true"> </span>
@@ -78,6 +79,7 @@
                                                 <span class="glyphicon glyphicon-remove" aria-hidden="true"> </span>
                                             </a>
                                         </div>
+                                        </xsl:if>
                                         Курьер:<br/>
                                         <b><xsl:value-of select="../../fio_car"/></b>
                                         <br/>
@@ -86,11 +88,11 @@
                                         <!--<i>-->
                                             <!--За рулем: <xsl:value-of select="../../fio_courier"/>-->
                                         <!--</i>-->
-                                        <div class="btn-group" role="group" aria-label="Изменение курьера">
-                                            <a href="#" title="Назначить курьера" class="btn btn-info btn-sm" onclick="chg_courier({../../id})">
-                                                <i class="fa fa-car" aria-hidden="true"> </i> Курьер
-                                            </a>
-                                        </div>
+                                        <!--<div class="btn-group" role="group" aria-label="Изменение курьера">-->
+                                            <!--<a href="#" title="Назначить курьера" class="btn btn-info btn-sm" onclick="chg_courier({../../id})">-->
+                                                <!--<i class="fa fa-car" aria-hidden="true"> </i> Курьер-->
+                                            <!--</a>-->
+                                        <!--</div>-->
                                     </div>
                                 </div>
                                 <xsl:if test="../../comment != ''">
@@ -119,18 +121,18 @@
                                 </b>
                             </td>
                             <td>
-                                <xsl:value-of select="cost_route"/>
+                                <xsl:value-of select="cost_tovar"/> + <xsl:value-of select="cost_route"/> = <xsl:value-of select="number(cost_route)+number(cost_tovar)"/>
                             </td>
                             <td>
                                 <xsl:value-of select="status"/>
                             </td>
-                            <td width="80px" align="center">
-                                <div class="btn-group" role="group" aria-label="Изменение статуса">
-                                    <a href="#" title="Изменить статус" class="btn btn-warning btn-sm" onclick="chg_status({id_route},{../../id})">
-                                        <span class="glyphicon glyphicon-flag" aria-hidden="true"> </span> Стутус
-                                    </a>
-                                </div>
-                            </td>
+                            <!--<td width="80px" align="center">-->
+                                <!--<div class="btn-group" role="group" aria-label="Изменение статуса">-->
+                                    <!--<a href="#" title="Изменить статус" class="btn btn-warning btn-sm" onclick="chg_status({id_route},{../../id})">-->
+                                        <!--<span class="glyphicon glyphicon-flag" aria-hidden="true"> </span> Стутус-->
+                                    <!--</a>-->
+                                <!--</div>-->
+                            <!--</td>-->
                         </tr>
                     </xsl:for-each>
                 </tbody>

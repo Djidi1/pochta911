@@ -20,6 +20,8 @@ span.address { display: block;  text-align: right;}
 
 DIV.add_buttons { position: absolute; z-index: 100;  right: 58px; top: 0;}
 
+TABLE.dataTable thead > tr > th {padding: 0 4px 0 1px !important}
+
 .bottom-menu a.btn.btn-default.btn-xs { padding: 1px 9px;}
 
 #back-top a span {
