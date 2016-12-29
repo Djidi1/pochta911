@@ -11,6 +11,7 @@ class ordersModel extends module_model {
 		while ( ($row = $this->fetchRowA ()) !== false ) {
 			if (isset($row['ready'])) $row['ready'] = substr($row['ready'],0,5);
 			if (isset($row['to_time'])) $row['to_time'] = substr($row['to_time'],0,5);
+			if (isset($row['to_time_end'])) $row['to_time_end'] = substr($row['to_time_end'],0,5);
 			$items[] = $row;
 		}
 		return $items;
@@ -57,7 +58,7 @@ class ordersModel extends module_model {
 	public function getRoutes($order_id) {
 		$sql = 'SELECT r.id id_route, `to`,to_house,to_corpus,to_appart,
 					  to_fio,to_phone,to_coord,from_coord,lenght,cost_route,cost_tovar,
-					  `to_time`,r.`comment`, s.status, s.id status_id
+					  `to_time`,`to_time_end`,r.`comment`, s.status, s.id status_id
 				FROM orders_routes r
 				LEFT JOIN orders_status s ON s.id = r.id_status
 				WHERE id_order = '.$order_id;
@@ -256,10 +257,11 @@ class ordersModel extends module_model {
 				$sql_values .= ($key > 0)?',':'';
                 $sql_values .= ' (\''.$order_id.'\',\''.$params ['to'][$key].'\',\''.$params ['to_house'][$key].'\',\''.$params ['to_corpus'][$key].'\',
 							\''.$params ['to_appart'][$key].'\',\''.$params ['to_fio'][$key].'\',\''.$params ['to_phone'][$key].'\',
-							\''.$params ['cost_route'][$key].'\',\''.$params ['cost_tovar'][$key].'\',\''.$params ['to_time'][$key].'\',\''.$params ['comment'][$key].'\'	)';
+							\''.$params ['cost_route'][$key].'\',\''.$params ['cost_tovar'][$key].'\',
+							\''.$params ['to_time'][$key].'\',\''.$params ['to_time_end'][$key].'\',\''.$params ['comment'][$key].'\'	)';
 			}
 			if ($sql_values != '') {
-                $sql = "INSERT INTO orders_routes (id_order,`to`,`to_house`,`to_corpus`,`to_appart`,`to_fio`,`to_phone`,`cost_route`,`cost_tovar`,`to_time`,`comment`) VALUES $sql_values";
+                $sql = "INSERT INTO orders_routes (id_order,`to`,`to_house`,`to_corpus`,`to_appart`,`to_fio`,`to_phone`,`cost_route`,`cost_tovar`,`to_time`,`to_time_end`,`comment`) VALUES $sql_values";
                 $this->query($sql);
             }
 		}
@@ -401,6 +403,7 @@ class ordersProcess extends module_process {
         $user_right = $this->User->getRight ( $this->modName, $action );
         if ($user_right == 0 && ! $_action) {
             $this->User->nView->viewLoginParams ( '', '', $user_id, array (), array () );
+            $this->nView->viewMessage ( 'У вас нет прав на работу с этим модулем.','' );
             $this->updated = true;
             return;
         }
@@ -446,6 +449,7 @@ class ordersProcess extends module_process {
 			$params['to_fio'] = $this->Vals->getVal ( 'to_fio', 'POST', 'array' );
 			$params['to_phone'] = $this->Vals->getVal ( 'to_phone', 'POST', 'array' );
 			$params['to_time'] = $this->Vals->getVal ( 'to_time', 'POST', 'array' );
+			$params['to_time_end'] = $this->Vals->getVal ( 'to_time_end', 'POST', 'array' );
 			$params['cost_route'] = $this->Vals->getVal ( 'cost_route', 'POST', 'array' );
 			$params['cost_tovar'] = $this->Vals->getVal ( 'cost_tovar', 'POST', 'array' );
 			$params['comment'] = $this->Vals->getVal ( 'comment', 'POST', 'array' );

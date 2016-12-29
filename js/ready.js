@@ -100,9 +100,14 @@ jQuery(function ($) {
     // автозаполнение улиц
     autoc_spb_streets();
 
+    // Установка дата/время пикеров
     $('.time-picker').datetimepicker({format: 'LT',locale: 'ru'});
 
     $('.date-picker').datetimepicker({format: 'L', locale: 'ru'});
+
+    var start_time = $('.time-picker.start').get();
+    var end_time = $('.time-picker.end').get();
+    set_time_period(start_time,end_time,'LT');
 
 
 

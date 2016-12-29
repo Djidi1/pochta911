@@ -65,3 +65,5 @@ TABLE tr:hover .chg-status {display: block;}
 
 TABLE.new-logist-data-table td, TABLE.new-logist-data-table th { font-size: 80%; }
 TABLE.new-logist-data-table td { padding: 0 1px !important;}
+
+.largeWidth {    margin: 0 auto;    width: 90%;}

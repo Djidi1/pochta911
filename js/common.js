@@ -29,10 +29,39 @@ function clone_div_row(obj) {
     $(new_el).find('.btn-delete').removeAttr('disabled');
     // автозаполение адреса
     $(new_el).remove('.typeahead');
-    $(new_el).find('.time-picker').datetimepicker({format: 'LT',locale: 'ru'});
+    // $(new_el).find('.time-picker.start').datetimepicker({format: 'LT',locale: 'ru'});
+    var start_time = $(new_el).find('.time-picker.start').get();
+    var end_time = $(new_el).find('.time-picker.end').get();
+    set_time_period(start_time,end_time,'LT');
     autoc_spb_streets();
     //$(new_el).find("input").attr('id', '');
 }
+
+function set_time_period (start, end, format) {
+    $(start).datetimepicker({format: format, locale: 'ru'});
+    $(end).datetimepicker({format: format, locale: 'ru',
+        useCurrent: false //Important! See issue #1075
+    });
+    $(start).on("dp.change", function (e) {
+        $(end).data("DateTimePicker").minDate(e.date);
+        console.log('st_chg');
+    });
+    $(end).on("dp.change", function (e) {
+        $(start).data("DateTimePicker").maxDate(e.date);
+        console.log('end_chg');
+    });
+    $(start).on("dp.show", function (e) {
+        $(end).data("DateTimePicker").minDate(e.date);
+        console.log('st_show');
+    });
+    $(end).on("dp.show", function (e) {
+        $(start).data("DateTimePicker").maxDate(e.date);
+        console.log('end_show');
+    });
+}
+
+
+
 var timer_check_user;
 function check_user(obj){
     clearTimeout(timer_check_user);
@@ -59,6 +88,17 @@ function check_user(obj){
 
         });
     },500,elem_type);
+}
+
+function open_dialog(url) {
+    $.post(url, {ajax:1},  function(data) {
+        bootbox.alert({
+            title: "Изменение заказа",
+            message: data,
+            callback: function(){ alert('ok')}
+        }).find("div.modal-dialog").addClass("largeWidth");
+        //bootbox.alert(data,send_new_status(this));
+    });
 }
 
 function chg_courier(order_id){

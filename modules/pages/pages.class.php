@@ -230,7 +230,7 @@ class pageProcess extends module_process {
 
 		if ($user_right == 0 && $user_id > 0) {
 			$p = array('У Вас нет прав для использования модуля', '$this->modName'=>$this->modName, 'action'=>$action, 'user_id'=>$user_right, 'user_right'=>$user_right);
-			$this->nView->viewError('У Вас нет прав на это действие', 'Предупреждение');
+			$this->nView->viewMessage('У Вас нет прав на использования данного модуля.', '');
 			$this->Log->addError($p, __LINE__, __METHOD__);
 			$this->updated = true;
 			return;

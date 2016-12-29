@@ -691,29 +691,21 @@ class adminProcess extends module_process {
 			$this->Vals->URLparams ( $this->sysMod->defQueryString );
 			$action = $this->actionDefault;
 		}
-		
-		$user_id = $this->User->getUserID ();
-		$user_right = $this->User->getRight ( $this->modName, 'useAdmin' );
 
+		$user_id = $this->User->getUserID ();
+        $user_right = $this->User->getRight ( $this->modName, $action );
+        if ($user_right == 0 && ! $_action) {
+            $this->User->nView->viewLoginParams ( '', '', $user_id, array (), array () );
+            $this->nView->viewMessage ( 'У вас нет прав на работу с этим модулем.','' );
+            $this->updated = true;
+            return true;
+        }
 		
-		if ($user_right == 0) {
-			$p = array ('У Вас отсутствуют административные права' );
-			$this->nView->viewLogin ( $p, $user_id );
-			$this->Log->addError ( $p, __LINE__, __METHOD__ );
-			$this->updated = true;
-			return true;
-		} else {
-//			$p = array ('Система администрирования' );
-			//$this->nView->viewLogin($p, $user_id);
-			//$this->Log->addError($p, __LINE__, __METHOD__);
-			$this->updated = false;
-		}
-		
-		$useMod = $this->Vals->getVal ( 'mod', 'GET', 'string' );
-		$useAct = $this->Vals->getVal ( 'act', 'GET', 'string' );
+//		$useMod = $this->Vals->getVal ( 'mod', 'GET', 'string' );
+//		$useAct = $this->Vals->getVal ( 'act', 'GET', 'string' );
 //		$useVal = $this->Vals->getVal ( 'actval', 'GET', 'string' );
 		
-		$user_right = $this->User->getRight ( $useMod, $useAct );
+//		$user_right = $this->User->getRight ( $useMod, $useAct );
 		/*
 		if ($useMod) {
 			if ($this->User->getRight ( $useMod, $useAct ) == 0) {
@@ -752,7 +744,7 @@ class adminProcess extends module_process {
 		}
 		*/
 		/* * Пользователи * */
-		if ($user_right == 0 && $user_id == 0 && ! $_action) {
+	/*	if ($user_right == 0 && $user_id == 0 && ! $_action) {
 			$this->nView->viewLogin ( 'FD', '', $user_id );
 			$this->updated = true;
 			return true;
@@ -760,7 +752,7 @@ class adminProcess extends module_process {
 		
 		if ($user_id > 0 && ! $_action) {
 			$this->User->nView->viewLoginParams ( 'FD', '', $user_id, array (), array (), $this->User->getRightModule ( 'admin' ) );
-		}
+		}*/
 		
 		if ($action == 'newUser') {
 			$groups = $this->nModel->getGroups ();

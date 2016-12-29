@@ -18,9 +18,8 @@
 								</p>
 								<div style="float: left;">
 									<div class="icon">
-										<a href="http://{//page/@host}/admin/groupList-1/">
-											<img src="/images/icon-48-groups.png" alt="Список групп"/>
-											<span>Список групп</span>
+										<a href="/admin/groupList-1/">
+                                            <i class="fa fa-users" aria-hidden="true"> </i> Список групп
 										</a>
 									</div>
 								</div>
@@ -29,9 +28,9 @@
 					</tbody>
 				</table>
 			</div>
-			<form action="http://{//page/@host}/admin/groupRightsUpdate-1/" name="form" method="post">
+			<form action="/admin/groupRightsUpdate-1/" name="form" method="post">
 				<input type="hidden" name="group_id" value="{actions/@group_id}"/>
-				<table cellpadding="3" cellspacing="1" border="0" width="100%" id="grouprights">
+				<table id="grouprights" class="table table-hover table-striped table-condensed">
 					<tbody>
 						<tr bgcolor="#B0C4DE">
 							<th width="40">ID</th>
@@ -70,11 +69,11 @@
 									<td>
 										<xsl:choose>
 											<xsl:when test="access = 1">
-												<img alt="images/eye-green.gif" src="images/eye-green.gif" hspace="3"/>Открытое</xsl:when>
+                                                <span class="glyphicon glyphicon-eye-open text-success" aria-hidden="true"> </span> Открытое</xsl:when>
 											<xsl:when test="access = 2">
-												<img alt="images/eye-yellow.gif" src="images/eye-yellow.gif" hspace="3"/>Регистрация</xsl:when>
+                                                <span class="glyphicon glyphicon-eye-open text-warning" aria-hidden="true"> </span> Регистрация</xsl:when>
 											<xsl:when test="access = 3">
-												<img alt="images/eye-red.gif" src="images/eye-red.gif" hspace="3"/>Группа</xsl:when>
+                                                <span class="glyphicon glyphicon-eye-open text-danger" aria-hidden="true"> </span> Группа</xsl:when>
 										</xsl:choose>
 									</td>
 									<td align="center">
@@ -98,7 +97,6 @@
 					<input type="submit" name="submit" value="сохранить"/>
 				</p>
 			</form>
-			<xsl:call-template name="linkback"/>
 		</div>
 	</xsl:template>
 </xsl:stylesheet>

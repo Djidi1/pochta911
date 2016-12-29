@@ -310,7 +310,7 @@ class newsProcess extends module_process
 
         if ($user_right == 0) {
             $p = array('У Вас нет прав для использования модуля');
-            $this->nView->viewError($p, false);
+            $this->nView->viewMessage($p[0],'', false);
             $this->Log->addError($p, __LINE__, __METHOD__);
             $this->updated = true;
             return;

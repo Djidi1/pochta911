@@ -103,7 +103,7 @@
 
                         <div class="moduletable_LoginForm navbar-right">
                             <xsl:apply-templates
-                                    select="//page/body/module[@name = 'CurentUser']/container[@module = 'login']"/>
+                                    select="//page/body/module[@name = 'CurentUser']/container[@module = 'login' and position() = 1]"/>
                             <!--				<div xmlns="" class="form"><div class="poping_links"><a href="/admin/" style="padding-right: 0px;">Менеджерам</a></div></div>-->
                         </div>
                     </div><!-- /.navbar-collapse -->

@@ -47,6 +47,7 @@ if(intval($User->isAutch()) > 0 and !$module) {
 }else{
  // ???
 }
+
 if (!$module) $module = 'title';             # костыль
 
 switch ($module) {
