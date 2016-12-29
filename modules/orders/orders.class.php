@@ -421,11 +421,12 @@ class ordersProcess extends module_process {
 		
 		if ($action == 'order') {
 			$order_id = $this->Vals->getVal ( 'order', 'GET', 'integer' );
+			$without_menu = $this->Vals->getVal ( 'without_menu', 'GET', 'integer' );
 			$order = $this->nModel->getOrder($order_id);
 			$routes = $this->nModel->getRoutes($order_id);
 			$stores = $this->nModel->getStores(isset($order['id_user'])?$order['id_user']:$user_id);
 			$client_title = $this->nModel->getClientTitle(isset($order['id_user'])?$order['id_user']:$user_id);
-			$this->nView->viewOrderEdit ( $order, $stores, $routes, $client_title );
+			$this->nView->viewOrderEdit ( $order, $stores, $routes, $client_title, $without_menu );
 		}
 
 		if ($action == 'orderBan') {
@@ -459,7 +460,7 @@ class ordersProcess extends module_process {
 				$id_code = $this->nModel->orderInsert($user_id,$params);
 			}
 			$this->nView->viewMessage('Заказ успешно сохранен. Номер для отслеживания: '.$id_code, 'Сообщение');
-			$action = 'view';
+            $this->updated = true;
 		}
 
 		if ($action == 'chg_status'){
@@ -657,14 +658,23 @@ class ordersProcess extends module_process {
 		//https://api.telegram.org/bot<YourBOTToken>/getUpdates
 
         $encodedMarkup = json_encode($menu);
+        if ($menu == array()) {
+            $params = array(
+                'chat_id' => $chat_id,
+                'parse_mode' => 'HTML',
+                'text' => '' . $message . ''
+                //,'reply_to_message_id' => $message_id,
+            );
+        } else {
+            $params = array(
+                'chat_id' => $chat_id,
+                'parse_mode' => 'HTML',
+                'text' => '' . $message . '',
+                'reply_markup' => $encodedMarkup
+                //,'reply_to_message_id' => $message_id,
+            );
+        }
 
-        $params = array(
-            'chat_id' => $chat_id,
-            'parse_mode' => 'HTML',
-            'text' => '' . $message . '',
-            'reply_markup' => $encodedMarkup
-            //,'reply_to_message_id' => $message_id,
-        );
 		$this->callApiTlg('sendMessage', $params, TLG_TOKEN);
 
 	}
@@ -771,10 +781,11 @@ class ordersView extends module_View {
 		return true;
 	}
 	
-	public function viewOrderEdit($order, $stores, $routes, $client_title) {
+	public function viewOrderEdit($order, $stores, $routes, $client_title, $without_menu) {
 		$this->pXSL [] = RIVC_ROOT . 'layout/orders/order.edit.xsl';
 		$Container = $this->newContainer ( 'order' );
         $this->addAttr ( 'today', date('d.m.Y'), $Container );
+        $this->addAttr('without_menu',$without_menu, $Container);
 
 		$this->arrToXML ( $order, $Container, 'order' );
 

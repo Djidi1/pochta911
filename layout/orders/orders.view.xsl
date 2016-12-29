@@ -5,7 +5,7 @@
             <form method="post" style="margin-bottom: 2px;">
                 <div class="row">
                     <div class="col-sm-9">
-                        <a class="btn btn-success" href="/orders/order-0/" title="Добавить заказ">
+                        <a class="btn btn-success" href="/orders/order-0/" title="Добавить заказ" target="_blank">
                             <span class="glyphicon glyphicon-flag"> </span>
                             <span>Новый заказ</span>
                         </a>

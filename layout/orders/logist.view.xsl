@@ -4,18 +4,24 @@
         <xsl:if test="//page/@isAjax != 1">
             <form method="post" style="margin-bottom: 2px;">
                 <div class="row">
-                    <div class="col-sm-9">
-                        <striong>Статусы: </striong>
-                        <xsl:for-each select="statuses/item">
-                            <label class="btn btn-default btn-xs" style="margin-right:10px;" onchange="filter_table()">
-                                <input class="statuses" type="checkbox" aria-label="" value="{id}"/>
-                                <xsl:text> </xsl:text>
-                                <span style="vertical-align: text-bottom;"><xsl:value-of select="status"/></span>
-                            </label>
-                        </xsl:for-each>
+                    <div class="col-sm-2">
+                        <a class="btn btn-success btn-sm" href="/orders/order-0/" title="Добавить заказ" target="_blank">
+                            <span class="glyphicon glyphicon-flag"> </span>
+                            <span>Новый заказ</span>
+                        </a>
+                    </div>
+                    <div class="col-sm-7">
+                        <!--<striong>Статусы: </striong>-->
+                        <!--<xsl:for-each select="statuses/item">-->
+                            <!--<label class="btn btn-default btn-xs" style="margin-right:10px;" onchange="filter_table()">-->
+                                <!--<input class="statuses" type="checkbox" aria-label="" value="{id}"/>-->
+                                <!--<xsl:text> </xsl:text>-->
+                                <!--<span style="vertical-align: text-bottom;"><xsl:value-of select="status"/></span>-->
+                            <!--</label>-->
+                        <!--</xsl:for-each>-->
                     </div>
                     <div class="col-sm-3">
-                        <div class="input-group" style="float:right">
+                        <div class="input-group input-group-sm" style="float:right">
                             <input type="text" class="form-control" id="end_date" name="date_to" value="{@date_to}" style="text-align:center" />
                             <span class="input-group-btn">
                                 <button class="btn btn-info">Обновить</button>
@@ -31,7 +37,7 @@
             </form>
             <table class="table table-striped table-hover table-bordered new-logist-data-table">
                 <thead>
-                    <th>#</th>
+                    <!--<th>#</th>-->
                     <th>Заказ</th>
                     <th>Готовность</th>
                     <th>Время доставки</th>
@@ -51,16 +57,34 @@
                     </xsl:if>
                     <th>Прим. заказ</th>
                     <!--<th>Прим. адрес</th>-->
-                    <th> </th>
+                    <th/>
                 </thead>
+                <tfoot>
+                    <tr>
+                        <!--<th/>-->
+                        <th/>
+                        <th/>
+                        <th/>
+                        <th/>
+                        <th/>
+                        <th/>
+                        <th/>
+                        <th/>
+                        <th/>
+                        <th/>
+                        <th/>
+                        <th/>
+                        <th/>
+                    </tr>
+                </tfoot>
                 <tbody>
                     <xsl:for-each select="orders/item/route/array">
-                        <tr class="status_{status_id} order_route_{id_route} order_{../../id}" rel="{id_route}">
+                        <tr onclick="open_bootbox_dialog('/orders/order-{../../id}/');">
                             <xsl:attribute name="class">
                                 status_<xsl:value-of select="status_id"/> order_route_<xsl:value-of select="id_route"/> order_<xsl:value-of select="../../id"/>
                                 <xsl:if test="../../car_accept != ''"> info</xsl:if>
                             </xsl:attribute>
-                            <td class="text text-muted"><xsl:value-of select="position()"/></td>
+                            <!--<td class="text text-muted"><xsl:value-of select="position()"/></td>-->
                             <td>
                                 <xsl:value-of select="../../id"/>
                             </td>
@@ -68,14 +92,14 @@
                             <td><nobr>
                                 <xsl:value-of select="to_time"/>-<xsl:value-of select="to_time_end"/>
                             </nobr></td>
-                            <td><b><xsl:value-of select="../../address"/></b>
+                            <td><xsl:value-of select="../../address"/>
                                 <br/>
                                 <i>
                                     <xsl:value-of select="../../addr_comment"/>
                                 </i>
                             </td>
                             <td><xsl:value-of select="../../title"/></td>
-                            <td><nobr><xsl:value-of select="to"/>, <xsl:value-of select="to_house"/>, <xsl:value-of select="to_corpus"/>, <xsl:value-of select="to_appart"/></nobr></td>
+                            <td><nobr><b><xsl:value-of select="to"/>, <xsl:value-of select="to_house"/>, <xsl:value-of select="to_corpus"/>, <xsl:value-of select="to_appart"/></b></nobr></td>
                             <td><nobr>
                                 <b>
                                     <xsl:value-of select="to_phone"/>
@@ -118,9 +142,9 @@
                                     <!--<div onclick="open_dialog('/orders/order-{../../id}/')" class="btn btn-success btn-xs chg-status" title="редактировать">-->
                                         <!--<span class="glyphicon glyphicon-pencil" aria-hidden="true"> </span>-->
                                     <!--</div>-->
-                                    <a href="/orders/order-{../../id}/" class="btn btn-success btn-xs chg-status" title="редактировать" target="_blank">
-                                        <span class="glyphicon glyphicon-pencil" aria-hidden="true"> </span>
-                                    </a>
+                                    <!--<a href="/orders/order-{../../id}/" class="btn btn-success btn-xs chg-status" title="редактировать" target="_blank">-->
+                                        <!--<span class="glyphicon glyphicon-pencil" aria-hidden="true"> </span>-->
+                                    <!--</a>-->
                                     <div title="Назначить курьера" class="btn btn-info btn-xs chg-status" onclick="chg_courier({../../id})">
                                         <i class="fa fa-car" aria-hidden="true"> </i>
                                     </div>

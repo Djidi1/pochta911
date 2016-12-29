@@ -28,8 +28,8 @@
             <script src="/js/common.js?v1"/>
             <script src="/js/script.js?v1"/>
             <script src="//cdn.ckeditor.com/4.6.1/full/ckeditor.js"/>
-            <script src="//cdn.datatables.net/1.10.4/js/jquery.dataTables.min.js"/>
-            <script src="//cdn.datatables.net/plug-ins/3cfcc339e89/integration/bootstrap/3/dataTables.bootstrap.js"/>
+            <script src="//cdn.datatables.net/1.10.13/js/jquery.dataTables.min.js"/>
+            <script src="//cdn.datatables.net/1.10.13/js/dataTables.bootstrap.min.js"/>
             <script>
             <!--var roxyFileman = '/fileman/index.html';-->
             <!--//1-->

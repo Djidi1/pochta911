@@ -14,7 +14,9 @@
                 </xsl:attribute>
                 <div class="body-top">
                     <div class="main" style="width:90%;">
-                        <xsl:call-template name="main_headWrap"/>
+                        <xsl:if test="/page/@without_menu != 1">
+                            <xsl:call-template name="main_headWrap"/>
+                        </xsl:if>
                         <div id="content">
                             <div class="wrapper2">
                                 <xsl:choose>
@@ -41,7 +43,9 @@
                             </div>
                         </div>
                         <div class="clear"/>
-                        <xsl:call-template name="bottom_block"/>
+                        <xsl:if test="/page/@without_menu != 1">
+                            <xsl:call-template name="bottom_block"/>
+                        </xsl:if>
                     </div>
                 </div>
             </body>

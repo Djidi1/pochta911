@@ -16,9 +16,8 @@ jQuery(function ($) {
         "url": "//cdn.datatables.net/plug-ins/1.10.13/i18n/Russian.json"
     }});
 
-    $('.new-logist-data-table').dataTable({"language": {
-        "url": "//cdn.datatables.net/plug-ins/1.10.13/i18n/Russian.json"
-    }});
+    add_data_table($('.new-logist-data-table'));
+
 
     $('.logist-data-table').dataTable({
         "columnDefs": [

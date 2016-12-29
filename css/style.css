@@ -57,13 +57,15 @@ TR.group TD.order-group { background: #bce8f1 !important; }
 TD.order-group .btn-group { float: right; }
 TD.order-group .alert { margin: 0; }
 
-TABLE.orders-data-table .btn-group {display: none;}
-TABLE.orders-data-table tr:hover .btn-group {display: block;}
+/*TABLE.orders-data-table .btn-group {display: none;}*/
+/*TABLE.orders-data-table tr:hover .btn-group {display: block;}*/
 
-TABLE .chg-status {display: none;}
-TABLE tr:hover .chg-status {display: block;}
+/*TABLE .chg-status {display: none;}*/
+/*TABLE tr:hover .chg-status {display: block;}*/
 
 TABLE.new-logist-data-table td, TABLE.new-logist-data-table th { font-size: 80%; }
 TABLE.new-logist-data-table td { padding: 0 1px !important;}
 
-.largeWidth {    margin: 0 auto;    width: 90%;}
+.largeWidth > div {    margin: 0 auto;    width: 90%;}
+
+tfoot {   display: table-header-group; }

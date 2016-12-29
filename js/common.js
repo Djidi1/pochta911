@@ -90,15 +90,26 @@ function check_user(obj){
     },500,elem_type);
 }
 
-function open_dialog(url) {
-    $.post(url, {ajax:1},  function(data) {
-        bootbox.alert({
-            title: "Изменение заказа",
-            message: data,
-            callback: function(){ alert('ok')}
-        }).find("div.modal-dialog").addClass("largeWidth");
-        //bootbox.alert(data,send_new_status(this));
+function open_bootbox_dialog(url) {
+    bootbox.dialog({
+        title: "Изменение заказа",
+        message: '<iframe style="border:0;" src="'+url+'/without_menu-1/" height="500" width="100%" ></iframe>',
+        className: "largeWidth",
+        buttons: {
+            'cancel': {
+                label: 'Закрыть',
+                className: 'btn-default pull-left'
+            }
+        }
     });
+    // $.post(url, {ajax:1},  function(data) {
+    //     bootbox.alert({
+    //         title: "Изменение заказа",
+    //         message: data,
+    //         callback: function(){ alert('ok')}
+    //     }).find("div.modal-dialog").addClass("largeWidth");
+    //     //bootbox.alert(data,send_new_status(this));
+    // });
 }
 
 function chg_courier(order_id){
@@ -190,4 +201,41 @@ function re_calc(obj){
     var cost_tovar = $(obj).parent().find('.cost_tovar').val();
     var cost_route = $(obj).parent().find('.cost_route').val();
     $(obj).parent().find('.cost_all').val(Number(cost_tovar)+Number(cost_route));
+}
+
+function add_data_table(obj){
+    // Setup - add a text input to each footer cell
+    $(obj).find('tfoot th').each( function () {
+        var title = $(this).text();
+        $(this).html( '<input type="text" placeholder="Search '+title+'" />' );
+    } );
+    // DataTable
+    var table = $(obj).DataTable({
+        "language": {
+            "url": "//cdn.datatables.net/plug-ins/1.10.13/i18n/Russian.json"
+        }
+        , "bLengthChange": false
+        , "bPaginate": false
+        , "bFilter": false
+        ,initComplete: function () {
+            this.api().columns().every( function () {
+                var column = this;
+                var select = $('<select><option value=""></option></select>')
+                    .appendTo( $(column.footer()).empty() )
+                    .on( 'change', function () {
+                        var val = $.fn.dataTable.util.escapeRegex(
+                            $(this).val()
+                        );
+
+                        column
+                            .search( val ? '^'+val+'$' : '', true, false )
+                            .draw();
+                    } );
+
+                column.data().unique().sort().each( function ( d, j ) {
+                    select.append( '<option value="'+d+'">'+d+'</option>' )
+                } );
+            } );
+        }
+    });
 }

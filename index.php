@@ -111,8 +111,10 @@ if ($module) {
         $Page = new TXMLPage($modData->module_codename, 'index', 'index', $modData->module_defXSL);
         $Page->title('Балтиклайнс Тур');
         $isAjax = $values->getVal('ajax', 'INDEX', 'integer');
+        $without_menu = $values->getVal('without_menu', 'INDEX', 'integer');
         $Page->addToPageAttr('isAjax', intval($isAjax));
         $Page->addToPageAttr('year', date('Y'));
+        $Page->addToPageAttr('without_menu', $without_menu);
         $Page->addToPageAttr('new_page', $User->get_menu_new(49));
         $Page->addMeta('http-equiv', 'Content-Type', 'text/html; charset=utf-8', '');
 
@@ -134,10 +136,10 @@ if ($module) {
             default:
                 $LOG->addError(array('Модуль не существует!'), __LINE__, __METHOD__, 0);
                 $Page = new TXMLPage('index', 'index', 'index', 'page.index.xsl');
-                $Page->title('Балтиклайнс Тур');
+                $Page->title('');
                 $Page->addMeta('http-equiv', 'Content-Type', 'text/html; charset=utf-8', '');
 
-                $User->nView->viewLogin('Балтиклайнс Тур', $User->getUserID(), 'login');
+                $User->nView->viewLogin('', $User->getUserID(), 'login');
                 $sysBODY[] = array($User->nView->getBody('html'), 'index', 'html');
                 foreach ($sysBODY as $block) {
                     $Page->importBlock($block[0], $block[1]);

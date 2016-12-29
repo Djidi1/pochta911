@@ -3,7 +3,7 @@
     <xsl:template match="container[@module = 'order']">
 
         <!--<h2>Заказ:</h2>-->
-        <form action="/orders/orderUpdate-{order/id}/" method="post" name="main_form">
+        <form action="/orders/orderUpdate-{order/id}/without_menu-1/" method="post" name="main_form">
             <div class="row">
                 <div class="col-md-1"> </div>
                 <div class="col-md-10">
@@ -76,7 +76,9 @@
 
                 </div>
             </div>
+
             <div style="text-align: center">
+                <!--<a href="javascript:window.open('','_self').close();" class="btn btn-danger" onclick="window.close();" style="float:right">выход</a>-->
                 <input class="btn btn-success" type="submit" value="сохранить" name="submit"/>
             </div>
         </form>
