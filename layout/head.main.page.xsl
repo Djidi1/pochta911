@@ -76,8 +76,13 @@
                     <!-- Collect the nav links, forms, and other content for toggling -->
                     <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                         <ul class="nav navbar-nav">
-                            <li>
-                                <a href="/orders/"><i class="fa fa-flag" aria-hidden="true"> </i> Заказы</a>
+                            <li class="dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-flag" aria-hidden="true"> </i> Заказы</a>
+                                <ul class="dropdown-menu">
+                                    <li><a href="/orders/">Список заказов</a></li>
+                                    <li><a href="#" onclick="open_bootbox_dialog('/orders/order-0/')">Новый заказ</a></li>
+                                    <li><a href="#" onclick="popup_excel('orders/excel-1')">Выгрузить в Excel</a></li>
+                                </ul>
                             </li>
                             <li>
                                 <a href="/orders/LogistList-1"><i class="fa fa-bus" aria-hidden="true"> </i> Логист</a>

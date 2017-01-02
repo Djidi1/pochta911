@@ -102,14 +102,20 @@ function open_bootbox_dialog(url) {
             }
         }
     });
-    // $.post(url, {ajax:1},  function(data) {
-    //     bootbox.alert({
-    //         title: "Изменение заказа",
-    //         message: data,
-    //         callback: function(){ alert('ok')}
-    //     }).find("div.modal-dialog").addClass("largeWidth");
-    //     //bootbox.alert(data,send_new_status(this));
-    // });
+}
+
+function popup_excel(url) {
+    bootbox.dialog({
+        title: "Экспорт в эксель",
+        message: '<iframe style="border:0;" src="/'+url+'/without_menu-1/" height="500" width="100%" ></iframe>',
+        className: "largeWidth",
+        buttons: {
+            'cancel': {
+                label: 'Закрыть',
+                className: 'btn-default pull-left'
+            }
+        }
+    });
 }
 
 function chg_courier(order_id){

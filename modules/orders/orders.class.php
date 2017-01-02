@@ -17,7 +17,51 @@ class ordersModel extends module_model {
 		return $items;
 	}
 
-	public function getClientTitle($user_id){
+	public function exportToExcel($orders){
+        require_once CORE_ROOT . 'classes/PHPExcel.php';
+        // Instantiate a new PHPExcel object
+        $objPHPExcel = new PHPExcel();
+// Set the active Excel worksheet to sheet 0
+        $objPHPExcel->setActiveSheetIndex(0);
+// Initialise the Excel row number
+        $rowCount = 1;
+// Iterate through each result from the SQL query in turn
+// We fetch each database result row into $row in turn
+        foreach($orders as $row){
+            // Set cell An to the "name" column from the database (assuming you have a column called name)
+            //    where n is the Excel row number (ie cell A1 in the first row)
+            $objPHPExcel->getActiveSheet()->SetCellValue('A'.$rowCount, $row['id']);
+            // Set cell Bn to the "age" column from the database (assuming you have a column called age)
+            //    where n is the Excel row number (ie cell A1 in the first row)
+            $objPHPExcel->getActiveSheet()->SetCellValue('B'.$rowCount, $row['comment']);
+            // Increment the Excel row counter
+            $rowCount++;
+        }
+        $file_name = 'orders'.date('_Y_m_d').'.xlsx';
+// Instantiate a Writer to create an OfficeOpenXML Excel .xlsx file
+//        $objWriter = new PHPExcel_Writer_Excel2007($objPHPExcel);
+// Write the Excel file to filename some_excel_file.xlsx in the current directory
+//        $objWriter->save('orders'.date('_Y_m_d').'.xlsx');
+        // Redirect output to a client’s web browser (Excel2007)
+        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        header('Content-Disposition: attachment;filename="'.$file_name.'"');
+        header('Cache-Control: max-age=0');
+// If you're serving to IE 9, then the following may be needed
+        header('Cache-Control: max-age=1');
+
+// If you're serving to IE over SSL, then the following may be needed
+        header ('Expires: Mon, 26 Jul 1997 05:00:00 GMT'); // Date in the past
+        header ('Last-Modified: '.gmdate('D, d M Y H:i:s').' GMT'); // always modified
+        header ('Cache-Control: cache, must-revalidate'); // HTTP/1.1
+        header ('Pragma: public'); // HTTP/1.0
+
+        $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007');
+        $objWriter->save('php://output');
+        exit;
+    }
+
+
+    public function getClientTitle($user_id){
 		$sql = 'SELECT
 				  title
 				FROM users
@@ -373,6 +417,7 @@ class ordersProcess extends module_process {
 		$this->regAction ( 'chg_status', 'Изменение статуса заявки', ACTION_GROUP );
 		$this->regAction ( 'chg_courier', 'Изменение курьера', ACTION_GROUP );
 		$this->regAction ( 'get_data', 'Получение интерактивных данных', ACTION_GROUP );
+		$this->regAction ( 'excel', 'Экспорт в Excel', ACTION_GROUP );
 
 		if (DEBUG == 0) {
 			$this->registerActions ( 1 );
@@ -418,6 +463,16 @@ class ordersProcess extends module_process {
 			}
 		}
 
+        if ($action == 'excel'){
+            $sub_action = $this->Vals->getVal ( 'sub_action', 'POST', 'string' );
+            list($from, $to) = $this->get_post_date('all');
+            if ($sub_action == 'excel') {
+                $orders = $this->nModel->getOrdersList($from, $to);
+                $this->nModel->exportToExcel($orders);
+                stop($orders);
+            }
+            $this->nView->viewExcelDialog($from, $to);
+        }
 		
 		if ($action == 'order') {
 			$order_id = $this->Vals->getVal ( 'order', 'GET', 'integer' );
@@ -627,19 +682,27 @@ class ordersProcess extends module_process {
 
 	}
 
-	public function get_post_date(){
-        //			$from = $this->Vals->getVal ( 'date_from', 'POST', 'string' );
+	public function get_post_date($type = 'to'){
+	    if ($type == 'all') {
+            $from = $this->Vals->getVal ( 'date_from', 'POST', 'string' );
+        }
         $to = $this->Vals->getVal ( 'date_to', 'POST', 'string' );
-        $from = $to;
-        if ($to == '') {
-//				$from = (isset($_SESSION['date_from']) and $_SESSION['date_from'] != '') ? $_SESSION['date_from'] : date('01.m.Y');
-            $to = (isset($_SESSION['date_to']) and $_SESSION['date_to'] != '') ? $_SESSION['date_to'] : date('d.m.Y');
+        if ($type == 'to') {
             $from = $to;
+        }
+        if ($to == '') {
+            if ($type == 'all') {
+        		$from = (isset($_SESSION['date_from']) and $_SESSION['date_from'] != '') ? $_SESSION['date_from'] : date('01.m.Y');
+            }
+            $to = (isset($_SESSION['date_to']) and $_SESSION['date_to'] != '') ? $_SESSION['date_to'] : date('d.m.Y');
+            if ($type == 'to') {
+                $from = $to;
+            }
         }else{
-            $_SESSION['date_from'] = $from;
+            $_SESSION['date_from'] = (isset($from))?$from:$to;
             $_SESSION['date_to'] = $to;
         }
-        return array($from,$to);
+        return array((isset($from))?$from:$to,$to);
     }
 
 
@@ -709,7 +772,17 @@ class ordersView extends module_View {
 		parent::__construct ( $modName, $sysMod );
 		$this->pXSL = array ();
 	}
-	
+
+    public function viewExcelDialog($from, $to) {
+        $this->pXSL [] = RIVC_ROOT . 'layout/orders/orders.excel.xsl';
+        $Container = $this->newContainer ( 'excel' );
+
+        $this->addAttr('date_from', $from, $Container);
+        $this->addAttr('date_to', $to, $Container);
+
+        return true;
+    }
+
 	public function viewOrders($from, $to, $orders) {
 		$this->pXSL [] = RIVC_ROOT . 'layout/orders/orders.view.xsl';
 		$Container = $this->newContainer ( 'list' );

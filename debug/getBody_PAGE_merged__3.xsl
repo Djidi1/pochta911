@@ -15,7 +15,9 @@
                 </xsl:attribute>
                 <div class="body-top">
                     <div class="main" style="width:90%;">
-                        <xsl:call-template name="main_headWrap"/>
+                        <xsl:if test="/page/@without_menu != 1">
+                            <xsl:call-template name="main_headWrap"/>
+                        </xsl:if>
                         <div id="content">
                             <div class="wrapper2">
                                 <xsl:choose>
@@ -40,36 +42,12 @@
                             </div>
                         </div>
                         <div class="clear"/>
-                        <div id="foot">
-                            <p id="back-top" style="display: none;">
-                                <a href="#top">
-                                    <span/>
-                                </a>
-                            </p>
-                            <div class="well wrapper">
-                                <div class="moduletable">
-                                    <ul class="bottom-menu navbar-nav">
-                                        <li class="item-207">
-                                            <a href="#">&#x41E; &#x43A;&#x43E;&#x43C;&#x43F;&#x430;&#x43D;&#x438;&#x438;</a>
-                                        </li>
-                                        <li class="item-471">
-                                            <a href="#">&#x410;&#x43A;&#x446;&#x438;&#x438;</a>
-                                        </li>
-                                        <li class="item-470">
-                                            <a href="#">&#x41A;&#x43E;&#x43D;&#x442;&#x430;&#x43A;&#x442;&#x44B;</a>
-                                        </li>
-                                    </ul>
-                                </div>
-                                <div class="footerText">
-                                    <div class="footer1">Copyright &#xA9; <xsl:value-of select="//@year"/> &#x414;&#x43E;&#x441;&#x442;&#x430;&#x432;&#x43A;&#x430;
-                                        &#x446;&#x432;&#x435;&#x442;&#x43E;&#x432;. &#x412;&#x441;&#x435; &#x43F;&#x440;&#x430;&#x432;&#x430; &#x437;&#x430;&#x449;&#x438;&#x449;&#x435;&#x43D;&#x44B;.
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                        <xsl:if test="/page/@without_menu != 1">
+                            <xsl:call-template name="bottom_block"/>
+                        </xsl:if>
                     </div>
                 </div>
             </body>
         </html>
     </xsl:template>
-<xsl:include href="../layout/viewLoginBar.xsl"/><xsl:include href="../layout/orders/orders.view.xsl"/></xsl:stylesheet>
+<xsl:include href="../layout/viewLoginBar.xsl"/><xsl:include href="../layout/orders/orders.excel.xsl"/></xsl:stylesheet>
