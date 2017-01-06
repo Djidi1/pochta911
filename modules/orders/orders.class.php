@@ -17,24 +17,44 @@ class ordersModel extends module_model {
 		return $items;
 	}
 
-	public function exportToExcel($orders){
+	public function exportToExcel($titles,$orders){
         require_once CORE_ROOT . 'classes/PHPExcel.php';
         // Instantiate a new PHPExcel object
         $objPHPExcel = new PHPExcel();
-// Set the active Excel worksheet to sheet 0
+
+        $style = array(
+            'alignment' => array(
+                'horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER,
+                'wrap' => true
+            ),
+            'font'  => array(
+                'bold'  => true,
+                'color' => array('rgb' => '333333'),
+                'size'  => 10,
+                'name'  => 'Verdana'
+            )
+        );
         $objPHPExcel->setActiveSheetIndex(0);
-// Initialise the Excel row number
-        $rowCount = 1;
-// Iterate through each result from the SQL query in turn
-// We fetch each database result row into $row in turn
-        foreach($orders as $row){
-            // Set cell An to the "name" column from the database (assuming you have a column called name)
-            //    where n is the Excel row number (ie cell A1 in the first row)
-            $objPHPExcel->getActiveSheet()->SetCellValue('A'.$rowCount, $row['id']);
-            // Set cell Bn to the "age" column from the database (assuming you have a column called age)
-            //    where n is the Excel row number (ie cell A1 in the first row)
-            $objPHPExcel->getActiveSheet()->SetCellValue('B'.$rowCount, $row['comment']);
-            // Increment the Excel row counter
+// Записываем заголовки со второй строки
+        $colCount = 'A';
+        foreach ($titles as $col_value) {
+            $cell = $colCount.'1';
+            $objPHPExcel->getActiveSheet()->SetCellValue($cell, $col_value);
+            $objPHPExcel->getActiveSheet()->getStyle($colCount."1")->applyFromArray($style);
+            $objPHPExcel->getActiveSheet()->getColumnDimension($colCount)->setAutoSize(true);
+            $colCount++;
+        }
+//        $objPHPExcel->getActiveSheet()->getStyle("A1:".$colCount."1")->applyFromArray($style);
+// Записываем данные со второй строки
+        $rowCount = 2;
+        foreach($orders as $order){
+            $colCount = 'A';
+            foreach ($order as $col_value) {
+                $cell = $colCount.$rowCount;
+                $objPHPExcel->getActiveSheet()->SetCellValue($cell, $col_value);
+//                $objPHPExcel->getActiveSheet()->getColumnDimension($colCount)->setAutoSize(true);
+                $colCount++;
+            }
             $rowCount++;
         }
         $file_name = 'orders'.date('_Y_m_d').'.xlsx';
@@ -189,7 +209,44 @@ class ordersModel extends module_model {
         $row = $this->get_assoc_array($sql);
         return $row[0]['status'];
     }
-
+    public function getOrdersListExcel($from, $to) {
+        $sql = 'SELECT o.id, 
+                       o.ready, 
+                       r.to_time,
+                       r.to_time_end,
+                       a.address `from`,
+                       u.title,
+                       concat(r.`to`, \', \', r.to_house, \'-\', r.to_corpus, \'-\', r.to_appart) `to`,
+                       r.to_phone,
+                       r.to_fio,
+                       s.status,
+					   cc.fio fio_car,
+					   r.cost_tovar,
+					   r.cost_route + r.cost_tovar inkass,
+					   \'\' inkas_proc,
+					   \'\' money_car,
+					   \'\' money_comp,
+                       o.comment
+                  FROM orders o
+                LEFT JOIN orders_routes r ON r.id_order = o.id
+				LEFT JOIN orders_status s ON s.id = r.id_status
+                LEFT JOIN users_address a ON a.id = o.id_address
+				LEFT JOIN cars_couriers cc ON cc.id = o.id_car
+				LEFT JOIN couriers c ON c.id = o.id_car
+                LEFT JOIN users u ON u.id = o.id_user
+                  WHERE o.dk BETWEEN \''.$this->dmy_to_mydate($from).'\' AND \''.$this->dmy_to_mydate($to).' 23:59:59\'
+                  and o.isBan = 0
+                ORDER BY o.id desc
+                LIMIT 0,1000';
+        $orders = $this->get_assoc_array($sql);
+        $result_orders = array();
+        foreach ($orders as $key => $order) {
+            $order['to_time'] = $order['to_time'].'-'.$order['to_time_end'];
+            unset($order['to_time_end']);
+            $result_orders[] = $order;
+        }
+        return $result_orders;
+    }
 	public function getOrdersList($from, $to) {
 		$sql = 'SELECT o.id, o.comment, o.cost, o.ready, a.address `from`, a.comment addr_comment,
 					   u.name, u.title, o.dk, o.id_user,
@@ -467,8 +524,9 @@ class ordersProcess extends module_process {
             $sub_action = $this->Vals->getVal ( 'sub_action', 'POST', 'string' );
             list($from, $to) = $this->get_post_date('all');
             if ($sub_action == 'excel') {
-                $orders = $this->nModel->getOrdersList($from, $to);
-                $this->nModel->exportToExcel($orders);
+                $titles = array('номер заказа','время готовности','время доставки','адрес приема','компания','адрес доставки','телефон','ФИО получателя','статус заказа','курьер','стоимость','инкассация','% инкас.','заработок курьера','заработок компании','примечания');
+                $orders = $this->nModel->getOrdersListExcel($from, $to);
+                $this->nModel->exportToExcel($titles,$orders);
                 stop($orders);
             }
             $this->nView->viewExcelDialog($from, $to);
