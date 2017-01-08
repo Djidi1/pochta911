@@ -1,6 +1,10 @@
-ymaps.ready(init);
+jQuery(function ($) {
+    if ($('#map').length) {
+        ymaps.ready(init);
+    }
+});
 var myMap;
-var order_route;
+var order_route = [];
 
 /*function init(){
     myMap = new ymaps.Map("map", {
@@ -46,22 +50,20 @@ function calc_route(){
         bootbox.alert('Необходимо ввести хотя бы один адрес доставки.');
         return false;
     }
-    // var route = [
-    //     "пр. Ветеранов, 36, корп.2",
-    //     "ул. Пилотов, 24",
-    //     "ул. Крыленко, 21-2"
-    // ];
     show_route(route);
 }
 
 
 function show_route(route_addresses){
-    myMap.geoObjects.remove(order_route);
+    // Удаляем старые маршруты
+    $.each(order_route,function () {
+        myMap.geoObjects.remove(this);
+    });
     ymaps.route(route_addresses, {
         multiRoute: true,
         wayPointDraggable: true
     }).done(function (route) {
-        order_route = route;
+        order_route.push(route);
         myMap.geoObjects.add(route);
 
         var moveList = '',

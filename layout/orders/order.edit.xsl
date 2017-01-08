@@ -2,7 +2,7 @@
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
     <xsl:template match="container[@module = 'order']">
         <div class="row">
-            <div class="col-md-8">
+            <div class="col-sm-8">
                 <form action="/orders/orderUpdate-{order/id}/without_menu-1/" method="post" name="main_form">
                     <div class="panel panel-success">
                         <div class="panel-heading">
@@ -81,7 +81,7 @@
                     </div>
                 </form>
             </div>
-            <div class="col-md-4">
+            <div class="col-sm-4">
                 <div id="map" style="width: 100%; min-height: 500px"/>
                 <div id="viewContainer"/>
             </div>
@@ -99,7 +99,7 @@
                 <span class="input-group-addon">
                     <xsl:value-of select="position()"/>
                 </span>
-                <input type="search" class="form-control spb-streets" name="to[]" placeholder="Адрес" title="Адрес" value="{to}" style="width: 100%;" onchange="calc_route()"/>
+                <input type="search" class="form-control spb-streets" name="to[]" placeholder="Адрес" title="Адрес" value="{to}" style="width: 100%;" onchange=""/>
                 <input type="text" class="form-control to_house" name="to_house[]" placeholder="Дом" title="Дом" value="{to_house}" style="width: 34%;" onchange="calc_route()"/>
                 <input type="text" class="form-control to_corpus" name="to_corpus[]" placeholder="Корпус" title="Корпус" value="{to_corpus}" style="width: 33%;" onchange="calc_route()"/>
                 <input type="text" class="form-control" name="to_appart[]" placeholder="Квартира" title="Квартира" value="{to_appart}" style="width: 33%;"/>
@@ -133,7 +133,7 @@
         <xsl:if test="count(routes/item) = 0">
             <div class="input-group" rel="1">
                 <span class="input-group-addon">1</span>
-                <input type="text" class="form-control spb-streets" name="to[]" placeholder="Адрес" value="" style="width: 100%;" onchange="calc_route()"/>
+                <input type="text" class="form-control spb-streets" name="to[]" placeholder="Адрес" value="" style="width: 100%;" onchange=""/>
                 <input type="text" class="form-control to_house" name="to_house[]" placeholder="Дом" value="" style="width: 34%;" onchange="calc_route()"/>
                 <input type="text" class="form-control to_corpus" name="to_corpus[]" placeholder="Корпус" value="" style="width: 33%;" onchange="calc_route()"/>
                 <input type="text" class="form-control" name="to_appart[]" placeholder="Квартира" value="" style="width: 33%;"/>
