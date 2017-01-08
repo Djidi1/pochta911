@@ -30,6 +30,8 @@
             <script src="//cdn.ckeditor.com/4.6.1/full/ckeditor.js"/>
             <script src="//cdn.datatables.net/1.10.13/js/jquery.dataTables.min.js"/>
             <script src="//cdn.datatables.net/1.10.13/js/dataTables.bootstrap.min.js"/>
+            <script src="https://api-maps.yandex.ru/2.1/?lang=ru_RU"/>
+            <script src="/js/ymap.js?v1"/>
             <script>
             <!--var roxyFileman = '/fileman/index.html';-->
             <!--//1-->
