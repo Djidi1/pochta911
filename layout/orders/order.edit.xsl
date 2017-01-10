@@ -99,7 +99,7 @@
                 <span class="input-group-addon">
                     <xsl:value-of select="position()"/>
                 </span>
-                <input type="search" class="form-control spb-streets" name="to[]" placeholder="Адрес" title="Адрес" value="{to}" style="width: 100%;" onchange=""/>
+                <input type="search" class="form-control spb-streets" name="to[]" placeholder="Адрес" title="Адрес" value="{to}" style="width: 100%;" onchange="" autocomplete="off"/>
                 <input type="text" class="form-control to_house" name="to_house[]" placeholder="Дом" title="Дом" value="{to_house}" style="width: 34%;" onchange="calc_route()"/>
                 <input type="text" class="form-control to_corpus" name="to_corpus[]" placeholder="Корпус" title="Корпус" value="{to_corpus}" style="width: 33%;" onchange="calc_route()"/>
                 <input type="text" class="form-control" name="to_appart[]" placeholder="Квартира" title="Квартира" value="{to_appart}" style="width: 33%;"/>
@@ -133,7 +133,7 @@
         <xsl:if test="count(routes/item) = 0">
             <div class="input-group" rel="1">
                 <span class="input-group-addon">1</span>
-                <input type="text" class="form-control spb-streets" name="to[]" placeholder="Адрес" value="" style="width: 100%;" onchange=""/>
+                <input type="text" class="form-control spb-streets" name="to[]" placeholder="Адрес" value="" style="width: 100%;" onchange="" autocomplete="off"/>
                 <input type="text" class="form-control to_house" name="to_house[]" placeholder="Дом" value="" style="width: 34%;" onchange="calc_route()"/>
                 <input type="text" class="form-control to_corpus" name="to_corpus[]" placeholder="Корпус" value="" style="width: 33%;" onchange="calc_route()"/>
                 <input type="text" class="form-control" name="to_appart[]" placeholder="Квартира" value="" style="width: 33%;"/>

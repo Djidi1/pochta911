@@ -46,7 +46,7 @@ if (isset($data->callback_query)){
 
     callApi( 'sendMessage', array(
         'chat_id'               => $row['chat_id'],
-        'text'                  => "Спасибо за подтверждение!  [".$row['data']."]",
+        'text'                  => "Спасибо за подтверждение!",
         'reply_to_message_id'   => $row['message_id'],
     ));
 }

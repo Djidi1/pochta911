@@ -171,6 +171,25 @@ function send_new_status(){
 }
 
 function autoc_spb_streets(){
+    // $(".spb-streets").typeahead({ ajax: '', hint: true });
+    $(".spb-streets").typeahead({ source: function(query, process) {
+        // var textVal=$("#field1").val();
+        $.ajax({
+            url: '/service/kladr.php',
+            type: 'POST',
+            data: 'type=street&street=' + query + '&city=',
+            dataType: 'JSON',
+            async: true,
+            timeout: 5000,
+            success: function(data) {
+                process(data);
+                // console.log(textVal);
+            }
+        });
+    },
+        minLength: 4
+    });
+    /*
     var saved_data = localStorage.getItem('spb_street_data');
     if (typeof saved_data == 'undefined' || saved_data == null || saved_data == '' ) {
         $.getJSON('/orders/get_data-spbStreets', function(spb_street_data){
@@ -181,6 +200,7 @@ function autoc_spb_streets(){
         var localData = JSON.parse(localStorage.getItem('spb_street_data'));
         $(".spb-streets").typeahead({ source: localData, hint: true });
     }
+    */
 }
 
 

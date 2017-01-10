@@ -42,7 +42,8 @@ function calc_route(){
         var route_to_house = $(this).parent().find('.to_house').val();
         var route_to_corpus = $(this).parent().find('.to_corpus').val();
         if (route_address != '') {
-            route.push('Санкт-Петербург, ' + route_address + ((route_to_house != '')?(', '+route_to_house):'') + ((route_to_corpus != '')?(', '+route_to_corpus):''));
+            // route.push('Санкт-Петербург, ' + route_address + ((route_to_house != '')?(', '+route_to_house):'') + ((route_to_corpus != '')?(', '+route_to_corpus):''));
+            route.push('' + route_address + ((route_to_house != '')?(', '+route_to_house):'') + ((route_to_corpus != '')?(', '+route_to_corpus):''));
             i++;
         }
     });
