@@ -12,6 +12,14 @@
 					<xsl:value-of select="." disable-output-escaping="yes"/>
 				</p>
 			</xsl:for-each>
+		<xsl:if test="/page/@without_menu = 1">
+			<script>
+				function history_go_back() {
+					history.go(-1)
+				}
+				setTimeout(history_go_back, 500);
+			</script>
+		</xsl:if>
 	</div>
 		<xsl:if test="nolink = 1">
 		</xsl:if>
