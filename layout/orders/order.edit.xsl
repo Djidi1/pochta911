@@ -3,7 +3,7 @@
     <xsl:template match="container[@module = 'order']">
         <div class="row">
             <div class="col-sm-8">
-                <form action="/orders/orderUpdate-{order/id}/without_menu-1/" method="post" name="main_form">
+                <form class="order_edit" action="/orders/orderUpdate-{order/id}/without_menu-1/" method="post" name="main_form">
                     <div class="panel panel-success">
                         <div class="panel-heading">
                             <strong>Заказ №<xsl:value-of select="order/id"/></strong>
@@ -45,6 +45,28 @@
                                 <div class="col-sm-2"><label>Готовность:</label></div>
                                 <div class="col-sm-4">
                                     <input class="form-control time-picker" type="text" name="ready" onkeyup="check_user(this)" value="{order/ready}" size="30" required=""/>
+                                </div>
+                                <div class="col-sm-2"><label>Статус:</label></div>
+                                <div class="col-sm-4">
+                                    <i>
+                                        <xsl:value-of select="routes/item[1]/status"/>
+                                    </i>
+                                    <xsl:if test="/page/body/module[@name='CurentUser']/container/group_id = 1 and order/id > 0">
+                                        <div title="Изменить статус" class="btn btn-warning btn-xs chg-status" onclick="chg_status({order/id})">
+                                            <span class="glyphicon glyphicon-flag" aria-hidden="true"> </span>
+                                        </div>
+                                    </xsl:if>
+                                </div>
+                                <div class="col-sm-2"><label>Курьер:</label></div>
+                                <div class="col-sm-4">
+                                    <i>
+                                        <xsl:value-of select="order/fio_car"/>
+                                    </i>
+                                    <xsl:if test="/page/body/module[@name='CurentUser']/container/group_id = 1 and order/id > 0">
+                                        <div title="Назначить курьера" class="btn btn-info btn-xs chg-status" onclick="chg_courier({order/id})">
+                                            <i class="fa fa-car" aria-hidden="true"> </i>
+                                        </div>
+                                    </xsl:if>
                                 </div>
                             </div>
                             <label>Адреса доставки:</label>
@@ -100,16 +122,19 @@
                     <xsl:value-of select="position()"/>
                 </span>
                 <input type="search" class="form-control spb-streets" name="to[]" placeholder="Адрес" title="Адрес" value="{to}" style="width: 100%;" onchange="" autocomplete="off"/>
-                <input type="text" class="form-control to_house" name="to_house[]" placeholder="Дом" title="Дом" value="{to_house}" style="width: 34%;" onchange="calc_route()"/>
-                <input type="text" class="form-control to_corpus" name="to_corpus[]" placeholder="Корпус" title="Корпус" value="{to_corpus}" style="width: 33%;" onchange="calc_route()"/>
-                <input type="text" class="form-control" name="to_appart[]" placeholder="Квартира" title="Квартира" value="{to_appart}" style="width: 33%;"/>
-                <input type="text" class="form-control" name="to_fio[]" placeholder="Получатель" title="Получатель" value="{to_fio}" style="width: 50%;"/>
-                <input type="text" class="form-control" name="to_phone[]" placeholder="Телефон получателя" title="Телефон получателя" value="{to_phone}" style="width: 50%;"/>
+                <input type="text" class="form-control to_house" name="to_house[]" placeholder="Дом" title="Дом" value="{to_house}" style="width: 20%;" onchange="calc_route()"/>
+                <input type="text" class="form-control to_corpus" name="to_corpus[]" placeholder="Корпус" title="Корпус" value="{to_corpus}" style="width: 20%;" onchange="calc_route()"/>
+                <input type="text" class="form-control" name="to_appart[]" placeholder="Квартира" title="Квартира" value="{to_appart}" style="width: 20%;"/>
                 <input type="text" class="form-control time-picker start" name="to_time[]" placeholder="Время доставки с" title="Время доставки с" value="{to_time}" style="width: 20%;"/>
                 <input type="text" class="form-control time-picker end" name="to_time_end[]" placeholder="Время доставки по" title="Время доставки по" value="{to_time_end}" style="width: 20%;"/>
-                <input type="text" class="form-control cost_tovar" name="cost_tovar[]" placeholder="Стоимость товара" title="Стоимость товара" value="{cost_tovar}" style="width: 20%;" onkeyup="re_calc(this)"/>
-                <input type="text" class="form-control cost_route" name="cost_route[]" placeholder="Стоимость доставки" title="Стоимость доставки" value="{cost_route}" style="width: 20%;" onkeyup="re_calc(this)"/>
-                <input type="text" class="form-control cost_all" placeholder="Инкассация" title="Инкассация" value="{number(cost_route)+number(cost_tovar)}" style="width: 20%;" disabled=""/>
+
+                <input type="text" class="form-control" name="to_fio[]" placeholder="Получатель" title="Получатель" value="{to_fio}" style="width: 50%;"/>
+                <input type="text" class="form-control" name="to_phone[]" placeholder="Телефон получателя" title="Телефон получателя" value="{to_phone}" style="width: 50%;"/>
+
+                <input type="text" class="form-control cost_tovar" name="cost_tovar[]" placeholder="Стоимость товара" title="Стоимость товара" value="{cost_tovar}" style="width: 25%;" onkeyup="re_calc(this)"/>
+                <input type="text" class="form-control cost_route" name="cost_route[]" placeholder="Стоимость доставки" title="Стоимость доставки" value="{cost_route}" style="width: 25%;" onkeyup="re_calc(this)"/>
+                <input type="text" class="form-control cost_car" name="cost_car[]" placeholder="Заработок курьера" title="Заработок курьера" value="{cost_car}" style="width: 25%;" onkeyup="re_calc(this)"/>
+                <input type="text" class="form-control cost_all" placeholder="Инкассация" title="Инкассация" value="{number(cost_route)+number(cost_tovar)}" style="width: 25%;" disabled=""/>
                 <br/>
                 <textarea name="comment[]" class="form-control" placeholder="Комментарий" title="Комментарий" style="display:none">
                     <xsl:value-of select="comment"/>

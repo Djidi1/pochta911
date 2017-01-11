@@ -44,19 +44,15 @@ function set_time_period (start, end, format) {
     });
     $(start).on("dp.change", function (e) {
         $(end).data("DateTimePicker").minDate(e.date);
-        console.log('st_chg');
     });
     $(end).on("dp.change", function (e) {
         $(start).data("DateTimePicker").maxDate(e.date);
-        console.log('end_chg');
     });
     $(start).on("dp.show", function (e) {
         $(end).data("DateTimePicker").minDate(e.date);
-        console.log('st_show');
     });
     $(end).on("dp.show", function (e) {
         $(start).data("DateTimePicker").maxDate(e.date);
-        console.log('end_show');
     });
 }
 
@@ -120,8 +116,7 @@ function popup_excel(url) {
 
 function chg_courier(order_id){
     var order_route_id = $('tr.order_'+order_id).first().attr('rel');
-    var order_info = $('.order_route_'+order_route_id+' .order_info').attr('rel');
-    $.post("/orders/chg_courier-1/", {order_id:order_id,order_info:order_info},  function(data) {
+    $.post("/orders/chg_courier-1/", {order_id:order_id},  function(data) {
         bootbox.confirm({
             title: "Изменение курьера в заказе № "+order_id,
             message: data,
@@ -145,9 +140,8 @@ function send_new_courier(){
     });
 
 }
-function chg_status(order_route_id, order_id){
-    var order_info = $('.order_route_'+order_route_id+' .order_info').attr('rel');
-    $.post("/orders/chg_status-1/", {order_route_id:order_route_id,order_info:order_info},  function(data) {
+function chg_status(order_id){
+    $.post("/orders/chg_status-1/", {order_id:order_id},  function(data) {
         bootbox.confirm({
             title: "Изменение статуса доставки в заказе № "+order_id,
             message: data,

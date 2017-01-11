@@ -121,7 +121,7 @@ class ordersModel extends module_model {
 
 	public function getRoutes($order_id) {
 		$sql = 'SELECT r.id id_route, `to`,to_house,to_corpus,to_appart,
-					  to_fio,to_phone,to_coord,from_coord,lenght,cost_route,cost_tovar,
+					  to_fio,to_phone,to_coord,from_coord,lenght,cost_route,cost_tovar,cost_car,
 					  `to_time`,`to_time_end`,r.`comment`, s.status, s.id status_id
 				FROM orders_routes r
 				LEFT JOIN orders_status s ON s.id = r.id_status
@@ -136,13 +136,40 @@ class ordersModel extends module_model {
 
 	public function getOrderRoute($order_route_id) {
 	    $sql = "SELECT id id_route, id_order, `to`, to_house, to_corpus, to_appart, to_fio, to_phone, to_coord, 
-                      from_coord, lenght, cost_route,cost_tovar, to_date, to_time, comment, id_status, dk 
+                      from_coord, lenght, cost_route,cost_tovar,cost_car, to_date, to_time, comment, id_status, dk 
                 FROM orders_routes
                 WHERE id = $order_route_id";
 	    $row = $this->get_assoc_array($sql);
 	    return $row[0];
     }
 
+
+    public function getOrderInfo($order_id) {
+        $sql = 'SELECT o.id,
+                       ua.address `from`,
+					   o.ready
+				FROM orders o
+				LEFT JOIN users_address ua ON ua.id = o.id_address
+				WHERE o.id = '.$order_id;
+        $items = $this->get_assoc_array($sql);
+        return isset($items[0])?$items[0]:array();
+    }
+
+    public function getOrderRoutesInfo($order_id) {
+        $sql = 'SELECT r.id,
+                       r.to_time,
+                       r.to_time_end,
+                       CONCAT(r.`to`,\', д.\',r.`to_house`,\', корп.\',r.`to_corpus`,\', кв.\',r.`to_appart`) to_addr,
+                       r.to_fio,
+                       r.to_phone,
+					   r.cost_route,
+					   r.cost_tovar
+				FROM orders o
+				LEFT JOIN orders_routes r ON o.id = r.id_order
+				WHERE o.id = '.$order_id;
+        $items = $this->get_assoc_array($sql);
+        return $items;
+    }
 
 	public function getOrder($order_id) {
 		$sql = 'SELECT o.id,
@@ -358,11 +385,11 @@ class ordersModel extends module_model {
 				$sql_values .= ($key > 0)?',':'';
                 $sql_values .= ' (\''.$order_id.'\',\''.$params ['to'][$key].'\',\''.$params ['to_house'][$key].'\',\''.$params ['to_corpus'][$key].'\',
 							\''.$params ['to_appart'][$key].'\',\''.$params ['to_fio'][$key].'\',\''.$params ['to_phone'][$key].'\',
-							\''.$params ['cost_route'][$key].'\',\''.$params ['cost_tovar'][$key].'\',
+							\''.$params ['cost_route'][$key].'\',\''.$params ['cost_tovar'][$key].'\',\''.$params ['cost_car'][$key].'\',
 							\''.$params ['to_time'][$key].'\',\''.$params ['to_time_end'][$key].'\',\''.$params ['comment'][$key].'\'	)';
 			}
 			if ($sql_values != '') {
-                $sql = "INSERT INTO orders_routes (id_order,`to`,`to_house`,`to_corpus`,`to_appart`,`to_fio`,`to_phone`,`cost_route`,`cost_tovar`,`to_time`,`to_time_end`,`comment`) VALUES $sql_values";
+                $sql = "INSERT INTO orders_routes (id_order,`to`,`to_house`,`to_corpus`,`to_appart`,`to_fio`,`to_phone`,`cost_route`,`cost_tovar`,`cost_car`,`to_time`,`to_time_end`,`comment`) VALUES $sql_values";
                 $this->query($sql);
             }
 		}
@@ -566,6 +593,7 @@ class ordersProcess extends module_process {
 			$params['to_time_end'] = $this->Vals->getVal ( 'to_time_end', 'POST', 'array' );
 			$params['cost_route'] = $this->Vals->getVal ( 'cost_route', 'POST', 'array' );
 			$params['cost_tovar'] = $this->Vals->getVal ( 'cost_tovar', 'POST', 'array' );
+			$params['cost_car'] = $this->Vals->getVal ( 'cost_car', 'POST', 'array' );
 			$params['comment'] = $this->Vals->getVal ( 'comment', 'POST', 'array' );
 			if ($params['order_id'] > 0) {
 				$id_code = $this->nModel->orderUpdate($params);
@@ -577,20 +605,17 @@ class ordersProcess extends module_process {
 		}
 
 		if ($action == 'chg_status'){
+            $order_id = $this->Vals->getVal ( 'order_id', 'POST', 'integer' );
             $order_route_id = $this->Vals->getVal ( 'order_route_id', 'POST', 'integer' );
 			$new_status = $this->Vals->getVal ( 'new_status', 'POST', 'integer' );
 			$stat_comment = $this->Vals->getVal ( 'stat_comment', 'POST', 'string' );
-			$order_info = $this->Vals->getVal ( 'order_info', 'POST', 'string' );
 			$order_info_message = $this->Vals->getVal ( 'order_info_message', 'POST', 'string' );
 			if ($order_info_message == '') {
-                $order_info = json_decode($order_info);
-                $order_info_message = "<b>Заказ №</b> " . $order_info->order_id . "\r\n";
-                $order_info_message .= "<b>Откуда:</b> " . $order_info->from . "\r\n";
-                $order_info_message .= "<b>Готовность:</b> " . $order_info->ready . "\r\n";
-                $order_info_message .= "<b>Время получения:</b> " . $order_info->to_time . "\r\n";
-                $order_info_message .= "<b>Адрес доставки:</b> " . $order_info->to_addr . "\r\n";
-                $order_info_message .= "<b>Получатель:</b> " . $order_info->to_fio . " [" . $order_info->to_phone . "]\r\n";
-                $order_info_message .= "<b>Стоимость заказа:</b> " . $order_info->cost . " ";
+                $order_info_message = $this->getOrderTextInfo($order_id);
+            }
+            if ($order_route_id == ''){
+                $order_routes = $this->nModel->getOrderRoutesInfo($order_id);
+                $order_route_id = $order_routes[0]['id'];
             }
 			if ($new_status > 0){
 				$this->nModel->updOrderStatus($user_id, $order_route_id, $new_status, $stat_comment);
@@ -631,17 +656,9 @@ class ordersProcess extends module_process {
 			$new_courier = $this->Vals->getVal ( 'new_courier', 'POST', 'integer' );
 			$new_car_courier = $this->Vals->getVal ( 'new_car_courier', 'POST', 'integer' );
             $courier_comment = $this->Vals->getVal ( 'courier_comment', 'POST', 'string' );
-            $order_info = $this->Vals->getVal ( 'order_info', 'POST', 'string' );
             $order_info_message = $this->Vals->getVal ( 'order_info_message', 'POST', 'string' );
             if ($order_info_message == '') {
-                $order_info = json_decode($order_info);
-                $order_info_message = "<b>Заказ №</b> " . $order_info->order_id . "\r\n";
-                $order_info_message .= "<b>Откуда:</b> " . $order_info->from . "\r\n";
-                $order_info_message .= "<b>Готовность:</b> " . $order_info->ready . "\r\n";
-                $order_info_message .= "<b>Время получения:</b> " . $order_info->to_time . "\r\n";
-                $order_info_message .= "<b>Адрес доставки:</b> " . $order_info->to_addr . "\r\n";
-                $order_info_message .= "<b>Получатель:</b> " . $order_info->to_fio . " [" . $order_info->to_phone . "]\r\n";
-                $order_info_message .= "<b>Стоимость заказа:</b> " . $order_info->cost . " ";
+                $order_info_message = $this->getOrderTextInfo($order_id);
             }
 			if ($new_courier > 0 and $new_car_courier > 0){
 				$this->nModel->updOrderRouteCourier($user_id, $order_id, $new_courier, $new_car_courier, $courier_comment);
@@ -739,6 +756,23 @@ class ordersProcess extends module_process {
 
 
 	}
+
+	public function getOrderTextInfo($order_id){
+        $order_info = $this->nModel->getOrderInfo($order_id);
+        $order_routes_info = $this->nModel->getOrderRoutesInfo($order_id);
+        $order_info_message = "<b>Заказ №</b> " . $order_id . "\r\n";
+        $order_info_message .= "<b>Откуда:</b> " . $order_info['from'] . "\r\n";
+        $order_info_message .= "<b>Готовность:</b> " . $order_info['ready'] . "\r\n\r\n";
+        $i = 0;
+        foreach ($order_routes_info as $order_route_info) {
+            $i++;
+            $order_info_message .= "$i) <b>Адрес доставки:</b> " . $order_route_info['to_addr'] . "\r\n";
+            $order_info_message .= "$i) <b>Период получения:</b> " . $order_route_info['to_time'] . " - " . $order_route_info['to_time_end'] . "\r\n";
+            $order_info_message .= "$i) <b>Получатель:</b> " . $order_route_info['to_fio'] . " [" . $order_route_info['to_phone'] . "]\r\n";
+            $order_info_message .= "$i) <b>Стоимость заказа:</b> " . (+$order_route_info['cost_route'] + $order_route_info['cost_tovar']) . "\r\n ";
+        }
+        return $order_info_message;
+    }
 
 	public function get_post_date($type = 'to'){
 	    if ($type == 'all') {

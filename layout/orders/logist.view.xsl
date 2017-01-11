@@ -57,12 +57,11 @@
                     </xsl:if>
                     <th>Прим. заказ</th>
                     <!--<th>Прим. адрес</th>-->
-                    <th/>
+                    <!--<th/>-->
                 </thead>
                 <tfoot>
                     <tr>
                         <!--<th/>-->
-                        <th/>
                         <th/>
                         <th/>
                         <th/>
@@ -137,22 +136,22 @@
                             <!--<td>-->
                                 <!--<xsl:value-of select="comment"/>-->
                             <!--</td>-->
-                            <td style="width:90px">
-                                <div class="btn-group">
-                                    <!--<div onclick="open_dialog('/orders/order-{../../id}/')" class="btn btn-success btn-xs chg-status" title="редактировать">-->
-                                        <!--<span class="glyphicon glyphicon-pencil" aria-hidden="true"> </span>-->
+                            <!--<td style="width:90px">-->
+                                <!--<div class="btn-group">-->
+                                    <!--&lt;!&ndash;<div onclick="open_dialog('/orders/order-{../../id}/')" class="btn btn-success btn-xs chg-status" title="редактировать">&ndash;&gt;-->
+                                        <!--&lt;!&ndash;<span class="glyphicon glyphicon-pencil" aria-hidden="true"> </span>&ndash;&gt;-->
+                                    <!--&lt;!&ndash;</div>&ndash;&gt;-->
+                                    <!--&lt;!&ndash;<a href="/orders/order-{../../id}/" class="btn btn-success btn-xs chg-status" title="редактировать" target="_blank">&ndash;&gt;-->
+                                        <!--&lt;!&ndash;<span class="glyphicon glyphicon-pencil" aria-hidden="true"> </span>&ndash;&gt;-->
+                                    <!--&lt;!&ndash;</a>&ndash;&gt;-->
+                                    <!--<div title="Назначить курьера" class="btn btn-info btn-xs chg-status" onclick="chg_courier({../../id})">-->
+                                        <!--<i class="fa fa-car" aria-hidden="true"> </i>-->
                                     <!--</div>-->
-                                    <!--<a href="/orders/order-{../../id}/" class="btn btn-success btn-xs chg-status" title="редактировать" target="_blank">-->
-                                        <!--<span class="glyphicon glyphicon-pencil" aria-hidden="true"> </span>-->
-                                    <!--</a>-->
-                                    <div title="Назначить курьера" class="btn btn-info btn-xs chg-status" onclick="chg_courier({../../id})">
-                                        <i class="fa fa-car" aria-hidden="true"> </i>
-                                    </div>
-                                    <div title="Изменить статус" class="btn btn-warning btn-xs chg-status" onclick="chg_status({id_route},{../../id})">
-                                        <span class="glyphicon glyphicon-flag" aria-hidden="true"> </span>
-                                    </div>
-                                </div>
-                            </td>
+                                    <!--<div title="Изменить статус" class="btn btn-warning btn-xs chg-status" onclick="chg_status({id_route},{../../id})">-->
+                                        <!--<span class="glyphicon glyphicon-flag" aria-hidden="true"> </span>-->
+                                    <!--</div>-->
+                                <!--</div>-->
+                            <!--</td>-->
                         </tr>
                     </xsl:for-each>
                 </tbody>
