@@ -187,7 +187,9 @@ function autoc_spb_streets(){
             }
         });
     },
-        minLength: 4
+        minLength: 4,
+//		scrollHeight: 200,
+		items: 'all'
     });
     /*
     var saved_data = localStorage.getItem('spb_street_data');

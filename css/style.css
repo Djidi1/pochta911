@@ -69,3 +69,5 @@ TABLE.new-logist-data-table td { padding: 0 1px !important;}
 .largeWidth > div {    margin: 0 auto;    width: 90%;}
 
 tfoot {   display: table-header-group; }
+
+ul.typeahead.dropdown-menu { max-height: 200px;  overflow-y: auto;}
