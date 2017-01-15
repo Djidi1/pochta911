@@ -101,12 +101,12 @@ function open_bootbox_dialog(url) {
 }
 
 function popup_excel(url) {
-    bootbox.dialog({
+    bootbox.alert({
         title: "Экспорт в эксель",
-        message: '<iframe style="border:0;" src="/'+url+'/without_menu-1/" height="500" width="100%" ></iframe>',
-        className: "largeWidth",
+        message: '<iframe style="border:0;" src="/'+url+'/without_menu-1/" height="200" width="100%"  scrolling="no"></iframe>',
+        className: "minWidth",
         buttons: {
-            'cancel': {
+            'ok': {
                 label: 'Закрыть',
                 className: 'btn-default pull-left'
             }

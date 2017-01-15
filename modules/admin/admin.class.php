@@ -359,6 +359,43 @@ class adminModel extends module_model {
 		return $items;
 	}
 
+	public function getRoutesPrices() {
+		$sql = 'SELECT id, km_from, km_to, user_id, dk, km_cost
+				FROM routes_price
+				ORDER BY km_from ';
+		$this->query ( $sql );
+		$items = array ();
+        $i = 0;
+		while ( ($row = $this->fetchRowA ()) !== false ) {
+			$items [] = $row;
+            $i++;
+		}
+		// Дополняем массив до 10 значений
+		$fake_price = array('id'=>'', 'km_from'=>'', 'km_to'=>'', 'km_cost'=>'');
+		if ($i < 10) {
+		    for ( ; $i <= 10; $i++){
+                $items [] = $fake_price;
+            }
+        }
+		return $items;
+	}
+
+    public function saveRoutesPrices($km_from,$km_to,$km_cost,$user_id){
+        if (is_array($km_from)) {
+            $sql = 'TRUNCATE TABLE routes_price';
+            $this->query ( $sql );
+            $values = '';
+            foreach ($km_from as $key => $km_from_item) {
+                if ($km_from_item !== ''){
+                    $values .= ($key > 0)?',':'';
+                    $values .= ' (\''.$km_from_item.'\',\''.$km_to[$key].'\',\''.$km_cost[$key].'\','.$user_id.', NOW())';
+                }
+            }
+            $sql = 'INSERT INTO routes_price (km_from, km_to, km_cost, user_id, dk) VALUES '.$values;
+            $this->query ( $sql );
+        }
+    }
+
 	public function carUpdate($param) {
 		$sql = "
 		UPDATE cars_couriers 
@@ -664,7 +701,8 @@ class adminProcess extends module_process {
 		$this->regAction ( 'groupRightsUpdate', 'Обновление прав групп', ACTION_GROUP );
 		$this->regAction ( 'LoginsList', 'Журнал входов', ACTION_GROUP );
 		$this->regAction ( 'logs', 'Журнал изменений', ACTION_GROUP );
-		$this->regAction ( 'mails', 'Рассылка писем', ACTION_GROUP );
+		$this->regAction ( 'price_routes', 'Стоимость за киллометр', ACTION_GROUP );
+//		$this->regAction ( 'mails', 'Рассылка писем', ACTION_GROUP );
 		$this->regAction ( 'getTelegramUpdates', 'Обновления телеграмма', ACTION_GROUP );
 		if (DEBUG == 0) {
 			$this->registerActions ( 1 );
@@ -967,6 +1005,19 @@ class adminProcess extends module_process {
 			$this->nView->viewCarsList ( $cars );
 			$this->updated = true;
 		}
+		/* Цены по киллометрам */
+		if ($action == 'price_routes') {
+		    if ($this->Vals->getVal ( 'sub_action', 'POST', 'string' ) == 'save'){
+                $km_from = $this->Vals->getVal ( 'km_from', 'POST', 'array' );
+                $km_to = $this->Vals->getVal ( 'km_to', 'POST', 'array' );
+                $km_cost = $this->Vals->getVal ( 'km_cost', 'POST', 'array' );
+                $this->nModel->saveRoutesPrices($km_from,$km_to,$km_cost,$user_id);
+            }
+		    $prices = $this->nModel->getRoutesPrices();
+		    $this->nView->viewRoutesPrices($prices);
+            $this->updated = true;
+        }
+
 		/* * Группы * */
 		
 		if ($action == 'groupNew') {
@@ -1272,7 +1323,17 @@ class adminView extends module_view {
 		}
 		return true;
 	}
-	
+
+	public function viewRoutesPrices($prices) {
+		$this->pXSL [] = RIVC_ROOT . 'layout/admin/prices.list.xsl';
+		$Container = $this->newContainer ( 'prceslist' );
+		$ContainerGroups = $this->addToNode ( $Container, 'prices', '' );
+		foreach ( $prices as $item ) {
+			$this->arrToXML ( $item, $ContainerGroups, 'item' );
+		}
+		return true;
+	}
+
 	public function viewNewGroup() {
 		$this->pXSL [] = RIVC_ROOT . 'layout/users/group.new.xsl';
 		$this->newContainer ( 'groupnew' );

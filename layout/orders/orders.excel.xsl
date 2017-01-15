@@ -3,10 +3,10 @@
     <xsl:template match="container[@module = 'excel']">
         <form method="post" style="margin-bottom: 2px;">
             <div class="row">
-                <div class="col-sm-9">
+                <div class="col-xs-9">
                     <xsl:call-template name="datepickers"/>
                 </div>
-                <div class="col-sm-3">
+                <div class="col-xs-3">
                     <input class="btn btn-success" type="submit" name="sub_action" value="excel"/>
                 </div>
             </div>

@@ -159,16 +159,18 @@
             <div class="input-group" rel="1">
                 <span class="input-group-addon">1</span>
                 <input type="text" class="form-control spb-streets" name="to[]" placeholder="Адрес" value="" style="width: 100%;" onchange="" autocomplete="off"/>
-                <input type="text" class="form-control to_house" name="to_house[]" placeholder="Дом" value="" style="width: 34%;" onchange="calc_route()"/>
-                <input type="text" class="form-control to_corpus" name="to_corpus[]" placeholder="Корпус" value="" style="width: 33%;" onchange="calc_route()"/>
-                <input type="text" class="form-control" name="to_appart[]" placeholder="Квартира" value="" style="width: 33%;"/>
-                <input type="text" class="form-control" name="to_fio[]" placeholder="Получатель" value="" style="width: 50%;"/>
-                <input type="text" class="form-control" name="to_phone[]" placeholder="Телефон получателя" value="" style="width: 50%;"/>
+                <input type="text" class="form-control to_house" name="to_house[]" placeholder="Дом" value="" style="width: 20%;" onchange="calc_route()"/>
+                <input type="text" class="form-control to_corpus" name="to_corpus[]" placeholder="Корпус" value="" style="width: 20%;" onchange="calc_route()"/>
+                <input type="text" class="form-control" name="to_appart[]" placeholder="Квартира" value="" style="width: 20%;"/>
                 <input type="text" class="form-control time-picker start" name="to_time[]" placeholder="Время доставки с" value="" style="width: 20%;"/>
                 <input type="text" class="form-control time-picker end" name="to_time_end[]" placeholder="Время доставки по" value="" style="width: 20%;"/>
-                <input type="text" class="form-control cost_tovar" name="cost_tovar[]" placeholder="Стоимость товара" title="Стоимость товара" value="" style="width: 20%;" onkeyup="re_calc(this)"/>
-                <input type="text" class="form-control cost_route" name="cost_route[]" placeholder="Стоимость доставки" title="Стоимость доставки" value="" style="width: 20%;" onkeyup="re_calc(this)"/>
-                <input type="text" class="form-control cost_all" placeholder="Инкассация" title="Инкассация" value="" style="width: 20%;" disabled=""/>
+
+                <input type="text" class="form-control" name="to_fio[]" placeholder="Получатель" value="" style="width: 50%;"/>
+                <input type="text" class="form-control" name="to_phone[]" placeholder="Телефон получателя" value="" style="width: 50%;"/>
+                <input type="text" class="form-control cost_tovar" name="cost_tovar[]" placeholder="Стоимость товара" title="Стоимость товара" value="" style="width: 25%;" onkeyup="re_calc(this)"/>
+                <input type="text" class="form-control cost_route" name="cost_route[]" placeholder="Стоимость доставки" title="Стоимость доставки" value="" style="width: 25%;" onkeyup="re_calc(this)"/>
+                <input type="text" class="form-control cost_car" name="cost_car[]" placeholder="Заработок курьера" title="Заработок курьера" value="" style="width: 25%;" onkeyup="re_calc(this)"/>
+                <input type="text" class="form-control cost_all" placeholder="Инкассация" title="Инкассация" value="" style="width: 25%;" disabled=""/>
                 <br/>
                 <textarea name="comment[]" class="form-control"  placeholder="Комментарий" title="Комментарий" style="display:none">
                     <xsl:value-of select="comment"/>
