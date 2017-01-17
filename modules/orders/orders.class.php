@@ -128,7 +128,10 @@ class ordersModel extends module_model {
 				WHERE id_order = '.$order_id;
 		return $this->get_assoc_array($sql);
 	}
-
+    public function getPrices() {
+        $sql = 'SELECT id, km_from, km_to, km_cost FROM routes_price r';
+        return $this->get_assoc_array($sql);
+    }
 	public function getSpbStreets(){
 		$sql = 'SELECT id, street_name name FROM spb_streets';
 		return $this->get_assoc_array($sql);
@@ -564,9 +567,10 @@ class ordersProcess extends module_process {
 			$without_menu = $this->Vals->getVal ( 'without_menu', 'GET', 'integer' );
 			$order = $this->nModel->getOrder($order_id);
 			$routes = $this->nModel->getRoutes($order_id);
+			$prices = $this->nModel->getPrices();
 			$stores = $this->nModel->getStores(isset($order['id_user'])?$order['id_user']:$user_id);
 			$client_title = $this->nModel->getClientTitle(isset($order['id_user'])?$order['id_user']:$user_id);
-			$this->nView->viewOrderEdit ( $order, $stores, $routes, $client_title, $without_menu );
+			$this->nView->viewOrderEdit ( $order, $stores, $routes, $prices, $client_title, $without_menu );
 		}
 
 		if ($action == 'orderBan') {
@@ -946,7 +950,7 @@ class ordersView extends module_View {
 		return true;
 	}
 	
-	public function viewOrderEdit($order, $stores, $routes, $client_title, $without_menu) {
+	public function viewOrderEdit($order, $stores, $routes, $prices, $client_title, $without_menu) {
 		$this->pXSL [] = RIVC_ROOT . 'layout/orders/order.edit.xsl';
 		$Container = $this->newContainer ( 'order' );
         $this->addAttr ( 'today', date('d.m.Y'), $Container );
@@ -963,10 +967,14 @@ class ordersView extends module_View {
 		foreach ( $stores as $item ) {
 			$this->arrToXML ( $item, $ContainerStores, 'item' );
 		}
-		$ContainerRoutes = $this->addToNode ( $Container, 'routes', '' );
-		foreach ( $routes as $item ) {
-			$this->arrToXML ( $item, $ContainerRoutes, 'item' );
-		}
+        $ContainerRoutes = $this->addToNode ( $Container, 'routes', '' );
+        foreach ( $routes as $item ) {
+            $this->arrToXML ( $item, $ContainerRoutes, 'item' );
+        }
+        $ContainerPrices = $this->addToNode ( $Container, 'prices', '' );
+        foreach ( $prices as $item ) {
+            $this->arrToXML ( $item, $ContainerPrices, 'item' );
+        }
 
 		return true;
 	}
