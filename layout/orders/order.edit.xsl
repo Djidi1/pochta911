@@ -107,6 +107,11 @@
                 <div id="map" style="width: 100%; min-height: 500px"/>
                 <div id="viewContainer"/>
             </div>
+            <div style="display:none">
+                <xsl:for-each select="prices/item">
+                    <input id="km_{id}" class="km_cost" type="hidden" value="{km_cost}" km_from="{km_from}" km_to="{km_to}" />
+                </xsl:for-each>
+            </div>
         </div>
         <script>
             $('FORM').on('keyup keypress', function(e) {

@@ -5,10 +5,11 @@
             <form method="post" style="margin-bottom: 2px;">
                 <div class="row">
                     <div class="col-sm-9">
-                        <a class="btn btn-success" href="/orders/order-0/" title="Добавить заказ" target="_blank">
-                            <span class="glyphicon glyphicon-flag"> </span>
-                            <span>Новый заказ</span>
+                        <a class="btn btn-success" href="#" onclick="open_bootbox_dialog('/orders/order-0/')" title="Добавить заказ">
+                            <span class="glyphicon glyphicon-flag"> </span> Новый заказ
                         </a>
+                        <a class="btn btn-success" href="#" onclick="popup_excel('orders/excel-1')" title="Выгрузить в Excel">
+                            <i class="fa fa-file-excel-o" aria-hidden="true"> </i> Excel</a>
                     </div>
                     <div class="col-sm-3">
                         <div class="input-group" style="float:right">

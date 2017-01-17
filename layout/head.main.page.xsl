@@ -79,12 +79,7 @@
                     <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                         <ul class="nav navbar-nav">
                             <li class="dropdown">
-                                <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-flag" aria-hidden="true"> </i> Заказы</a>
-                                <ul class="dropdown-menu">
-                                    <li><a href="/orders/">Список заказов</a></li>
-                                    <li><a href="#" onclick="open_bootbox_dialog('/orders/order-0/')">Новый заказ</a></li>
-                                    <li><a href="#" onclick="popup_excel('orders/excel-1')">Выгрузить в Excel</a></li>
-                                </ul>
+                                <a href="/orders"><i class="fa fa-flag" aria-hidden="true"> </i> Заказы</a>
                             </li>
                             <li>
                                 <a href="/orders/LogistList-1"><i class="fa fa-bus" aria-hidden="true"> </i> Логист</a>
@@ -154,6 +149,11 @@
                         <li>
                             <a class="btn btn-default btn-xs" href="/admin/getTelegramUpdates-1/">
                                 <i class="fa fa-telegram" aria-hidden="true"> </i> Телеграмм
+                            </a>
+                        </li>
+                        <li>
+                            <a class="btn btn-default btn-xs" href="/admin/price_routes-1/">
+                                <i class="fa fa-money" aria-hidden="true"> </i> Стоимость
                             </a>
                         </li>
                     </ul>
