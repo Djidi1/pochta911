@@ -4,7 +4,8 @@ jQuery(function ($) {
     }
 });
 var myMap, poly_neva_kad,poly_spb_kad;
-var order_route = [];
+var order_route = [],
+    myRoute;
 
 var poly_neva_kad_var = {
     "type": "Polygon",
@@ -83,30 +84,31 @@ function show_route(route_addresses) {
     $.each(order_route, function () {
         myMap.geoObjects.remove(this);
     });
+
     ymaps.route(route_addresses, {
-        multiRoute: true,
+        // multiRoute: true,
         wayPointDraggable: true,
         mapStateAutoApply: true,
         avoidTrafficJams: true,
+        // routingMode: 'pedestrian',
         results: 1
-    }).done(function (route) {
-        order_route.push(route);
-        myMap.geoObjects.add(route);
+    }).then(function (route) {
 
-        var routes = route.getRoutes().get(0);
+        // var routes = route.getRoutes().get(0);
+        var routes = route;
         var moveList = '',
             way;
         // Объединим в выборку все сегменты маршрута.
-        var pathsObjects = ymaps.geoQuery(routes.getPaths().get(0)),
+        var pathsObjects = ymaps.geoQuery(route.getPaths()),
             edges = [];
 
-        // Переберем все сегменты и разобьем их на отрезки.
         pathsObjects.each(function (path) {
             var coordinates = path.geometry.getCoordinates();
             for (var i = 1, l = coordinates.length; i < l; i++) {
                 edges.push({
                     type: 'LineString',
                     coordinates: [coordinates[i], coordinates[i - 1]]
+
                 });
             }
         });
@@ -118,31 +120,35 @@ function show_route(route_addresses) {
         var routeObjects = ymaps.geoQuery(edges)
                 .add(route.getWayPoints())
                 .add(route.getViaPoints())
-                .setOptions('strokeWidth', 1)
-                /*.addToMap(myMap)*/,
+                .setOptions('strokeWidth', 3)
+                .addToMap(myMap);
             // Найдем все объекты, попадающие внутрь КАД.
-            objectsInZone_1 = routeObjects.searchInside(poly_spb_kad),
-            // Найдем объекты, пересекающие МКАД.
+        var objectsInSPb = routeObjects.searchInside(poly_spb_kad),
+            // Найдем объекты, пересекающие КАД.
             boundaryObjects = routeObjects.searchIntersect(poly_spb_kad);
         // Раскрасим в разные цвета объекты внутри, снаружи и пересекающие КАД.
         boundaryObjects.setOptions({
-            strokeColor: '#06ff00'
-            // preset: 'islands#greenIcon'
+            strokeColor: '#ffe708',
+            preset: 'islands#yellowIcon'
         });
-        objectsInZone_1.setOptions({
-            strokeColor: '#ff0005'
-            // preset: 'islands#redIcon'
+        objectsInSPb.setOptions({
+            strokeColor: '#d300d6',
+            preset: 'islands#greenIcon'
         });
-        // Объекты за пределами МКАД получим исключением полученных выборок из
+        // Объекты за пределами КАД получим исключением полученных выборок из
         // исходной.
-        routeObjects.remove(objectsInZone_1).remove(boundaryObjects).setOptions({
-            strokeColor: '#0010ff'
-            // preset: 'islands#blueIcon'
+        var objectsOutSideSPb = routeObjects.remove(objectsInSPb).remove(boundaryObjects).setOptions({
+            strokeColor: '#ff000c',
+            preset: 'islands#redIcon'
         });
 
-        console.log(objectsInZone_1);
+        order_route.push(objectsInSPb);
+        order_route.push(objectsOutSideSPb);
+        order_route.push(boundaryObjects);
+
+        console.log(objectsInSPb);
         var in_kad_arr = [];
-        objectsInZone_1.each(function(pm) {
+        objectsInMoscow.each(function(pm) {
             if (pm.properties.get('index') > 0){
                 in_kad_arr.push(pm.properties.get('index'));
             }
@@ -152,10 +158,6 @@ function show_route(route_addresses) {
         // var routes = route.getRoutes().get(0);
         for (var i = 0; i < routes.getPaths().getLength(); i++) {
             way = routes.getPaths().get(i);
-            console.log('Test:');
-            console.log($.inArray( (+i+1), in_kad_arr ));
-            console.log(i+1);
-            console.log(in_kad_arr);
             var in_kad = ($.inArray( (+i+1), in_kad_arr ) > -1)?'в СПб':'за городом';
             var distance = Math.ceil(parseFloat(way.properties.get("distance").value) / 1000);
             // Расчитываем стоимость по маршруту и выполняем перерасчет
