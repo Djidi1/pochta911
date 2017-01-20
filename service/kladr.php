@@ -17,15 +17,15 @@ $items = array();
 if ($search_type == 'street' and strlen($search_str) > 3) {
     $sql = "SELECT 780 region, ks.NAME, ks.SOCR, k.NAME c_name, k.SOCR c_sokr FROM kladr_street_78 ks 
             LEFT JOIN kladr_kladr_78 k ON LEFT(ks.CODE,11) = LEFT(k.CODE, 11) AND RIGHT(k.CODE,2)='00'
-            WHERE k.NAME = 'Санкт-Петербург' AND ks.NAME LIKE '$search_str%'
+            WHERE k.NAME = 'Санкт-Петербург' AND ks.NAME LIKE '%$search_str%'
             UNION ALL 
             SELECT 472 region, ks.NAME, ks.SOCR, k.NAME c_name, k.SOCR c_sokr FROM kladr_street_78 ks 
             LEFT JOIN kladr_kladr_78 k ON LEFT(ks.CODE,11) = LEFT(k.CODE, 11) AND RIGHT(k.CODE,2)='00'
-            WHERE LEFT(k.CODE, 2) = '78' AND k.NAME <> 'Санкт-Петербург' AND ks.NAME LIKE '$search_str%'
+            WHERE LEFT(k.CODE, 2) = '78' AND k.NAME <> 'Санкт-Петербург' AND ks.NAME LIKE '%$search_str%'
             UNION ALL 
             SELECT 471 region, ks.NAME, ks.SOCR, k.NAME c_name, k.SOCR c_sokr FROM kladr_street_78 ks 
             LEFT JOIN kladr_kladr_78 k ON LEFT(ks.CODE,11) = LEFT(k.CODE, 11) AND RIGHT(k.CODE,2)='00'
-            WHERE LEFT(k.CODE, 2) = '47' AND k.NAME <> 'Санкт-Петербург' AND ks.NAME LIKE '$search_str%'
+            WHERE LEFT(k.CODE, 2) = '47' AND k.NAME <> 'Санкт-Петербург' AND ks.NAME LIKE '%$search_str%'
 			ORDER BY region DESC, c_name, NAME;";
     $result = mysqli_query($connect, $sql);
     $items = array();
