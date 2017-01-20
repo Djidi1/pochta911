@@ -89,7 +89,7 @@ function show_route(route_addresses) {
         // multiRoute: true,
         wayPointDraggable: true,
         mapStateAutoApply: true,
-        avoidTrafficJams: true,
+        avoidTrafficJams: false,
         // routingMode: 'pedestrian',
         results: 1
     }).then(function (route) {
