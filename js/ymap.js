@@ -3,9 +3,8 @@ jQuery(function ($) {
         ymaps.ready(init);
     }
 });
-var myMap, poly_neva_kad,poly_spb_kad;
-var order_route = [],
-    myRoute;
+var myMap, poly_neva_kad, poly_spb_kad;
+var order_route = [];
 
 var poly_neva_kad_var = {
     "type": "Polygon",
@@ -80,9 +79,10 @@ function calc_route() {
 
 
 function show_route(route_addresses) {
+    LoadingMap(true);
     // Удаляем старые маршруты
     $.each(order_route, function () {
-        myMap.geoObjects.remove(this);
+        this.removeFromMap(myMap);
     });
 
     ymaps.route(route_addresses, {
@@ -90,19 +90,17 @@ function show_route(route_addresses) {
         wayPointDraggable: true,
         mapStateAutoApply: true,
         avoidTrafficJams: false,
-        // routingMode: 'pedestrian',
         results: 1
     }).then(function (route) {
 
-        // var routes = route.getRoutes().get(0);
-        var routes = route;
-        var moveList = '',
-            way;
+        var moveList = '';
         // Объединим в выборку все сегменты маршрута.
-        var pathsObjects = ymaps.geoQuery(route.getPaths()),
-            edges = [];
+        var pathsObjects = ymaps.geoQuery(route.getPaths());
 
+        var path_i = 0;
         pathsObjects.each(function (path) {
+            iLog(path);
+            var edges = [];
             var coordinates = path.geometry.getCoordinates();
             for (var i = 1, l = coordinates.length; i < l; i++) {
                 edges.push({
@@ -111,71 +109,87 @@ function show_route(route_addresses) {
 
                 });
             }
-        });
 
-        // Создадим новую выборку, содержащую:
-        // - отрезки, описываюшие маршрут;
-        // - начальную и конечную точки;
-        // - промежуточные точки.
-        var routeObjects = ymaps.geoQuery(edges)
+            var routeObjects = ymaps.geoQuery(edges)
                 .add(route.getWayPoints())
                 .add(route.getViaPoints())
                 .setOptions('strokeWidth', 3)
-                .addToMap(myMap);
+                .setOptions('mapStateAutoApply', true)
+                .setOptions('avoidTrafficJams', false);
+            routeObjects.addToMap(myMap);
+            // routeObjects.applyBoundsToMap(myMap);
             // Найдем все объекты, попадающие внутрь КАД.
-        var objectsInSPb = routeObjects.searchInside(poly_spb_kad),
+            var objectsInSPb = routeObjects.searchInside(poly_spb_kad);
             // Найдем объекты, пересекающие КАД.
-            boundaryObjects = routeObjects.searchIntersect(poly_spb_kad);
-        // Раскрасим в разные цвета объекты внутри, снаружи и пересекающие КАД.
-        boundaryObjects.setOptions({
-            strokeColor: '#ffe708',
-            preset: 'islands#yellowIcon'
-        });
-        objectsInSPb.setOptions({
-            strokeColor: '#d300d6',
-            preset: 'islands#greenIcon'
-        });
-        // Объекты за пределами КАД получим исключением полученных выборок из
-        // исходной.
-        var objectsOutSideSPb = routeObjects.remove(objectsInSPb).remove(boundaryObjects).setOptions({
-            strokeColor: '#ff000c',
-            preset: 'islands#redIcon'
-        });
+            var boundaryObjects = routeObjects.searchIntersect(poly_spb_kad);
+            // Раскрасим в разные цвета объекты внутри, снаружи и пересекающие КАД.
+            boundaryObjects.setOptions({
+                strokeColor: '#ffe708',
+                preset: 'islands#yellowIcon'
+            });
+            objectsInSPb.setOptions({
+                strokeColor: '#d300d6',
+                preset: 'islands#greenIcon'
+            });
+            // Объекты за пределами КАД получим исключением полученных выборок из исходной.
+            var objectsOutSideSPb = routeObjects.remove(objectsInSPb).remove(boundaryObjects).setOptions({
+                strokeColor: '#ff000c',
+                preset: 'islands#redIcon'
+            });
 
-        order_route.push(objectsInSPb);
-        order_route.push(objectsOutSideSPb);
-        order_route.push(boundaryObjects);
+            var outSideSPb = getPathDistance(objectsOutSideSPb);
+            var inSideSPb = getPathDistance(objectsInSPb);
 
-        console.log(objectsInSPb);
-        var in_kad_arr = [];
-        objectsInMoscow.each(function(pm) {
-            if (pm.properties.get('index') > 0){
-                in_kad_arr.push(pm.properties.get('index'));
+            var cost_km = 0;
+            var cost_km_out = 0;
+
+            moveList += 'Участок №' + (+path_i+1) + ':';
+
+            if (inSideSPb > 0) {
+                cost_km = getRoutePrice(inSideSPb);
+                moveList += ' по городу: ' + inSideSPb + 'км. (' + cost_km + ' р.);' + '<br/>';
             }
+            if (outSideSPb > 0) {
+                cost_km_out = getOutKADprice(outSideSPb);
+                moveList += ' за городом: ' + outSideSPb + 'км. (' + cost_km_out + ' р.) ' + '<br/>';
+            }
+
+            // Устанавливаем стоимость по маршруту и выполняем перерасчет
+            var cost_route = $('.cost_route').eq(path_i).get();
+            $(cost_route).val(+cost_km+cost_km_out);
+            re_calc(cost_route);
+
+            // Записываем маршрут в массив для очистки
+            order_route.push(objectsInSPb);
+            order_route.push(objectsOutSideSPb);
+            order_route.push(boundaryObjects);
+
+            path_i++;
+
         });
 
-        // Получаем массив путей.
-        // var routes = route.getRoutes().get(0);
-        for (var i = 0; i < routes.getPaths().getLength(); i++) {
-            way = routes.getPaths().get(i);
-            var in_kad = ($.inArray( (+i+1), in_kad_arr ) > -1)?'в СПб':'за городом';
-            var distance = Math.ceil(parseFloat(way.properties.get("distance").value) / 1000);
-            // Расчитываем стоимость по маршруту и выполняем перерасчет
-            var cost_km = getRoutePrice(distance);
-            var cost_route = $('.cost_route').eq(i).get();
-            $(cost_route).val(cost_km);
-            re_calc(cost_route);
-            moveList += 'Участок №' + (1 + i) + ':' + distance + 'км. (' + cost_km + ' р.) - ' + in_kad;
-            moveList += '</br>';
-        }
         // Выводим маршрутный лист.
         $('#viewContainer').html(moveList);
+        LoadingMap(false);
     }, function (error) {
         alert('Возникла ошибка: ' + error.message);
     });
     $(".calc_route").prop('disabled', false);
 
 }
+
+function getPathDistance(objects){
+    var dist = 0;
+    objects.each(function(path) {
+        var arrays_coord = path.geometry.getBounds();
+        var diff = $(arrays_coord[0]).not(arrays_coord[1]).get();
+        if (diff.length > 0) {
+            dist += path.geometry.getDistance();
+        }
+    });
+    return Math.ceil(dist / 1000);
+}
+
 function getRoutePrice(km_route){
     var cost_res = 0;
     $('input.km_cost').each(function(){
@@ -188,6 +202,20 @@ function getRoutePrice(km_route){
     });
     return cost_res;
 }
+
+function getOutKADprice(dist){
+    var cost_km_kad = $('input#km_kad').val();
+    return dist*cost_km_kad;
+}
+
+function LoadingMap(show){
+    if (show){
+        $('div#map').addClass('loading');
+    }else{
+        $('div#map').removeClass('loading');
+    }
+}
+
 function iLog(text) {
     console.log(text);
 }

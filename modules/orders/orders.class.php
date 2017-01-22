@@ -132,6 +132,10 @@ class ordersModel extends module_model {
         $sql = 'SELECT id, km_from, km_to, km_cost FROM routes_price r';
         return $this->get_assoc_array($sql);
     }
+    public function getAddPrices() {
+        $sql = 'SELECT id, type, cost_route FROM routes_add_price r';
+        return $this->get_assoc_array($sql);
+    }
 	public function getSpbStreets(){
 		$sql = 'SELECT id, street_name name FROM spb_streets';
 		return $this->get_assoc_array($sql);
@@ -568,9 +572,10 @@ class ordersProcess extends module_process {
 			$order = $this->nModel->getOrder($order_id);
 			$routes = $this->nModel->getRoutes($order_id);
 			$prices = $this->nModel->getPrices();
+            $add_prices = $this->nModel->getAddPrices();
 			$stores = $this->nModel->getStores(isset($order['id_user'])?$order['id_user']:$user_id);
 			$client_title = $this->nModel->getClientTitle(isset($order['id_user'])?$order['id_user']:$user_id);
-			$this->nView->viewOrderEdit ( $order, $stores, $routes, $prices, $client_title, $without_menu );
+			$this->nView->viewOrderEdit ( $order, $stores, $routes, $prices, $add_prices, $client_title, $without_menu );
 		}
 
 		if ($action == 'orderBan') {
@@ -950,7 +955,7 @@ class ordersView extends module_View {
 		return true;
 	}
 	
-	public function viewOrderEdit($order, $stores, $routes, $prices, $client_title, $without_menu) {
+	public function viewOrderEdit($order, $stores, $routes, $prices, $add_prices, $client_title, $without_menu) {
 		$this->pXSL [] = RIVC_ROOT . 'layout/orders/order.edit.xsl';
 		$Container = $this->newContainer ( 'order' );
         $this->addAttr ( 'today', date('d.m.Y'), $Container );
@@ -974,6 +979,10 @@ class ordersView extends module_View {
         $ContainerPrices = $this->addToNode ( $Container, 'prices', '' );
         foreach ( $prices as $item ) {
             $this->arrToXML ( $item, $ContainerPrices, 'item' );
+        }
+        $ContainerAddPrices = $this->addToNode ( $Container, 'add_prices', '' );
+        foreach ( $add_prices as $item ) {
+            $this->arrToXML ( $item, $ContainerAddPrices, 'item' );
         }
 
 		return true;

@@ -111,6 +111,9 @@
                 <xsl:for-each select="prices/item">
                     <input id="km_{id}" class="km_cost" type="hidden" value="{km_cost}" km_from="{km_from}" km_to="{km_to}" />
                 </xsl:for-each>
+                <xsl:for-each select="add_prices/item">
+                    <input id="km_{type}" type="hidden" value="{cost_route}" />
+                </xsl:for-each>
             </div>
         </div>
         <script>
