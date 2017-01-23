@@ -3,12 +3,24 @@ jQuery(function ($) {
         ymaps.ready(init);
     }
 });
-var myMap, poly_neva_kad, poly_spb_kad;
+var myMap, poly_neva_1,poly_neva_2,poly_neva_3, poly_spb_kad;
 var order_route = [];
 
-var poly_neva_kad_var = {
+// Нева
+var poly_neva_1_var = {
     "type": "Polygon",
-    "coordinates": [[[30.49511, 59.855337], [30.478631, 59.868459], [30.458718, 59.869841], [30.447045, 59.884338], [30.440179, 59.89814], [30.420952, 59.909866], [30.399666, 59.922278], [30.39486, 59.933307], [30.402413, 59.945021], [30.402413, 59.956043], [30.383187, 59.958405], [30.368081, 59.951862], [30.345421, 59.951862], [30.336495, 59.956684], [30.333062, 59.967701], [30.326195, 59.975618], [30.310403, 59.980091], [30.28843, 59.98078], [30.263024, 59.978715], [30.234185, 59.978715], [30.203057, 59.978371], [30.183831, 59.98422], [30.179711, 60.002683], [30.193444, 60.014831], [30.138512, 60.051203], [30.154992, 60.063218], [30.176278, 60.070769], [30.187951, 60.07969], [30.227776, 60.08655], [30.255242, 60.095467], [30.277901, 60.099239], [30.31086, 60.096839], [30.358925, 60.094095], [30.374718, 60.088608], [30.420724, 60.047769], [30.440636, 60.03987], [30.452996, 60.024753], [30.463296, 60.016161], [30.476342, 60.011004], [30.480462, 59.992434], [30.494195, 59.984522], [30.52784, 59.979016], [30.549126, 59.971101], [30.553246, 59.963872], [30.538827, 59.933561], [30.526467, 59.907017], [30.525094, 59.894254], [30.52784, 59.882867], [30.532647, 59.872512], [30.52372, 59.864113], [30.508614, 59.853752]]]
+    "coordinates": [[[30.508322,59.843532],[30.495275,59.848542],[30.493731,59.8602],[30.484289,59.866761],[30.476908,59.869],[30.461287,59.871417],[30.448927,59.881945],[30.444292,59.895252],[30.436224,59.902496],[30.419229,59.910347],[30.402833,59.921368],[30.395909,59.929635],[30.398312,59.934976],[30.401746,59.938939],[30.404149,59.948037],[30.40535,59.954065],[30.400544,59.957508],[30.385094,59.959144],[30.37943,59.956217],[30.379344,59.956475],[30.372048,59.95329],[30.364838,59.951998],[30.356299,59.952383],[30.339304,59.953588],[30.322138,59.948594],[30.315615,59.945925],[30.30583,59.941111],[30.297076,59.938183],[30.287806,59.93534],[30.277678,59.933273],[30.271498,59.929568],[30.267893,59.924657],[30.265662,59.919572],[30.260397,59.917774],[30.245529,59.920357],[30.218406,59.928112],[30.205532,59.930008],[30.207935,59.919064],[30.260607,59.916149],[30.268668,59.920506],[30.274326,59.929687],[30.281272,59.932577],[30.28856,59.933744],[30.323713,59.946178],[30.345475,59.951031],[30.364797,59.950664],[30.372883,59.952253],[30.385796,59.957324],[30.39536,59.956111],[30.402522,59.95266],[30.399582,59.940142],[30.391643,59.929311],[30.396363,59.923413],[30.414558,59.910924],[30.434126,59.902061],[30.442364,59.893816],[30.447337,59.881808],[30.460372,59.869952],[30.476831,59.8679],[30.484342,59.86483],[30.491468,59.859468],[30.490958,59.851332],[30.493198,59.845335]]]
+};
+// Малая Нева
+var poly_neva_2_var = {
+    "type": "Polygon",
+    "coordinates": [[[30.310546,59.945109],[30.293594,59.946277],[30.278059,59.950152],[30.272136,59.952262],[30.261751,59.956065],[30.252052,59.95826],[30.239263,59.95882],[30.232397,59.962435],[30.206905,59.961876],[30.208536,59.969019],[30.225702,59.96704],[30.241924,59.961252],[30.264025,59.957001],[30.274046,59.953585],[30.28441,59.950512],[30.293873,59.947165],[30.315599,59.946567]]]
+};
+
+// Большая Нева
+var poly_neva_3_var = {
+    "type": "Polygon",
+    "coordinates": [[[30.339957,59.952684],[30.335966,59.95764],[30.335708,59.961815],[30.335107,59.965603],[30.331417,59.970422],[30.326181,59.976129],[30.319443,59.978817],[30.304809,59.981334],[30.291892,59.982323],[30.275026,59.980903],[30.266786,59.982065],[30.260091,59.982452],[30.245071,59.981764],[30.230394,59.979957],[30.218978,59.978107],[30.20413,59.976],[30.203615,59.977118],[30.237175,59.981204],[30.24962,59.982452],[30.254942,59.982624],[30.261794,59.982688],[30.267959,59.982237],[30.275341,59.981334],[30.28461,59.982839],[30.294137,59.983592],[30.304523,59.982452],[30.321088,59.979484],[30.328126,59.976086],[30.333362,59.971654],[30.336538,59.965803],[30.337217,59.960535],[30.340177,59.955237],[30.345883,59.951401]]]
 };
 
 var poly_spb_kad_var = {
@@ -37,13 +49,16 @@ function init() {
     poly_neva_kad.options.set('visible', true);
     myMap.geoObjects.add(poly_neva_kad);
 */
-    // СПб
-    poly_spb_kad = new ymaps.Polygon(poly_spb_kad_var.coordinates, { hintContent: "Санкт-Петербург"  }, {
-        fillColor: '#00FF0050',
-        strokeWidth: 3
-    });
-    poly_spb_kad.options.set('visible', true);
-    myMap.geoObjects.add(poly_spb_kad);
+
+
+    poly_spb_kad = createPolyObjects(poly_spb_kad_var,'#00FF0050');
+    poly_neva_1 = createPolyObjects(poly_neva_1_var,'#FF000050');
+    poly_neva_2 = createPolyObjects(poly_neva_2_var,'#FF000050');
+    poly_neva_3 = createPolyObjects(poly_neva_3_var,'#FF000050');
+
+
+
+
 
 
     var order_id = $('#order_id').val();
@@ -92,14 +107,15 @@ function show_route(route_addresses) {
         avoidTrafficJams: false,
         results: 1
     }).then(function (route) {
-
+        // Вывод результатов работы калькулятора
         var moveList = '';
         // Объединим в выборку все сегменты маршрута.
         var pathsObjects = ymaps.geoQuery(route.getPaths());
 
         var path_i = 0;
         pathsObjects.each(function (path) {
-            iLog(path);
+            // Факт пересечения невы
+            var neva_cross = false;
             var edges = [];
             var coordinates = path.geometry.getCoordinates();
             for (var i = 1, l = coordinates.length; i < l; i++) {
@@ -121,9 +137,21 @@ function show_route(route_addresses) {
             // Найдем все объекты, попадающие внутрь КАД.
             var objectsInSPb = routeObjects.searchInside(poly_spb_kad);
             // Найдем объекты, пересекающие КАД.
-            var boundaryObjects = routeObjects.searchIntersect(poly_spb_kad);
+            var boundaryKADObjects = routeObjects.searchIntersect(poly_spb_kad);
+            var boundaryNeva1Objects = routeObjects.searchIntersect(poly_neva_1);
+            var boundaryNeva2Objects = routeObjects.searchIntersect(poly_neva_2);
+            var boundaryNeva3Objects = routeObjects.searchIntersect(poly_neva_3);
+
+
+            if (boundaryNeva1Objects.getLength() > 0
+                || boundaryNeva2Objects.getLength() > 0
+                || boundaryNeva3Objects.getLength() > 0
+            ) {
+                neva_cross = true;
+            }
+
             // Раскрасим в разные цвета объекты внутри, снаружи и пересекающие КАД.
-            boundaryObjects.setOptions({
+            boundaryKADObjects.setOptions({
                 strokeColor: '#ffe708',
                 preset: 'islands#yellowIcon'
             });
@@ -132,7 +160,7 @@ function show_route(route_addresses) {
                 preset: 'islands#greenIcon'
             });
             // Объекты за пределами КАД получим исключением полученных выборок из исходной.
-            var objectsOutSideSPb = routeObjects.remove(objectsInSPb).remove(boundaryObjects).setOptions({
+            var objectsOutSideSPb = routeObjects.remove(objectsInSPb).remove(boundaryKADObjects).setOptions({
                 strokeColor: '#ff000c',
                 preset: 'islands#redIcon'
             });
@@ -142,12 +170,17 @@ function show_route(route_addresses) {
 
             var cost_km = 0;
             var cost_km_out = 0;
+            var cost_Neva = 0;
 
             moveList += 'Участок №' + (+path_i+1) + ':';
 
             if (inSideSPb > 0) {
                 cost_km = getRoutePrice(inSideSPb);
                 moveList += ' по городу: ' + inSideSPb + 'км. (' + cost_km + ' р.);' + '<br/>';
+            }
+            if (neva_cross) {
+                cost_Neva = $('input#km_neva').val();
+                moveList += ' пересечение Невы: ' + cost_Neva + ' р.;' + '<br/>';
             }
             if (outSideSPb > 0) {
                 cost_km_out = getOutKADprice(outSideSPb);
@@ -156,13 +189,13 @@ function show_route(route_addresses) {
 
             // Устанавливаем стоимость по маршруту и выполняем перерасчет
             var cost_route = $('.cost_route').eq(path_i).get();
-            $(cost_route).val(+cost_km+cost_km_out);
+            $(cost_route).val(parseFloat(cost_km)+parseFloat(cost_km_out)+parseFloat(cost_Neva));
             re_calc(cost_route);
 
             // Записываем маршрут в массив для очистки
             order_route.push(objectsInSPb);
             order_route.push(objectsOutSideSPb);
-            order_route.push(boundaryObjects);
+            order_route.push(boundaryKADObjects);
 
             path_i++;
 
@@ -206,6 +239,16 @@ function getRoutePrice(km_route){
 function getOutKADprice(dist){
     var cost_km_kad = $('input#km_kad').val();
     return dist*cost_km_kad;
+}
+
+function createPolyObjects(poly_var,color){
+    var poly_data = new ymaps.Polygon(poly_var.coordinates, /*{ hintContent: "Санкт-Петербург"  },*/ {
+        fillColor: color,
+        strokeWidth: 3
+    });
+    poly_data.options.set('visible', true);
+    myMap.geoObjects.add(poly_data);
+    return poly_data;
 }
 
 function LoadingMap(show){
