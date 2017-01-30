@@ -98,3 +98,5 @@ div#map.loading:before {
     z-index: 1;
     padding: 50% 0;
 }
+
+#viewContainer {font-size: 10px}
