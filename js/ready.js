@@ -109,6 +109,13 @@ jQuery(function ($) {
     set_time_period(start_time,end_time,'LT');
 
 
+    $('.js-store_address').change(function() {
+        if ($(this).val() == 0){
+            $(this).parent().find('.hand_write').show();
+        }else{
+            $(this).parent().find('.hand_write').hide();
+        }
+    });
 
 });
 

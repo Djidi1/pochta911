@@ -1,7 +1,7 @@
 jQuery(function ($) {
-    // if ($('#map').length) {
-    //     initMap();
-    // }
+    if ($('#map').length) {
+        initMap();
+    }
 });
 
 var map, directionsService, directionsDisplay;
@@ -96,7 +96,7 @@ function calc_route() {
         var route_to_corpus = $(this).parent().find('.to_corpus').val();
         if (route_address != '') {
             way_points.push({
-                location: ('' + route_address + ((route_to_house != '') ? (', ' + route_to_house) : '') + ((route_to_corpus != '') ? (', ' + route_to_corpus) : '')),
+                location: ('' + route_address + ((route_to_house != '') ? (', ' + route_to_house) : '') + ((route_to_corpus != '') ? (', ' + route_to_corpus) : '')) + ', Ленинградская обл.',
                 stopover: true
             });
             i++;
@@ -108,7 +108,7 @@ function calc_route() {
         return false;
     }
     // Начальная точка маршрута
-    var origin_point = $("SELECT.store_address option:selected").text();
+    var origin_point = ($("SELECT.store_address").val() != 0)?$("SELECT.store_address option:selected").text():$('INPUT.store_address_new').val();
     // Конечная точка маршрута
     // var destination_point = route[route.length-1].location;
     // Исклюаем конечную точку маршрута из промежуточных
@@ -118,6 +118,7 @@ function calc_route() {
         origin: origin_point,
         destination: destination_point.location,
         waypoints: way_points,
+        region: 'ru',
         optimizeWaypoints: true,
         avoidHighways: true,
         avoidTolls: true,
@@ -227,7 +228,7 @@ function getRoutePrice(km_route){
             cost_res = km_cost;
         }
     });
-    return cost_res;
+    return Math.ceil(cost_res);
 }
 
 function getOutKADprice(dist){

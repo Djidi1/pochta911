@@ -18,7 +18,8 @@
                                 </div>
                                 <div class="col-sm-2"><label>Откуда:</label></div>
                                 <div class="col-sm-4">
-                                    <select class="form-control store_address" name="store_id">
+                                    <select class="form-control store_address js-store_address" name="store_id">
+                                        <option value="0">Ручной ввод</option>
                                         <xsl:for-each select="stores/item">
                                             <option value="{id}">
                                                 <xsl:if test="id = //order/id_address">
@@ -29,6 +30,9 @@
                                             </option>
                                         </xsl:for-each>
                                     </select>
+                                    <div class="hand_write" style="display:none">
+                                        <input class="form-control store_address_new" name="store_new" placeholder="ручной ввод"/>
+                                    </div>
                                 </div>
                             </div>
                             <div class="row">
@@ -129,7 +133,7 @@
                 <span class="input-group-addon">
                     <xsl:value-of select="position()"/>
                 </span>
-                <input type="search" class="form-control spb-streets" name="to[]" placeholder="Адрес" title="Адрес" value="{to}" style="width: 100%;" onchange="" autocomplete="off"/>
+                <input type="search" class="form-control spb-streets" name="to[]" placeholder="Улица, проспект и т.д." title="Улица, проспект и т.д." value="{to}" style="width: 100%;" onchange="" autocomplete="off"/>
                 <input type="text" class="form-control to_house" name="to_house[]" placeholder="Дом" title="Дом" value="{to_house}" style="width: 20%;" onchange="calc_route()"/>
                 <input type="text" class="form-control to_corpus" name="to_corpus[]" placeholder="Корпус" title="Корпус" value="{to_corpus}" style="width: 20%;" onchange="calc_route()"/>
                 <input type="text" class="form-control" name="to_appart[]" placeholder="Квартира" title="Квартира" value="{to_appart}" style="width: 20%;"/>
@@ -166,7 +170,7 @@
         <xsl:if test="count(routes/item) = 0">
             <div class="input-group" rel="1">
                 <span class="input-group-addon">1</span>
-                <input type="text" class="form-control spb-streets" name="to[]" placeholder="Адрес" value="" style="width: 100%;" onchange="" autocomplete="off"/>
+                <input type="text" class="form-control spb-streets" name="to[]" placeholder="Улица, проспект и т.д." value="" style="width: 100%;" onchange="" autocomplete="off"/>
                 <input type="text" class="form-control to_house" name="to_house[]" placeholder="Дом" value="" style="width: 20%;" onchange="calc_route()"/>
                 <input type="text" class="form-control to_corpus" name="to_corpus[]" placeholder="Корпус" value="" style="width: 20%;" onchange="calc_route()"/>
                 <input type="text" class="form-control" name="to_appart[]" placeholder="Квартира" value="" style="width: 20%;"/>
