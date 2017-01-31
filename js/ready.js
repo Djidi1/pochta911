@@ -88,10 +88,12 @@ jQuery(function ($) {
 
 
     $(window).scroll(function(){
-        if (isVisisble( $('.navbar') )) {
-            $("#back-top").show();
-        } else {
-            $("#back-top").hide();
+        if ($('.navbar').length > 0) {
+            if (isVisisble($('.navbar'))) {
+                $("#back-top").show();
+            } else {
+                $("#back-top").hide();
+            }
         }
     });
 

@@ -19,7 +19,6 @@
                                 <div class="col-sm-2"><label>Откуда:</label></div>
                                 <div class="col-sm-4">
                                     <select class="form-control store_address js-store_address" name="store_id">
-                                        <option value="0">Ручной ввод</option>
                                         <xsl:for-each select="stores/item">
                                             <option value="{id}">
                                                 <xsl:if test="id = //order/id_address">
@@ -29,9 +28,16 @@
                                                 <xsl:value-of select="address"/>
                                             </option>
                                         </xsl:for-each>
+                                        <option value="0">
+                                            <xsl:if test="order/id_address = 0">
+                                                <xsl:attribute name="selected">selected</xsl:attribute>
+                                            </xsl:if>Ручной ввод</option>
                                     </select>
-                                    <div class="hand_write" style="display:none">
-                                        <input class="form-control store_address_new" name="store_new" placeholder="ручной ввод"/>
+                                    <div class="hand_write">
+                                        <xsl:if test="count(order/id_address) = 0 or order/id_address > 0">
+                                            <xsl:attribute name="style">display:none</xsl:attribute>
+                                        </xsl:if>
+                                        <input class="form-control store_address_new" name="store_new" value="{order/address_new}" placeholder="ручной ввод"/>
                                     </div>
                                 </div>
                             </div>

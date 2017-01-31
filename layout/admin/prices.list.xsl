@@ -1,18 +1,32 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
-	<xsl:template match="container[@module = 'prceslist']">
+	<xsl:template match="container[@module = 'priceslist']">
 		<h2>Стоимость за киллометр</h2>
 		<form method="post">
 			<input type="hidden" name="sub_action" value="save"/>
 			<div>
 				<table class="table table-hover">
-					<tbody>
+				<tbody>
+					<tr>
+						<th>Стоимость пересечения Невы</th>
+						<td><input name="km_neva" class="form-control" type="number" value="{prices/add_item/km_neva}"/></td>
+					</tr>
+					<tr>
+						<th>Стоимость за пределами Санкт-Петербурга</th>
+						<td><input name="km_kad" class="form-control" type="number" value="{prices/add_item/km_kad}"/></td>
+					</tr>
+				</tbody>
+				</table>
+				<table class="table table-hover">
+					<thead>
 						<tr>
 							<th>id</th>
 							<th>от</th>
 							<th>до</th>
 							<th>стоимость</th>
 						</tr>
+					</thead>
+					<tbody>
 						<xsl:for-each select="prices/item">
 							<tr>
 								<td>

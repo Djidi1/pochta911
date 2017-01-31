@@ -88,7 +88,7 @@ function check_user(obj){
 
 function open_bootbox_dialog(url) {
     bootbox.dialog({
-        title: "Изменение заказа",
+        title: "Карточка заказа",
         message: '<iframe style="border:0;" src="'+url+'/without_menu-1/" height="500" width="100%" ></iframe>',
         className: "largeWidth",
         buttons: {

@@ -72,7 +72,7 @@ tfoot {   display: table-header-group; }
 
 ul.typeahead.dropdown-menu { max-height: 200px;  overflow-y: auto;}
 
-FORM.order_edit .input-group {    border: 2px solid #46b8da;    border-radius: 5px;}
+FORM.order_edit .input-group { border: 2px solid #46b8da; border-radius: 5px; margin-bottom: 5px;}
 /* Уменьшаем календарь и выбор времени */
 .timepicker-picker TABLE td span,.timepicker-picker TABLE td {
     width: 24px !important;

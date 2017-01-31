@@ -182,6 +182,7 @@ class ordersModel extends module_model {
 		$sql = 'SELECT o.id,
 					   o.id_user,
 					   o.id_address,
+					   o.address_new,
 					   o.id_car,
 					   o.id_courier,
 					   o.ready,
@@ -210,7 +211,7 @@ class ordersModel extends module_model {
 		return $items;
 	}
 
-	public function getChatIdByOrder($order_route_id) {
+	public function getChatIdByOrderRoute($order_route_id) {
 		$sql = 'SELECT u.phone_mess
 				FROM orders o
 				LEFT JOIN orders_routes r ON o.id = r.id_order
@@ -219,6 +220,15 @@ class ordersModel extends module_model {
 		$row = $this->get_assoc_array($sql);
 		return $row[0]['phone_mess'];
 	}
+
+    public function getChatIdByOrder($order_id) {
+        $sql = 'SELECT u.phone_mess
+				FROM orders o
+				LEFT JOIN users u ON o.id_user = u.id
+				WHERE o.id = '.$order_id;
+        $row = $this->get_assoc_array($sql);
+        return $row[0]['phone_mess'];
+    }
 
 	public function getChatIdByCourier($courier_id) {
 		$sql = "SELECT c.telegram
@@ -337,8 +347,8 @@ class ordersModel extends module_model {
 
 	public function orderInsert($id_user, $params) {
 		$sql = "
-		INSERT INTO orders (id_user, ready, `date`, comment, id_address, dk)
-		VALUES ($id_user,'".$params['ready']."','".$this->dmy_to_mydate($params['date'])."','".$params['order_comment']."','".$params['store_id']."',NOW());
+		INSERT INTO orders (id_user, ready, `date`, comment, id_address, address_new, dk)
+		VALUES ($id_user,'".$params['ready']."','".$this->dmy_to_mydate($params['date'])."','".$params['order_comment']."','".$params['store_id']."','".$params['store_new']."',NOW());
 		";
 		$this->query($sql);
 
@@ -354,6 +364,7 @@ class ordersModel extends module_model {
 		`ready` = '".$params['ready']."',
 		`date` = '".$this->dmy_to_mydate($params['date'])."',
 		`id_address` = '".$params['store_id']."',
+		`address_new` = '".$params['store_new']."',
 		`comment` = '".$params['order_comment']."',
 		`dk` = NOW()
 		WHERE id = ".$params['order_id']."
@@ -589,6 +600,7 @@ class ordersProcess extends module_process {
 			$params['order_id'] = $this->Vals->getVal ( 'order_id', 'POST', 'integer' );
 			$params['id_user'] = $this->Vals->getVal ( 'id_user', 'POST', 'integer' );
 			$params['store_id'] = $this->Vals->getVal ( 'store_id', 'POST', 'integer' );
+			$params['store_new'] = $this->Vals->getVal ( 'store_new', 'POST', 'integer' );
 			$params['date'] = $this->Vals->getVal ( 'date', 'POST', 'string' );
 			$params['ready'] = $this->Vals->getVal ( 'ready', 'POST', 'string' );
 			$params['order_comment'] = $this->Vals->getVal ( 'order_comment', 'POST', 'string' );
@@ -605,11 +617,28 @@ class ordersProcess extends module_process {
 			$params['cost_car'] = $this->Vals->getVal ( 'cost_car', 'POST', 'array' );
 			$params['comment'] = $this->Vals->getVal ( 'comment', 'POST', 'array' );
 			if ($params['order_id'] > 0) {
-				$id_code = $this->nModel->orderUpdate($params);
+				$order_id = $this->nModel->orderUpdate($params);
+                $message = "Ваш заказ обновлен.";
 			}else{
-				$id_code = $this->nModel->orderInsert($user_id,$params);
+                $order_id = $this->nModel->orderInsert($user_id,$params);
+                $message = "Ваш заказ добавлен.";
 			}
-			$this->nView->viewMessage('Заказ успешно сохранен. Номер для отслеживания: '.$id_code, 'Сообщение');
+
+            $order_id = $this->nModel->getChatIdByOrder($order_id);
+            if (isset($chat_id) and $chat_id != '') {
+
+                $menu = array('inline_keyboard' => array(
+                    array(
+                        array(
+                            'text' => 'Перейти к заказу',
+                            'url' => 'https://fd.pochta911.ru/orders/order-'.$order_id
+                        ),
+                    ),
+                ));
+                $this->telegram($message, $chat_id, $menu);
+            }
+
+			$this->nView->viewMessage('Заказ успешно сохранен. Номер для отслеживания: '.$order_id, 'Сообщение');
             $this->updated = true;
 		}
 
@@ -629,7 +658,7 @@ class ordersProcess extends module_process {
 			if ($new_status > 0){
 				$this->nModel->updOrderStatus($user_id, $order_route_id, $new_status, $stat_comment);
 				$result = 'Статус успешно изменен. ';
-				$chat_id = $this->nModel->getChatIdByOrder($order_route_id);
+				$chat_id = $this->nModel->getChatIdByOrderRoute($order_route_id);
 				$status_name = $this->nModel->getStatusName($new_status);
 				if (isset($chat_id) and $chat_id != '') {
 					$result .= ' Сообщение клиенту отправлено.';
@@ -730,15 +759,17 @@ class ordersProcess extends module_process {
 */
 		if ($action == 'view') {
             list($from, $to) = $this->get_post_date();
-			$orders = $this->nModel->getOrdersList($from, $to);
-			$this->nView->viewOrders ($from, $to, $orders);
+            $statuses = $this->nModel->getStatuses();
+//			$orders = $this->nModel->getOrdersList($from, $to);
+			$orders = $this->nModel->getLogistList($from, $to);
+			$this->nView->viewOrders ($from, $to, $orders, $statuses);
 		}
 
 		if ($action == 'LogistList') {
             list($from, $to) = $this->get_post_date();
             $statuses = $this->nModel->getStatuses();
 			$orders = $this->nModel->getLogistList($from, $to);
-			$this->nView->viewLogistList ($from, $to, $orders,$statuses);
+			$this->nView->viewLogistList ($from, $to, $orders, $statuses);
 		}
 
 
@@ -884,7 +915,7 @@ class ordersView extends module_View {
         return true;
     }
 
-	public function viewOrders($from, $to, $orders) {
+	public function viewOrders($from, $to, $orders, $statuses) {
 		$this->pXSL [] = RIVC_ROOT . 'layout/orders/orders.view.xsl';
 		$Container = $this->newContainer ( 'list' );
 
@@ -895,6 +926,10 @@ class ordersView extends module_View {
 		foreach ( $orders as $item ) {
 			$this->arrToXML ( $item, $ContainerNews, 'item' );
 		}
+        $ContainerStatuses = $this->addToNode ( $Container, 'statuses', '' );
+        foreach ( $statuses as $item ) {
+            $this->arrToXML ( $item, $ContainerStatuses, 'item' );
+        }
 		return true;
 	}
 

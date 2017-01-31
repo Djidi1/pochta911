@@ -359,6 +359,23 @@ class adminModel extends module_model {
 		return $items;
 	}
 
+    public function getRoutesAddPrices()
+    {
+        $sql = 'SELECT id, type, cost_route, user_id, dk
+				FROM routes_add_price';
+        $this->query($sql);
+        $items = array();
+        while (($row = $this->fetchRowA()) !== false) {
+            if ($row['type'] == 'kad') {
+                $items ['km_kad'] = $row['cost_route'];
+            }
+            if ($row['type'] == 'neva') {
+                $items ['km_neva'] = $row['cost_route'];
+            }
+        }
+        return $items;
+    }
+
 	public function getRoutesPrices() {
 		$sql = 'SELECT id, km_from, km_to, user_id, dk, km_cost
 				FROM routes_price
@@ -380,7 +397,7 @@ class adminModel extends module_model {
 		return $items;
 	}
 
-    public function saveRoutesPrices($km_from,$km_to,$km_cost,$user_id){
+    public function saveRoutesPrices($km_from,$km_to,$km_cost,$km_neva,$km_kad,$user_id){
         if (is_array($km_from)) {
             $sql = 'TRUNCATE TABLE routes_price';
             $this->query ( $sql );
@@ -394,6 +411,10 @@ class adminModel extends module_model {
             $sql = 'INSERT INTO routes_price (km_from, km_to, km_cost, user_id, dk) VALUES '.$values;
             $this->query ( $sql );
         }
+        $sql = " UPDATE routes_add_price SET cost_route = '$km_neva' WHERE type = 'neva';";
+        $this->query ( $sql );
+        $sql = " UPDATE routes_add_price SET cost_route = '$km_kad' WHERE type = 'kad';";
+        $this->query ( $sql );
     }
 
 	public function carUpdate($param) {
@@ -1011,10 +1032,13 @@ class adminProcess extends module_process {
                 $km_from = $this->Vals->getVal ( 'km_from', 'POST', 'array' );
                 $km_to = $this->Vals->getVal ( 'km_to', 'POST', 'array' );
                 $km_cost = $this->Vals->getVal ( 'km_cost', 'POST', 'array' );
-                $this->nModel->saveRoutesPrices($km_from,$km_to,$km_cost,$user_id);
+                $km_neva = $this->Vals->getVal ( 'km_neva', 'POST', 'string' );
+                $km_kad = $this->Vals->getVal ( 'km_kad', 'POST', 'string' );
+                $this->nModel->saveRoutesPrices($km_from,$km_to,$km_cost,$km_neva,$km_kad,$user_id);
             }
 		    $prices = $this->nModel->getRoutesPrices();
-		    $this->nView->viewRoutesPrices($prices);
+		    $add_prices = $this->nModel->getRoutesAddPrices();
+		    $this->nView->viewRoutesPrices($prices,$add_prices);
             $this->updated = true;
         }
 
@@ -1324,13 +1348,15 @@ class adminView extends module_view {
 		return true;
 	}
 
-	public function viewRoutesPrices($prices) {
+	public function viewRoutesPrices($prices,$add_prices) {
 		$this->pXSL [] = RIVC_ROOT . 'layout/admin/prices.list.xsl';
-		$Container = $this->newContainer ( 'prceslist' );
+		$Container = $this->newContainer ( 'priceslist' );
 		$ContainerGroups = $this->addToNode ( $Container, 'prices', '' );
 		foreach ( $prices as $item ) {
 			$this->arrToXML ( $item, $ContainerGroups, 'item' );
 		}
+        $this->arrToXML ( $add_prices, $ContainerGroups, 'add_item' );
+
 		return true;
 	}
 

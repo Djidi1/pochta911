@@ -53,8 +53,10 @@ function initMap() { //30.328228,59.939784
     // poly_neva_1 = CratePoly(poly_neva_1_var, map, '#0000FF');
     // poly_neva_2 = CratePoly(poly_neva_2_var, map, '#0000FF');
     // poly_neva_3 = CratePoly(poly_neva_3_var, map, '#0000FF');
-
-    calc_route();
+    var order_id = $('#order_id').val();
+    if (order_id > 0) {
+        calc_route();
+    }
 }
 
 function CratePoly(poly_arr,map, color){
