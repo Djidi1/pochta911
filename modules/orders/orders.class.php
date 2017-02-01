@@ -624,7 +624,8 @@ class ordersProcess extends module_process {
                 $message = "Ваш заказ добавлен.";
 			}
 
-            $order_id = $this->nModel->getChatIdByOrder($order_id);
+            $chat_id = $this->nModel->getChatIdByOrder($order_id);
+
             if (isset($chat_id) and $chat_id != '') {
 
                 $menu = array('inline_keyboard' => array(

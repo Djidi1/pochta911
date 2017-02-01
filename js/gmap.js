@@ -94,8 +94,8 @@ function calc_route() {
     $('.spb-streets').each(function () {
         // Адреса доставки
         var route_address = $(this).val();
-        var route_to_house = $(this).parent().find('.to_house').val();
-        var route_to_corpus = $(this).parent().find('.to_corpus').val();
+        var route_to_house = $(this).parent().parent().find('.to_house').val();
+        var route_to_corpus = $(this).parent().parent().find('.to_corpus').val();
         if (route_address != '') {
             way_points.push({
                 location: ('' + route_address + ((route_to_house != '') ? (', ' + route_to_house) : '') + ((route_to_corpus != '') ? (', ' + route_to_corpus) : '')) + ', Ленинградская обл.',
@@ -117,7 +117,7 @@ function calc_route() {
     var destination_point = way_points.pop();
 
     directionsService.route({
-        origin: origin_point,
+        origin: 'Санкт-Петербург, '+origin_point,
         destination: destination_point.location,
         waypoints: way_points,
         region: 'ru',
@@ -235,7 +235,7 @@ function getRoutePrice(km_route){
 
 function getOutKADprice(dist){
     var cost_km_kad = $('input#km_kad').val();
-    return dist*cost_km_kad;
+    return Math.ceil(dist*cost_km_kad);
 }
 
 Array.prototype.getUnique = function(){

@@ -58,25 +58,29 @@
                                 </div>
                                 <div class="col-sm-2"><label>Статус:</label></div>
                                 <div class="col-sm-4">
-                                    <i>
-                                        <xsl:value-of select="routes/item[1]/status"/>
-                                    </i>
-                                    <xsl:if test="/page/body/module[@name='CurentUser']/container/group_id = 1 and order/id > 0">
-                                        <div title="Изменить статус" class="btn btn-warning btn-xs chg-status" onclick="chg_status({order/id})">
-                                            <span class="glyphicon glyphicon-flag" aria-hidden="true"> </span>
-                                        </div>
-                                    </xsl:if>
+                                    <div class="form-control">
+                                        <i>
+                                            <xsl:value-of select="routes/item[1]/status"/>
+                                        </i>
+                                        <xsl:if test="/page/body/module[@name='CurentUser']/container/group_id = 1 and order/id > 0">
+                                            <div title="Изменить статус" class="btn btn-warning btn-xs chg-status" onclick="chg_status({order/id})" style="float:right;">
+                                                <span class="glyphicon glyphicon-flag" aria-hidden="true"> </span>
+                                            </div>
+                                        </xsl:if>
+                                    </div>
                                 </div>
                                 <div class="col-sm-2"><label>Курьер:</label></div>
                                 <div class="col-sm-4">
-                                    <i>
-                                        <xsl:value-of select="order/fio_car"/>
-                                    </i>
-                                    <xsl:if test="/page/body/module[@name='CurentUser']/container/group_id = 1 and order/id > 0">
-                                        <div title="Назначить курьера" class="btn btn-info btn-xs chg-status" onclick="chg_courier({order/id})">
-                                            <i class="fa fa-car" aria-hidden="true"> </i>
-                                        </div>
-                                    </xsl:if>
+                                    <div class="form-control">
+                                        <i>
+                                            <xsl:value-of select="order/fio_car"/>
+                                        </i>
+                                        <xsl:if test="/page/body/module[@name='CurentUser']/container/group_id = 1 and order/id > 0">
+                                            <div title="Назначить курьера" class="btn btn-info btn-xs chg-status" onclick="chg_courier({order/id})" style="float:right;">
+                                                <i class="fa fa-car" aria-hidden="true"> </i>
+                                            </div>
+                                        </xsl:if>
+                                    </div>
                                 </div>
                             </div>
                             <label>Адреса доставки:</label>
@@ -135,69 +139,79 @@
     </xsl:template>
     <xsl:template name="adresses">
         <xsl:for-each select="routes/item">
-            <div class="input-group" rel="{position()}">
-                <span class="input-group-addon">
-                    <xsl:value-of select="position()"/>
-                </span>
-                <input type="search" class="form-control spb-streets" name="to[]" placeholder="Улица, проспект и т.д." title="Улица, проспект и т.д." value="{to}" style="width: 100%;" onchange="" autocomplete="off"/>
-                <input type="text" class="form-control to_house" name="to_house[]" placeholder="Дом" title="Дом" value="{to_house}" style="width: 20%;" onchange="calc_route()"/>
-                <input type="text" class="form-control to_corpus" name="to_corpus[]" placeholder="Корпус" title="Корпус" value="{to_corpus}" style="width: 20%;" onchange="calc_route()"/>
-                <input type="text" class="form-control" name="to_appart[]" placeholder="Квартира" title="Квартира" value="{to_appart}" style="width: 20%;"/>
-                <input type="text" class="form-control time-picker start" name="to_time[]" placeholder="Время доставки с" title="Время доставки с" value="{to_time}" style="width: 20%;"/>
-                <input type="text" class="form-control time-picker end" name="to_time_end[]" placeholder="Время доставки по" title="Время доставки по" value="{to_time_end}" style="width: 20%;"/>
-
-                <input type="text" class="form-control" name="to_fio[]" placeholder="Получатель" title="Получатель" value="{to_fio}" style="width: 50%;"/>
-                <input type="text" class="form-control" name="to_phone[]" placeholder="Телефон получателя" title="Телефон получателя" value="{to_phone}" style="width: 50%;"/>
-
-                <input type="text" class="form-control cost_tovar" name="cost_tovar[]" placeholder="Стоимость товара" title="Стоимость товара" value="{cost_tovar}" style="width: 25%;" onkeyup="re_calc(this)"/>
-                <input type="text" class="form-control cost_route" name="cost_route[]" placeholder="Стоимость доставки" title="Стоимость доставки" value="{cost_route}" style="width: 25%;" onkeyup="re_calc(this)"/>
-                <input type="text" class="form-control cost_car" name="cost_car[]" placeholder="Заработок курьера" title="Заработок курьера" value="{cost_car}" style="width: 25%;" onkeyup="re_calc(this)"/>
-                <input type="text" class="form-control cost_all" placeholder="Инкассация" title="Инкассация" value="{number(cost_route)+number(cost_tovar)}" style="width: 25%;" disabled=""/>
-                <br/>
-                <textarea name="comment[]" class="form-control" placeholder="Комментарий" title="Комментарий" style="display:none">
-                    <xsl:value-of select="comment"/>
-                </textarea>
-                <div class="input-group-btn add_buttons" style="vertical-align: top;">
-                    <button type="button" class="btn-clone btn btn-success" title="Добавить" onclick="clone_div_row(this)">
-                        <xsl:if test="position() != count(../../routes/item)">
-                            <xsl:attribute name="disabled"> </xsl:attribute>
-                        </xsl:if>
-                        +
-                    </button>
-                    <button type="button" class="btn-delete btn btn-danger" title="Удалить" onclick="delete_div_row(this)">
-                        <xsl:if test="position() = 1">
-                            <xsl:attribute name="disabled"> </xsl:attribute>
-                        </xsl:if>
-                        -
-                    </button>
-                </div>
-            </div>
+            <xsl:call-template name="routes"/>
         </xsl:for-each>
         <xsl:if test="count(routes/item) = 0">
-            <div class="input-group" rel="1">
-                <span class="input-group-addon">1</span>
-                <input type="text" class="form-control spb-streets" name="to[]" placeholder="Улица, проспект и т.д." value="" style="width: 100%;" onchange="" autocomplete="off"/>
-                <input type="text" class="form-control to_house" name="to_house[]" placeholder="Дом" value="" style="width: 20%;" onchange="calc_route()"/>
-                <input type="text" class="form-control to_corpus" name="to_corpus[]" placeholder="Корпус" value="" style="width: 20%;" onchange="calc_route()"/>
-                <input type="text" class="form-control" name="to_appart[]" placeholder="Квартира" value="" style="width: 20%;"/>
-                <input type="text" class="form-control time-picker start" name="to_time[]" placeholder="Время доставки с" value="" style="width: 20%;"/>
-                <input type="text" class="form-control time-picker end" name="to_time_end[]" placeholder="Время доставки по" value="" style="width: 20%;"/>
-
-                <input type="text" class="form-control" name="to_fio[]" placeholder="Получатель" value="" style="width: 50%;"/>
-                <input type="text" class="form-control" name="to_phone[]" placeholder="Телефон получателя" value="" style="width: 50%;"/>
-                <input type="text" class="form-control cost_tovar" name="cost_tovar[]" placeholder="Стоимость товара" title="Стоимость товара" value="" style="width: 25%;" onkeyup="re_calc(this)"/>
-                <input type="text" class="form-control cost_route" name="cost_route[]" placeholder="Стоимость доставки" title="Стоимость доставки" value="" style="width: 25%;" onkeyup="re_calc(this)"/>
-                <input type="text" class="form-control cost_car" name="cost_car[]" placeholder="Заработок курьера" title="Заработок курьера" value="" style="width: 25%;" onkeyup="re_calc(this)"/>
-                <input type="text" class="form-control cost_all" placeholder="Инкассация" title="Инкассация" value="" style="width: 25%;" disabled=""/>
-                <br/>
-                <textarea name="comment[]" class="form-control"  placeholder="Комментарий" title="Комментарий" style="display:none">
-                    <xsl:value-of select="comment"/>
-                </textarea>
-                <div class="input-group-btn add_buttons" style="vertical-align: top;">
-                    <button type="button" class="btn-clone btn btn-success" title="Добавить" onclick="clone_div_row(this)">+</button>
-                    <button type="button" class="btn-delete btn btn-danger" title="Удалить" onclick="delete_div_row(this)" disabled="">-</button>
-                </div>
-            </div>
+            <xsl:call-template name="routes"/>
         </xsl:if>
+    </xsl:template>
+
+    <xsl:template name="routes">
+        <div class="input-group" rel="{position()}">
+            <span class="input-group-addon">
+                <xsl:value-of select="position()"/>
+            </span>
+            <div class="form-control" style="width: 100%;">
+                <span class="order-add-title">Улица</span>
+                <input type="search" class="order-route-data spb-streets" name="to[]" title="Улица, проспект и т.д." value="{to}" onchange="" autocomplete="off"/>
+            </div><div class="form-control" style="width: 20%;">
+            <span class="order-add-title">Дом</span>
+            <input type="text" class="order-route-data to_house number" name="to_house[]" title="Дом" value="{to_house}"  onchange="calc_route()"/>
+        </div><div class="form-control" style="width: 20%;">
+            <span class="order-add-title">Корп.</span>
+            <input type="text" class="order-route-data to_corpus number" name="to_corpus[]" title="Корпус" value="{to_corpus}" onchange="calc_route()"/>
+        </div><div class="form-control" style="width: 20%;">
+            <span class="order-add-title">Кв.</span>
+            <input type="text" class="order-route-data number" name="to_appart[]" title="Квартира" value="{to_appart}"/>
+        </div><div class="form-control" style="width: 20%;">
+            <span class="order-add-title"><span class="glyphicon glyphicon-time" aria-hidden="true"/> с</span>
+            <input type="text" class="order-route-data number time-picker start" name="to_time[]" title="Время доставки с" value="{to_time}"/>
+        </div><div class="form-control" style="width: 20%;">
+            <span class="order-add-title"><span class="glyphicon glyphicon-time" aria-hidden="true"/> по</span>
+            <input type="text" class="order-route-data number time-picker end" name="to_time_end[]" title="Время доставки по" value="{to_time_end}"/>
+        </div>
+
+            <div class="form-control" style="width: 50%;">
+                <span class="order-add-title">Кому</span>
+                <input type="text" class="order-route-data" name="to_fio[]" title="Получатель" value="{to_fio}"/>
+            </div>
+            <div class="form-control" style="width: 50%;">
+                <span class="order-add-title"><span class="glyphicon glyphicon-phone-alt" aria-hidden="true"/></span>
+                <input type="text" class="order-route-data" name="to_phone[]" title="Телефон получателя" value="{to_phone}"/>
+            </div>
+
+
+            <div class="form-control" style="width: 25%;">
+                <span class="order-add-title"><span class="glyphicon glyphicon-usd" aria-hidden="true"/> товар</span>
+                <input type="text" class="order-route-data number cost_tovar" name="cost_tovar[]" title="Стоимость товара" value="{cost_tovar}" onkeyup="re_calc(this)"/>
+            </div><div class="form-control" style="width: 25%;">
+            <span class="order-add-title"><span class="glyphicon glyphicon-usd" aria-hidden="true"/> дост.</span>
+            <input type="text" class="order-route-data number cost_route" name="cost_route[]" title="Стоимость доставки" value="{cost_route}" onkeyup="re_calc(this)"/>
+        </div><div class="form-control" style="width: 25%;">
+            <span class="order-add-title"><span class="glyphicon glyphicon-usd" aria-hidden="true"/> курьер</span>
+            <input type="text" class="order-route-data number cost_car" name="cost_car[]" title="Заработок курьера" value="{cost_car}" onkeyup="re_calc(this)"/>
+        </div><div class="form-control" style="width: 25%;">
+            <span class="order-add-title"><span class="glyphicon glyphicon-usd" aria-hidden="true"/> инк.</span>
+            <input type="text" class="order-route-data number cost_all" title="Инкассация" value="{number(cost_route)+number(cost_tovar)}" disabled=""/>
+        </div>
+            <br/>
+            <textarea name="comment[]" class="form-control" title="Комментарий" style="display:none">
+                <xsl:value-of select="comment"/>
+            </textarea>
+            <div class="input-group-btn add_buttons" style="vertical-align: top;">
+                <button type="button" class="btn-clone btn btn-success" title="Добавить" onclick="clone_div_row(this)">
+                    <xsl:if test="position() != count(../../routes/item) and count(../../routes/item) != 0">
+                        <xsl:attribute name="disabled"> </xsl:attribute>
+                    </xsl:if>
+                    +
+                </button>
+                <button type="button" class="btn-delete btn btn-danger" title="Удалить" onclick="delete_div_row(this)">
+                    <xsl:if test="position() = 1">
+                        <xsl:attribute name="disabled"> </xsl:attribute>
+                    </xsl:if>
+                    -
+                </button>
+            </div>
+        </div>
     </xsl:template>
 </xsl:stylesheet>
