@@ -15,16 +15,12 @@ function delete_div_row(obj) {
     $(panel).find('.input-group:last-child .btn-clone').removeAttr('disabled');
 }
 
-function clone_div_row(obj) {
-    // находим блок со строкой
-    var row = $(obj).parent().parent();
+function clone_div_row(row) {
     var class_id = $(row).attr("rel");
     var class_id_new = +class_id + 1;
     var new_el = $(row).clone().insertAfter($(row));
     $(new_el).attr("rel", class_id_new);
     $(new_el).find('.input-group-addon').text(class_id_new);
-    // блокируем копирование у текущего
-    $(row).find('.btn-clone').attr('disabled','');
     // даем возможность удалиться созданному
     $(new_el).find('.btn-delete').removeAttr('disabled');
     // автозаполение адреса
@@ -32,15 +28,18 @@ function clone_div_row(obj) {
     // $(new_el).find('.time-picker.start').datetimepicker({format: 'LT',locale: 'ru'});
     var start_time = $(new_el).find('.time-picker.start').get();
     var end_time = $(new_el).find('.time-picker.end').get();
-    set_time_period(start_time,end_time,'LT');
+    set_time_period(start_time,end_time);
     autoc_spb_streets();
+    google_autocomlete();
     //$(new_el).find("input").attr('id', '');
 }
 
-function set_time_period (start, end, format) {
-    $(start).datetimepicker({format: format, locale: 'ru'});
-    $(end).datetimepicker({format: format, locale: 'ru',
-        useCurrent: false //Important! See issue #1075
+function set_time_period (start, end) {
+    $(start).datetimepicker(timeoptions).on("dp.change", function (e) {
+        test_time_routes(this)
+    });
+    $(end).datetimepicker(timeoptions).on("dp.change", function (e) {
+        test_time_routes(this)
     });
     $(start).on("dp.change", function (e) {
         $(end).data("DateTimePicker").minDate(e.date);
@@ -220,9 +219,86 @@ function filter_table(){
 }
 
 function re_calc(obj){
-    var cost_tovar = $(obj).parent().find('.cost_tovar').val();
-    var cost_route = $(obj).parent().find('.cost_route').val();
-    $(obj).parent().find('.cost_all').val(Number(cost_tovar)+Number(cost_route));
+    var route_row = $(obj).parent().parent();
+    var cost_tovar = $(route_row).find('.cost_tovar').val();
+    var cost_route = $(route_row).find('.cost_route').val();
+    var pay_type = $(route_row).find('.pay_type').val();
+    if (pay_type == 2){
+        $(route_row).find('.cost_all').val(Number(cost_tovar)+Number(cost_route));
+    }else{
+        $(route_row).find('.cost_all').val(Number(cost_tovar));
+    }
+}
+
+
+function test_time_routes(obj){
+    var route_row = $(obj).parent().parent();
+    test_time_routes_each(route_row);
+}
+function test_time_all_routes(){
+    $('div.routes-block').each(function () {
+        test_time_routes_each(this);
+    });
+}
+
+function test_time_routes_each(route_row){
+    var to_time_ready = $(route_row).find('.to_time_ready').val();
+    // var to_time = $(route_row).find('.to_time').val();
+    var to_time_end = $(route_row).find('.to_time_end').val();
+/*
+     iLog('to_time_ready: '+TimeToFloat(to_time_ready));
+     // iLog('to_time: '+TimeToFloat(to_time));
+     iLog('to_time_end: '+TimeToFloat(to_time_end));
+     iLog('time_now: '+TimeToFloat(timestampToTime()));
+*/
+    var tt_ready = TimeToFloat(to_time_ready);
+    // var tt = TimeToFloat(to_time);
+    var tt_end = TimeToFloat(to_time_end);
+    var t_now = TimeToFloat(timestampToTime());
+
+    // Если время доставки меньше готовности, то заказ на следующий день
+    tt_end = (tt_end - tt_ready) < 0 ? tt_end + 24 : tt_end;
+
+    // Если время доставки меньше текущего, то заказ на следующий день
+    var tt_end_2 = (tt_end - t_now) < 0 ? tt_end + 24 : tt_end;
+
+    // проверка от готовности (2,5 часа)
+    if ((tt_end - tt_ready) <= 2.4){
+        $('input.btn-submit').prop('disabled', true);
+        bootbox.alert('Крайнее время доставки не может быть меньше 2,5 часов от времени готовности.<br/>Откорректируйте временные рамки.');
+        // Проверка от времени заказа
+    }else if ((tt_end_2 - t_now) <= 2.9 ){
+        $('input.btn-submit').prop('disabled', true);
+        bootbox.alert('Крайнее время доставки не может быть меньше 3 часов от времени заказа.<br/>Откорректируйте временные рамки.');
+    }else if ((t_now > 21) && (tt_ready < 11) ){
+        $('input.btn-submit').prop('disabled', true);
+        bootbox.alert('Заказ на утро с 8:30 до 11:00 можно оставить не позднее 21:00.<br/>Откорректируйте временные рамки.');
+    }else{
+        $('input.btn-submit').prop('disabled', false);
+    }
+}
+
+/**
+ * @return {number}
+ */
+function TimeToFloat(time){
+    var result = 0;
+    if (time != ''){
+        var to_time_ready_arr = time.split(':');
+        result = parseInt(to_time_ready_arr[0])+parseInt(to_time_ready_arr[1])/60;
+    }
+    return result;
+}
+
+function timestampToTime(){
+    var unix_timestamp = $('#time_now').val();
+    var date = new Date(unix_timestamp*1000);
+    var hours = date.getHours();
+    var minutes = "0" + date.getMinutes();
+    var seconds = "0" + date.getSeconds();
+    var his = hours + ':' + minutes.substr(-2) + ':' + seconds.substr(-2);
+    $('span.his_time_now').html(his);
+    return hours + ':' + minutes.substr(-2);
 }
 
 function add_data_table(obj){
@@ -260,4 +336,16 @@ function add_data_table(obj){
             } );
         }
     });
+}
+
+function google_autocomlete(){
+    if ($('.address').length) {
+        $('input.address').each(function () {
+            var input = $(this).get(0);
+            var options = {
+                componentRestrictions: {country: 'ru'}
+            };
+            new google.maps.places.Autocomplete(input, options);
+        });
+    }
 }

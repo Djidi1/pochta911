@@ -2,6 +2,7 @@ jQuery(function ($) {
     if ($('#map').length) {
         initMap();
     }
+    google_autocomlete()
 });
 
 var map, directionsService, directionsDisplay;
@@ -121,16 +122,24 @@ function calc_route() {
         destination: destination_point.location,
         waypoints: way_points,
         region: 'ru',
+        provideRouteAlternatives: true,
         optimizeWaypoints: true,
         avoidHighways: true,
         avoidTolls: true,
         travelMode: google.maps.TravelMode.DRIVING
     }, function(response, status) {
         if (status === google.maps.DirectionsStatus.OK) {
+            var routeIndex = getShortestRoute(response);
             directionsDisplay.setDirections(response);
-            var route = response.routes[0];
+            // Set route index
+            directionsDisplay.setOptions({
+                routeIndex: routeIndex
+            });
+            var route = response.routes[routeIndex];
             var summaryPanel = document.getElementById('viewContainer');
             summaryPanel.innerHTML = '';
+            var shortInfo = '';
+
             // For each route, display summary information.
             for (var i = 0; i < route.legs.length; i++) {
                 var distanceInSPb = 0;
@@ -185,17 +194,31 @@ function calc_route() {
                 var cost_km = 0;
                 var cost_km_out = 0;
                 var cost_Neva = 0;
+                var routeSegment = i + 1;
+
+                if (route.legs.length > 1) {
+                    if (routeSegment > 1){
+                        summaryPanel.innerHTML += '<hr/>';
+                        shortInfo += '<hr/>';
+                    }
+                    summaryPanel.innerHTML += '<b>' + routeSegment + ': </b>';
+                    shortInfo += '<b>' + routeSegment + ': </b>'
+                }
+
                 if (distanceInSPb > 0) {
                     cost_km = getRoutePrice(MetersToKilo(distanceInSPb));
-                    moveList += ' по городу: ' + MetersToKilo(distanceInSPb) + 'км. (' + cost_km + ' р.);' + '<br/>';
+                    moveList += ' город: ' + MetersToKilo(distanceInSPb) + ' км (' + cost_km + ' р)' + '<br/>';
+                    shortInfo += '<b>' + MetersToKilo(distanceInSPb) + ' км</b><br/>'
                 }
                  if (neva_cross) {
-                    cost_Neva = $('input#km_neva').val();
-                    moveList += ' пересечение Невы: ' + cost_Neva + ' р.;' + '<br/>';
+                     cost_Neva = $('input#km_neva').val();
+                     moveList += ' Нева: ' + cost_Neva + ' р<br/>';
+                     shortInfo += '<i>+ ' + cost_Neva + ' р</i><br/>'
                 }
                 if (distanceOutSideSPb > 0) {
                     cost_km_out = getOutKADprice(MetersToKilo(distanceOutSideSPb));
-                    moveList += ' за городом: ' + MetersToKilo(distanceOutSideSPb) + 'км. (' + cost_km_out + ' р.) ' + '<br/>';
+                    moveList += ' за городом: ' + MetersToKilo(distanceOutSideSPb) + ' км (' + cost_km_out + ' р) ' + '<br/>';
+                    shortInfo += '<i>' + MetersToKilo(distanceOutSideSPb) + ' км</i><br/>'
                 }
 
                 // Устанавливаем стоимость по маршруту и выполняем перерасчет
@@ -203,15 +226,13 @@ function calc_route() {
                 $(cost_route).val(parseFloat(cost_km)+parseFloat(cost_km_out)+parseFloat(cost_Neva));
                 re_calc(cost_route);
 
-                var routeSegment = i + 1;
-                summaryPanel.innerHTML += '<b>Участок: ' + routeSegment +
-                    '</b><br>';
                 // summaryPanel.innerHTML += 'От: ' + route.legs[i].start_address + ',<br>';
                 // summaryPanel.innerHTML += 'До: ' + route.legs[i].end_address + '<br>';
                 summaryPanel.innerHTML += moveList + '<br>';
             }
+            $('#ShortInfo').html(shortInfo);
         } else {
-            window.alert('Ошибка построения маршрута: ' + status);
+            bootbox.alert('Ошибка построения маршрута: ' + status);
         }
     });
 }
@@ -249,6 +270,18 @@ Array.prototype.getUnique = function(){
     }
     return a;
 };
+
+function getShortestRoute(response){
+    var shortest = Number.MAX_VALUE;
+    var routeIndex = 0;
+    response.routes.forEach(function(rou, index) {
+        if (rou.legs[0].distance.value < shortest) {
+            shortest = rou.legs[0].distance.value  ;
+            routeIndex = index;
+        }
+    });
+    return routeIndex;
+}
 
 function iLog(text) {
     console.log(text);

@@ -29,3 +29,5 @@ define('SITE_ROOT', 'http://' . $_SERVER["SERVER_NAME"] . '/');
 define('DIR_UPLOAD', 'uploads/');
 
 define('CORE_ROOT', __DIR__ . '/');
+
+date_default_timezone_set('Europe/Moscow');

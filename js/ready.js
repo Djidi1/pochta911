@@ -1,3 +1,14 @@
+// var minDate = new Date(new Date().setHours('08', '30', '00'));
+// var maxDate = new Date(new Date().setHours('23', '00', '00'));
+var timeoptions = {
+    stepping: 5,
+    enabledHours: [8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22],
+    format: 'LT',
+    useCurrent: false,
+    locale: 'ru'
+};
+
+
 jQuery(function ($) {
 
     // Please wait...
@@ -9,8 +20,6 @@ jQuery(function ($) {
         .ajaxStop(function () {
             $loading.hide();
         });
-
-
 
     $('.data-table').dataTable({"language": {
         "url": "//cdn.datatables.net/plug-ins/1.10.13/i18n/Russian.json"
@@ -102,25 +111,40 @@ jQuery(function ($) {
     autoc_spb_streets();
 
     // Установка дата/время пикеров
-    $('.time-picker').datetimepicker({format: 'LT',locale: 'ru'});
+    $('.time-picker').each(function () {
+        $(this).datetimepicker(timeoptions).on("dp.change", function (e) {
+            test_time_routes(this)
+        });
+
+    });
 
     $('.date-picker').datetimepicker({format: 'L', locale: 'ru'});
 
     var start_time = $('.time-picker.start').get();
     var end_time = $('.time-picker.end').get();
-    set_time_period(start_time,end_time,'LT');
+    set_time_period(start_time,end_time);
+
+    if ($('#time_now').length){
+        incTimeNow();
+    }
 
 
     $('.js-store_address').change(function() {
         if ($(this).val() == 0){
-            $(this).parent().find('.hand_write').show();
+            $(this).parent().addClass('col-sm-4').removeClass('col-sm-10');
+            $(this).parent().parent().find('.hand_write').show();
         }else{
-            $(this).parent().find('.hand_write').hide();
+            $(this).parent().addClass('col-sm-10').removeClass('col-sm-4');
+            $(this).parent().parent().find('.hand_write').hide();
         }
     });
 
 });
-
+function incTimeNow() {
+    $('#time_now').val(parseInt($('#time_now').val())+1);
+    timestampToTime();
+    setTimeout('incTimeNow()',1000);
+}
 function isVisisble(elem){
     //return $(elem).offset().top - $(window).scrollTop() < $(elem).height() ;
     return $(elem).offset().top - $(window).scrollTop() < -1 * $(elem).height() ;

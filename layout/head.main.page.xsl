@@ -30,7 +30,11 @@
             <script src="//cdn.ckeditor.com/4.6.1/full/ckeditor.js"/>
             <script src="//cdn.datatables.net/1.10.13/js/jquery.dataTables.min.js"/>
             <script src="//cdn.datatables.net/1.10.13/js/dataTables.bootstrap.min.js"/>
-            <script src="//maps.googleapis.com/maps/api/js?key=AIzaSyAnDrB-qO4i5uCua-4krGQsloWYJBRtgNU"/>
+            <xsl:text disable-output-escaping="yes">
+                <![CDATA[
+            <script src="//maps.googleapis.com/maps/api/js?key=AIzaSyAnDrB-qO4i5uCua-4krGQsloWYJBRtgNU&libraries=places"></script>
+                ]]>
+            </xsl:text>
             <script src="/js/gmap.js?v5"/>
             <!--<script src="https://api-maps.yandex.ru/2.1/?lang=ru_RU&amp;coordorder=longlat"/>-->
             <!--<script src="/js/ymap.js?v1"/>-->

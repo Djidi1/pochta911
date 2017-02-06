@@ -18,7 +18,7 @@ span.address { display: block;  text-align: right;}
 .clear {clear: both}
 .typeahead { z-index: 1051; }
 
-DIV.add_buttons { position: absolute; z-index: 100;  right: 58px; top: 0;}
+DIV.add_buttons {position: absolute; z-index: 100; left: 0;  top: 0;}
 
 TABLE.dataTable thead > tr > th {padding: 0 4px 0 1px !important}
 
@@ -99,9 +99,7 @@ div#map.loading:before {
     padding: 50% 0;
 }
 
-#viewContainer {font-size: 10px}
-
-input.order-route-data {
+input.order-route-data, select.order-route-data {
     width: 100%;
     height: 32px;
     padding: 10px 5px 2px 5px;
@@ -115,7 +113,6 @@ span.order-add-title {
     left: 2px;
     top: 0;
     font-weight: bold;
-    color: #00639e;
     font-size: 10px;
 }
 
@@ -129,3 +126,46 @@ span.order-add-title {
     z-index: 10 !important;
 }
 */
+div.map-form {
+    padding: 0 15px 0 0;
+}
+div.map-container {
+    border: 2px solid #46b8da;
+    border-radius: 5px;
+}
+.map-info {
+    display: block;
+    position: absolute;
+    left: 2px;
+    top: 90px;
+    background: #fff;
+    padding: 10px;
+    text-align: left;
+    color: #000;
+    z-index: 1;
+}
+.map-full-info {
+    display: none;
+    position: absolute;
+    top: 0;
+    z-index: 1000;
+    background: #ffffff;
+    padding: 10px;
+    left: 0;
+    font-size: 11px;
+    width: 200%;
+}
+/*
+.map-info:hover .map-full-info{
+    display: block;
+}
+*/
+.panel {
+    border-width: 2px !important;
+}
+select.store_address option[value="0"] { /* value not val */
+    color: darkblue !important;
+}
+input:invalid {
+    background-color: #ffeded;
+}

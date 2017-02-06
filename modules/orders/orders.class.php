@@ -12,6 +12,7 @@ class ordersModel extends module_model {
 			if (isset($row['ready'])) $row['ready'] = substr($row['ready'],0,5);
 			if (isset($row['to_time'])) $row['to_time'] = substr($row['to_time'],0,5);
 			if (isset($row['to_time_end'])) $row['to_time_end'] = substr($row['to_time_end'],0,5);
+			if (isset($row['to_time_ready'])) $row['to_time_ready'] = substr($row['to_time_end'],0,5);
 			$items[] = $row;
 		}
 		return $items;
@@ -122,7 +123,7 @@ class ordersModel extends module_model {
 	public function getRoutes($order_id) {
 		$sql = 'SELECT r.id id_route, `to`,to_house,to_corpus,to_appart,
 					  to_fio,to_phone,to_coord,from_coord,lenght,cost_route,cost_tovar,cost_car,
-					  `to_time`,`to_time_end`,r.`comment`, s.status, s.id status_id
+					  `to_time`,`to_time_end`,r.`comment`, s.status, s.id status_id, r.pay_type, r.to_time_ready
 				FROM orders_routes r
 				LEFT JOIN orders_status s ON s.id = r.id_status
 				WHERE id_order = '.$order_id;
@@ -130,6 +131,10 @@ class ordersModel extends module_model {
 	}
     public function getPrices() {
         $sql = 'SELECT id, km_from, km_to, km_cost FROM routes_price r';
+        return $this->get_assoc_array($sql);
+    }
+    public function getPayTypes() {
+        $sql = 'SELECT id, pay_type FROM orders_pay_types opt';
         return $this->get_assoc_array($sql);
     }
     public function getAddPrices() {
@@ -404,10 +409,11 @@ class ordersModel extends module_model {
                 $sql_values .= ' (\''.$order_id.'\',\''.$params ['to'][$key].'\',\''.$params ['to_house'][$key].'\',\''.$params ['to_corpus'][$key].'\',
 							\''.$params ['to_appart'][$key].'\',\''.$params ['to_fio'][$key].'\',\''.$params ['to_phone'][$key].'\',
 							\''.$params ['cost_route'][$key].'\',\''.$params ['cost_tovar'][$key].'\',\''.$params ['cost_car'][$key].'\',
-							\''.$params ['to_time'][$key].'\',\''.$params ['to_time_end'][$key].'\',\''.$params ['comment'][$key].'\'	)';
+							\''.$params ['to_time'][$key].'\',\''.$params ['to_time_end'][$key].'\',\''.$params ['comment'][$key].'\',
+							\''.$params ['to_time_ready'][$key].'\',\''.$params ['pay_type'][$key].'\'	)';
 			}
 			if ($sql_values != '') {
-                $sql = "INSERT INTO orders_routes (id_order,`to`,`to_house`,`to_corpus`,`to_appart`,`to_fio`,`to_phone`,`cost_route`,`cost_tovar`,`cost_car`,`to_time`,`to_time_end`,`comment`) VALUES $sql_values";
+                $sql = "INSERT INTO orders_routes (id_order,`to`,`to_house`,`to_corpus`,`to_appart`,`to_fio`,`to_phone`,`cost_route`,`cost_tovar`,`cost_car`,`to_time`,`to_time_end`,`comment`, `to_time_ready`, `pay_type`) VALUES $sql_values";
                 $this->query($sql);
             }
 		}
@@ -582,11 +588,12 @@ class ordersProcess extends module_process {
 			$without_menu = $this->Vals->getVal ( 'without_menu', 'GET', 'integer' );
 			$order = $this->nModel->getOrder($order_id);
 			$routes = $this->nModel->getRoutes($order_id);
+			$pay_types = $this->nModel->getPayTypes();
 			$prices = $this->nModel->getPrices();
             $add_prices = $this->nModel->getAddPrices();
 			$stores = $this->nModel->getStores(isset($order['id_user'])?$order['id_user']:$user_id);
 			$client_title = $this->nModel->getClientTitle(isset($order['id_user'])?$order['id_user']:$user_id);
-			$this->nView->viewOrderEdit ( $order, $stores, $routes, $prices, $add_prices, $client_title, $without_menu );
+			$this->nView->viewOrderEdit ( $order, $stores, $routes, $pay_types, $prices, $add_prices, $client_title, $without_menu );
 		}
 
 		if ($action == 'orderBan') {
@@ -605,6 +612,7 @@ class ordersProcess extends module_process {
 			$params['ready'] = $this->Vals->getVal ( 'ready', 'POST', 'string' );
 			$params['order_comment'] = $this->Vals->getVal ( 'order_comment', 'POST', 'string' );
 			$params['to'] = $this->Vals->getVal ( 'to', 'POST', 'array' );
+			$params['to_time_ready'] = $this->Vals->getVal ( 'to_time_ready', 'POST', 'array' );
 			$params['to_house'] = $this->Vals->getVal ( 'to_house', 'POST', 'array' );
 			$params['to_corpus'] = $this->Vals->getVal ( 'to_corpus', 'POST', 'array' );
 			$params['to_appart'] = $this->Vals->getVal ( 'to_appart', 'POST', 'array' );
@@ -615,28 +623,36 @@ class ordersProcess extends module_process {
 			$params['cost_route'] = $this->Vals->getVal ( 'cost_route', 'POST', 'array' );
 			$params['cost_tovar'] = $this->Vals->getVal ( 'cost_tovar', 'POST', 'array' );
 			$params['cost_car'] = $this->Vals->getVal ( 'cost_car', 'POST', 'array' );
+			$params['pay_type'] = $this->Vals->getVal ( 'pay_type', 'POST', 'array' );
 			$params['comment'] = $this->Vals->getVal ( 'comment', 'POST', 'array' );
 			if ($params['order_id'] > 0) {
 				$order_id = $this->nModel->orderUpdate($params);
-                $message = "Ваш заказ обновлен.";
+                $message_add_text = " обновлен.";
 			}else{
                 $order_id = $this->nModel->orderInsert($user_id,$params);
-                $message = "Ваш заказ добавлен.";
+                $message_add_text = " принят, ожидайте курьера.";
 			}
+
+            $order_info = $this->nModel->getOrderInfo($order_id);
+
+			$message  = "<b>Ваш заказ #".$order_id." ".$message_add_text."</b>\r\n";
+            $message .= "<b>Дата:</b> ".$params['date']."\r\n";
+            $message .= "<b>Время:</b> ".$params['to_time_ready'][0]."\r\n";
+            $message .= "<b>Адрес:</b> ".$order_info['from']."\r\n";
 
             $chat_id = $this->nModel->getChatIdByOrder($order_id);
 
             if (isset($chat_id) and $chat_id != '') {
 
-                $menu = array('inline_keyboard' => array(
-                    array(
-                        array(
-                            'text' => 'Перейти к заказу',
-                            'url' => 'https://fd.pochta911.ru/orders/order-'.$order_id
-                        ),
-                    ),
-                ));
-                $this->telegram($message, $chat_id, $menu);
+//                $menu = array('inline_keyboard' => array(
+//                    array(
+//                        array(
+//                            'text' => 'Перейти к заказу',
+//                            'url' => 'https://fd.pochta911.ru/orders/order-'.$order_id
+//                        ),
+//                    ),
+//                ));
+                $this->telegram($message, $chat_id);
             }
 
 			$this->nView->viewMessage('Заказ успешно сохранен. Номер для отслеживания: '.$order_id, 'Сообщение');
@@ -970,31 +986,13 @@ class ordersView extends module_View {
 		}
 		return true;
 	}
-	public function viewTurList($turs, $isAjax, $locs, $countris) {
-		$this->pXSL [] = RIVC_ROOT . 'layout/'.$this->sysMod->layoutPref.'/turs.turlist.xsl';
-		if ($isAjax == 1) {
-			$this->pXSL [] = RIVC_ROOT . 'layout/head.page.xsl';
-		}
-		$Container = $this->newContainer ( 'turlist' );
-		$Containerusers = $this->addToNode ( $Container, 'turs', '' );
-		foreach ( $turs as $item ) {
-			$this->arrToXML ( $item, $Containerusers, 'item' );
-		}
-		$ContainerLocs = $this->addToNode ( $Container, 'locs', '' );
-		foreach ( $locs as $item ) {
-			$this->arrToXML ( $item, $ContainerLocs, 'item' );
-		}
-		$ContainerCntr = $this->addToNode ( $Container, 'countris', '' );
-		foreach ( $countris as $item ) {
-			$this->arrToXML ( $item, $ContainerCntr, 'item' );
-		}
-		return true;
-	}
 	
-	public function viewOrderEdit($order, $stores, $routes, $prices, $add_prices, $client_title, $without_menu) {
+	public function viewOrderEdit($order, $stores, $routes, $pay_types, $prices, $add_prices, $client_title, $without_menu) {
 		$this->pXSL [] = RIVC_ROOT . 'layout/orders/order.edit.xsl';
 		$Container = $this->newContainer ( 'order' );
         $this->addAttr ( 'today', date('d.m.Y'), $Container );
+        $this->addAttr ( 'time_now', time(), $Container );
+//        $this->addAttr ( 'time_now', date('H:i:s'), $Container );
         $this->addAttr('without_menu',$without_menu, $Container);
 
 		$this->arrToXML ( $order, $Container, 'order' );
@@ -1004,10 +1002,14 @@ class ordersView extends module_View {
 			$this->arrToXML ( $item, $ContainerClient, 'item' );
 		}
 
-		$ContainerStores = $this->addToNode ( $Container, 'stores', '' );
-		foreach ( $stores as $item ) {
-			$this->arrToXML ( $item, $ContainerStores, 'item' );
-		}
+        $ContainerPayTypes = $this->addToNode ( $Container, 'pay_types', '' );
+        foreach ( $pay_types as $item ) {
+            $this->arrToXML ( $item, $ContainerPayTypes, 'item' );
+        }
+        $ContainerStores = $this->addToNode ( $Container, 'stores', '' );
+        foreach ( $stores as $item ) {
+            $this->arrToXML ( $item, $ContainerStores, 'item' );
+        }
         $ContainerRoutes = $this->addToNode ( $Container, 'routes', '' );
         foreach ( $routes as $item ) {
             $this->arrToXML ( $item, $ContainerRoutes, 'item' );
