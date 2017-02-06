@@ -171,6 +171,7 @@ class ordersModel extends module_model {
         $sql = 'SELECT r.id,
                        r.to_time,
                        r.to_time_end,
+                       r.to_time_ready,
                        CONCAT(r.`to`,\', д.\',r.`to_house`,\', корп.\',r.`to_corpus`,\', кв.\',r.`to_appart`) to_addr,
                        r.to_fio,
                        r.to_phone,
@@ -627,18 +628,15 @@ class ordersProcess extends module_process {
 			$params['comment'] = $this->Vals->getVal ( 'comment', 'POST', 'array' );
 			if ($params['order_id'] > 0) {
 				$order_id = $this->nModel->orderUpdate($params);
-                $message_add_text = " обновлен.";
+                $message_add_text = "Заказ обновлен";
 			}else{
                 $order_id = $this->nModel->orderInsert($user_id,$params);
-                $message_add_text = " принят, ожидайте курьера.";
+                $message_add_text = "Заказ принят, ожидайте курьера.";
 			}
 
-            $order_info = $this->nModel->getOrderInfo($order_id);
 
-			$message  = "<b>Ваш заказ #".$order_id." ".$message_add_text."</b>\r\n";
-            $message .= "<b>Дата:</b> ".$params['date']."\r\n";
-            $message .= "<b>Время:</b> ".$params['to_time_ready'][0]."\r\n";
-            $message .= "<b>Адрес:</b> ".$order_info['from']."\r\n";
+			$message  = $this->getOrderTextInfo($order_id);
+            $message .= $message_add_text;
 
             $chat_id = $this->nModel->getChatIdByOrder($order_id);
 
@@ -818,15 +816,18 @@ class ordersProcess extends module_process {
         $order_info = $this->nModel->getOrderInfo($order_id);
         $order_routes_info = $this->nModel->getOrderRoutesInfo($order_id);
         $order_info_message = "<b>Заказ №</b> " . $order_id . "\r\n";
-        $order_info_message .= "<b>Откуда:</b> " . $order_info['from'] . "\r\n";
-        $order_info_message .= "<b>Готовность:</b> " . $order_info['ready'] . "\r\n\r\n";
+        $order_info_message .= "<b>Откуда:</b> " . $order_info['from'] . "\r\n\r\n";
         $i = 0;
         foreach ($order_routes_info as $order_route_info) {
             $i++;
-            $order_info_message .= "$i) <b>Адрес доставки:</b> " . $order_route_info['to_addr'] . "\r\n";
-            $order_info_message .= "$i) <b>Период получения:</b> " . $order_route_info['to_time'] . " - " . $order_route_info['to_time_end'] . "\r\n";
-            $order_info_message .= "$i) <b>Получатель:</b> " . $order_route_info['to_fio'] . " [" . $order_route_info['to_phone'] . "]\r\n";
-            $order_info_message .= "$i) <b>Стоимость заказа:</b> " . (+$order_route_info['cost_route'] + $order_route_info['cost_tovar']) . "\r\n ";
+            if (count($order_routes_info) > 1){
+                $order_info_message .= "<b>Участок № $i:</b>\r\n";
+            }
+            $order_info_message .= " <b>Адрес доставки:</b> " . $order_route_info['to_addr'] . "\r\n";
+            $order_info_message .= " <b>Готовность:</b> " . $order_route_info['to_time_ready'] . "\r\n";
+            $order_info_message .= " <b>Период получения:</b> " . $order_route_info['to_time'] . " - " . $order_route_info['to_time_end'] . "\r\n";
+            $order_info_message .= " <b>Получатель:</b> " . $order_route_info['to_fio'] . " [" . $order_route_info['to_phone'] . "]\r\n";
+//            $order_info_message .= " <b>Стоимость заказа:</b> " . (+$order_route_info['cost_route'] + $order_route_info['cost_tovar']) . "\r\n ";
         }
         return $order_info_message;
     }
