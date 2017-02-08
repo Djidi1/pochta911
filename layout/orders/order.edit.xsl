@@ -115,10 +115,10 @@
                                 Добавить адрес
                             </button>
                             <xsl:call-template name="adresses"/>
-                            <label>Дополнительная информация:</label>
-                            <textarea class="form-control" name="order_comment" placeholder="Комментарий к заказу" title="Комментарий к заказу">
-                                <xsl:value-of select="order/comment"/>
-                            </textarea>
+                            <!--<label>Дополнительная информация:</label>-->
+                            <!--<textarea class="form-control" name="order_comment" placeholder="Комментарий к заказу" title="Комментарий к заказу">-->
+                                <!--<xsl:value-of select="order/comment"/>-->
+                            <!--</textarea>-->
                             <!--<font color="red">* Поля обязательны для заполнения.</font>-->
                         </div>
                         <div class="row">
@@ -133,6 +133,7 @@
                                 </div>
                             </div>
                         </div>
+                        <br/>
                     </div>
                 </div>
                 <div class="col-sm-4 map-form">
@@ -175,36 +176,50 @@
             <span class="input-group-addon">
                 <xsl:value-of select="position()"/>
             </span>
-            <div class="form-control" style="width: 80%;">
+            <div class="form-control" style="width: 55%;">
                 <span class="order-add-title text-info">Улица</span>
                 <input type="search" class="order-route-data spb-streets" name="to[]" title="Улица, проспект и т.д." value="{to}" onchange="" autocomplete="off" required=""/>
             </div>
-            <div class="form-control" style="width: 20%;">
+            <div class="form-control" style="width: 15%;">
+                <span class="order-add-title text-info">Дом</span>
+                <input type="text" class="order-route-data to_house number" name="to_house[]" title="Дом" value="{to_house}" onchange="calc_route()" required=""/>
+            </div>
+            <div class="form-control" style="width: 15%;">
+                <span class="order-add-title text-info">Корп.</span>
+                <input type="text" class="order-route-data to_corpus number" name="to_corpus[]" title="Корпус" value="{to_corpus}" onchange="calc_route()" required=""/>
+            </div>
+            <div class="form-control" style="width: 15%;">
+                <span class="order-add-title text-info">Кв.</span>
+                <input type="text" class="order-route-data number" name="to_appart[]" title="Квартира" value="{to_appart}" required=""/>
+            </div>
+
+
+            <div class="form-control" style="width: 50%;">
+                <span class="order-add-title text-warning">Кому</span>
+                <input type="text" class="order-route-data" name="to_fio[]" title="Получатель" value="{to_fio}" required=""/>
+            </div>
+            <div class="form-control" style="width: 50%;">
+                <span class="order-add-title text-warning">
+                    <span class="glyphicon glyphicon-phone-alt" aria-hidden="true"/>
+                </span>
+                <input type="text" class="order-route-data" name="to_phone[]" title="Телефон получателя" value="{to_phone}" required=""/>
+            </div>
+
+
+            <div class="form-control" style="width: 34%;">
                 <span class="order-add-title text-danger">
                     <span class="glyphicon glyphicon-time" aria-hidden="true"/>
                     готов
                 </span>
                 <!--<xsl:call-template name="time_selector">-->
-                    <!--<xsl:with-param name="select_class">order-route-data number to_time_ready</xsl:with-param>-->
-                    <!--<xsl:with-param name="select_name">to_time_ready[]</xsl:with-param>-->
-                    <!--<xsl:with-param name="select_title">Время готовности</xsl:with-param>-->
-                    <!--<xsl:with-param name="select_value" select="to_time_ready"/>-->
+                <!--<xsl:with-param name="select_class">order-route-data number to_time_ready</xsl:with-param>-->
+                <!--<xsl:with-param name="select_name">to_time_ready[]</xsl:with-param>-->
+                <!--<xsl:with-param name="select_title">Время готовности</xsl:with-param>-->
+                <!--<xsl:with-param name="select_value" select="to_time_ready"/>-->
                 <!--</xsl:call-template>-->
                 <input type="text" class="order-route-data number time-picker to_time_ready" name="to_time_ready[]" title="Время готовности" value="{to_time_ready}" required=""/>
             </div>
-            <div class="form-control" style="width: 20%;">
-                <span class="order-add-title text-info">Дом</span>
-                <input type="text" class="order-route-data to_house number" name="to_house[]" title="Дом" value="{to_house}" onchange="calc_route()" required=""/>
-            </div>
-            <div class="form-control" style="width: 20%;">
-                <span class="order-add-title text-info">Корп.</span>
-                <input type="text" class="order-route-data to_corpus number" name="to_corpus[]" title="Корпус" value="{to_corpus}" onchange="calc_route()" required=""/>
-            </div>
-            <div class="form-control" style="width: 20%;">
-                <span class="order-add-title text-info">Кв.</span>
-                <input type="text" class="order-route-data number" name="to_appart[]" title="Квартира" value="{to_appart}" required=""/>
-            </div>
-            <div class="form-control" style="width: 20%;">
+            <div class="form-control" style="width: 33%;">
                 <span class="order-add-title text-primary">
                     <span class="glyphicon glyphicon-time" aria-hidden="true"/>
                     с
@@ -217,7 +232,7 @@
                 <!--</xsl:call-template>-->
                 <input type="text" class="order-route-data number time-picker to_time start" name="to_time[]" title="Время доставки с" value="{to_time}" required=""/>
             </div>
-            <div class="form-control" style="width: 20%;">
+            <div class="form-control" style="width: 33%;">
                 <span class="order-add-title text-primary">
                     <span class="glyphicon glyphicon-time" aria-hidden="true"/>
                     по
@@ -229,17 +244,6 @@
                     <!--<xsl:with-param name="select_value" select="to_time_end"/>-->
                 <!--</xsl:call-template>-->
                 <input type="text" class="order-route-data number time-picker to_time_end end" name="to_time_end[]" title="Время доставки по" value="{to_time_end}" required=""/>
-            </div>
-
-            <div class="form-control" style="width: 50%;">
-                <span class="order-add-title text-warning">Кому</span>
-                <input type="text" class="order-route-data" name="to_fio[]" title="Получатель" value="{to_fio}" required=""/>
-            </div>
-            <div class="form-control" style="width: 50%;">
-                <span class="order-add-title text-warning">
-                    <span class="glyphicon glyphicon-phone-alt" aria-hidden="true"/>
-                </span>
-                <input type="text" class="order-route-data" name="to_phone[]" title="Телефон получателя" value="{to_phone}" required=""/>
             </div>
 
 
@@ -288,7 +292,7 @@
                 <input type="text" class="order-route-data number cost_all" title="Инкассация" value="{number(cost_route)+number(cost_tovar)}" disabled=""/>
             </div>
             <br/>
-            <textarea name="comment[]" class="form-control" title="Комментарий" style="display:none">
+            <textarea name="comment[]" class="form-control" title="Комментарий" placeholder="Примечания к заказу">
                 <xsl:value-of select="comment"/>
             </textarea>
             <div class="add_buttons" style="vertical-align: top;">
