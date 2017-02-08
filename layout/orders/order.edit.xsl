@@ -129,7 +129,7 @@
                             </div>
                             <div class="col-sm-6">
                                 <div style="text-align: center">
-                                    <input class="btn btn-success btn-submit" type="submit" value="сохранить" name="submit" onclick="test_time_all_routes()"/>
+                                    <input class="btn btn-success btn-submit" type="submit" value="сохранить" name="submit" onclick="return test_time_all_routes()"/>
                                 </div>
                             </div>
                         </div>
@@ -184,13 +184,13 @@
                     <span class="glyphicon glyphicon-time" aria-hidden="true"/>
                     готов
                 </span>
-                <xsl:call-template name="time_selector">
-                    <xsl:with-param name="select_class">order-route-data number to_time_ready</xsl:with-param>
-                    <xsl:with-param name="select_name">to_time_ready[]</xsl:with-param>
-                    <xsl:with-param name="select_title">Время готовности</xsl:with-param>
-                    <xsl:with-param name="select_value" select="to_time_ready"/>
-                </xsl:call-template>
-                <!--<input type="text" class="order-route-data number time-picker to_time_ready" name="to_time_ready[]" title="Время готовности" value="{to_time_ready}" onchange="test_time_routes(this);" required=""/>-->
+                <!--<xsl:call-template name="time_selector">-->
+                    <!--<xsl:with-param name="select_class">order-route-data number to_time_ready</xsl:with-param>-->
+                    <!--<xsl:with-param name="select_name">to_time_ready[]</xsl:with-param>-->
+                    <!--<xsl:with-param name="select_title">Время готовности</xsl:with-param>-->
+                    <!--<xsl:with-param name="select_value" select="to_time_ready"/>-->
+                <!--</xsl:call-template>-->
+                <input type="text" class="order-route-data number time-picker to_time_ready" name="to_time_ready[]" title="Время готовности" value="{to_time_ready}" required=""/>
             </div>
             <div class="form-control" style="width: 20%;">
                 <span class="order-add-title text-info">Дом</span>
@@ -209,26 +209,26 @@
                     <span class="glyphicon glyphicon-time" aria-hidden="true"/>
                     с
                 </span>
-                <xsl:call-template name="time_selector">
-                    <xsl:with-param name="select_class">order-route-data number to_time</xsl:with-param>
-                    <xsl:with-param name="select_name">to_time[]</xsl:with-param>
-                    <xsl:with-param name="select_title">Время доставки с</xsl:with-param>
-                    <xsl:with-param name="select_value" select="to_time"/>
-                </xsl:call-template>
-                <!--<input type="text" class="order-route-data number time-picker to_time start" name="to_time[]" title="Время доставки с" value="{to_time}" onchange="test_time_routes(this);" required=""/>-->
+                <!--<xsl:call-template name="time_selector">-->
+                    <!--<xsl:with-param name="select_class">order-route-data number to_time</xsl:with-param>-->
+                    <!--<xsl:with-param name="select_name">to_time[]</xsl:with-param>-->
+                    <!--<xsl:with-param name="select_title">Время доставки с</xsl:with-param>-->
+                    <!--<xsl:with-param name="select_value" select="to_time"/>-->
+                <!--</xsl:call-template>-->
+                <input type="text" class="order-route-data number time-picker to_time start" name="to_time[]" title="Время доставки с" value="{to_time}" required=""/>
             </div>
             <div class="form-control" style="width: 20%;">
                 <span class="order-add-title text-primary">
                     <span class="glyphicon glyphicon-time" aria-hidden="true"/>
                     по
                 </span>
-                <xsl:call-template name="time_selector">
-                    <xsl:with-param name="select_class">order-route-data number to_time_end</xsl:with-param>
-                    <xsl:with-param name="select_name">to_time_end[]</xsl:with-param>
-                    <xsl:with-param name="select_title">Время доставки по</xsl:with-param>
-                    <xsl:with-param name="select_value" select="to_time_end"/>
-                </xsl:call-template>
-                <!--<input type="text" class="order-route-data number time-picker to_time_end end" name="to_time_end[]" title="Время доставки по" value="{to_time_end}" onchange="test_time_routes(this);" required=""/>-->
+                <!--<xsl:call-template name="time_selector">-->
+                    <!--<xsl:with-param name="select_class">order-route-data number to_time_end</xsl:with-param>-->
+                    <!--<xsl:with-param name="select_name">to_time_end[]</xsl:with-param>-->
+                    <!--<xsl:with-param name="select_title">Время доставки по</xsl:with-param>-->
+                    <!--<xsl:with-param name="select_value" select="to_time_end"/>-->
+                <!--</xsl:call-template>-->
+                <input type="text" class="order-route-data number time-picker to_time_end end" name="to_time_end[]" title="Время доставки по" value="{to_time_end}" required=""/>
             </div>
 
             <div class="form-control" style="width: 50%;">
