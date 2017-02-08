@@ -35,12 +35,8 @@ function clone_div_row(row) {
 }
 
 function set_time_period (start, end) {
-    $(start).datetimepicker(timeoptions).on("dp.change", function (e) {
-        test_time_routes(this)
-    });
-    $(end).datetimepicker(timeoptions).on("dp.change", function (e) {
-        test_time_routes(this)
-    });
+    $(start).datetimepicker(timeoptions);
+    $(end).datetimepicker(timeoptions);
     $(start).on("dp.change", function (e) {
         $(end).data("DateTimePicker").minDate(e.date);
     });
@@ -262,20 +258,32 @@ function test_time_routes_each(route_row){
     // Если время доставки меньше текущего, то заказ на следующий день
     var tt_end_2 = (tt_end - t_now) < 0 ? tt_end + 24 : tt_end;
 
+    var no_error = true;
+    var errors = '<ul>';
     // проверка от готовности (2,5 часа)
     if ((tt_end - tt_ready) <= 2.4){
+        errors += '<li>Крайнее время доставки не может быть меньше 2,5 часов от времени готовности.</li><br/>';
+        no_error = false;
+    }
+    // Проверка от времени заказа
+    if ((tt_end_2 - t_now) <= 2.9 ){
+        errors += '<li>Крайнее время доставки не может быть меньше 3 часов от времени заказа.</li><br/>';
+        no_error = false;
+    }
+    // Заказы вечером запрещены на утро
+    if ((t_now > 21) && (tt_ready < 11) ){
+        errors += '<li>Заказ на утро с 8:30 до 11:00 можно оставить не позднее 21:00.</li><br/>';
+        no_error = false;
+    }
+
+    if (!no_error){
         $('input.btn-submit').prop('disabled', true);
-        bootbox.alert('Крайнее время доставки не может быть меньше 2,5 часов от времени готовности.<br/>Откорректируйте временные рамки.');
-        // Проверка от времени заказа
-    }else if ((tt_end_2 - t_now) <= 2.9 ){
-        $('input.btn-submit').prop('disabled', true);
-        bootbox.alert('Крайнее время доставки не может быть меньше 3 часов от времени заказа.<br/>Откорректируйте временные рамки.');
-    }else if ((t_now > 21) && (tt_ready < 11) ){
-        $('input.btn-submit').prop('disabled', true);
-        bootbox.alert('Заказ на утро с 8:30 до 11:00 можно оставить не позднее 21:00.<br/>Откорректируйте временные рамки.');
+        bootbox.alert(errors+'</ul><br/>Откорректируйте временные рамки.');
     }else{
         $('input.btn-submit').prop('disabled', false);
     }
+
+    return no_error;
 }
 
 /**
