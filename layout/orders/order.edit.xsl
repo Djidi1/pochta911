@@ -27,6 +27,9 @@
                                     <label>Откуда:</label>
                                 </div>
                                 <div class="col-sm-4">
+                                    <xsl:if test="order/id_address > 0 or not(order/id_address)">
+                                        <xsl:attribute name="class">col-sm-10</xsl:attribute>
+                                    </xsl:if>
                                     <select class="form-control store_address js-store_address" name="store_id">
                                         <xsl:for-each select="stores/item">
                                             <option value="{id}">
@@ -67,6 +70,23 @@
                                         </xsl:if>
                                     </input>
                                 </div>
+                                <xsl:if test="order/id > 0">
+                                    <div class="col-sm-2">
+                                        <label>Курьер:</label>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <div class="form-control">
+                                            <i>
+                                                <xsl:value-of select="order/fio_car"/>
+                                            </i>
+                                            <xsl:if test="/page/body/module[@name='CurentUser']/container/group_id = 1">
+                                                <span title="Назначить курьера" class="btn btn-info btn-xs chg-status" onclick="chg_courier({order/id})" style="float:right;">
+                                                    <i class="fa fa-car" aria-hidden="true"/>
+                                                </span>
+                                            </xsl:if>
+                                        </div>
+                                    </div>
+                                </xsl:if>
                                 <!--<div class="col-sm-2">-->
                                     <!--<label>Готовность:</label>-->
                                 <!--</div>-->
@@ -74,46 +94,34 @@
                                     <!--<input class="form-control time-picker" type="text" name="ready" onkeyup="check_user(this)" value="{order/ready}" size="30" required=""/>-->
                                 <!--</div>-->
                             </div>
-                            <div class="row">
-                                <div class="col-sm-2">
-                                    <label>Статус:</label>
-                                </div>
-                                <div class="col-sm-4">
-                                    <div class="form-control">
-                                        <i>
-                                            <xsl:value-of select="routes/item[1]/status"/>
-                                        </i>
-                                        <xsl:if test="/page/body/module[@name='CurentUser']/container/group_id = 1 and order/id > 0">
-                                            <span title="Изменить статус" class="btn btn-warning btn-xs chg-status" onclick="chg_status({order/id})" style="float:right;">
-                                                <span class="glyphicon glyphicon-flag" aria-hidden="true"/>
-                                            </span>
-                                        </xsl:if>
-                                    </div>
-                                </div>
-                                <div class="col-sm-2">
-                                    <label>Курьер:</label>
-                                </div>
-                                <div class="col-sm-4">
-                                    <div class="form-control">
-                                        <i>
-                                            <xsl:value-of select="order/fio_car"/>
-                                        </i>
-                                        <xsl:if test="/page/body/module[@name='CurentUser']/container/group_id = 1 and order/id > 0">
-                                            <span title="Назначить курьера" class="btn btn-info btn-xs chg-status" onclick="chg_courier({order/id})" style="float:right;">
-                                                <i class="fa fa-car" aria-hidden="true"/>
-                                            </span>
-                                        </xsl:if>
-                                    </div>
-                                </div>
-                            </div>
+                            <!--<div class="row">-->
+                                <!--<div class="col-sm-2">-->
+                                    <!--<label>Статус:</label>-->
+                                <!--</div>-->
+                                <!--<div class="col-sm-4">-->
+                                    <!--<div class="form-control">-->
+                                        <!--<i>-->
+                                            <!--<xsl:value-of select="routes/item[1]/status"/>-->
+                                        <!--</i>-->
+                                        <!--<xsl:if test="/page/body/module[@name='CurentUser']/container/group_id = 1 and order/id > 0">-->
+                                            <!--<span title="Изменить статус" class="btn btn-warning btn-xs chg-status" onclick="chg_status({order/id})" style="float:right;">-->
+                                                <!--<span class="glyphicon glyphicon-flag" aria-hidden="true"/>-->
+                                            <!--</span>-->
+                                        <!--</xsl:if>-->
+                                    <!--</div>-->
+                                <!--</div>-->
+
+                            <!--</div>-->
                             <hr/>
                             <label>Адреса доставки:</label>
-                            <button type="button" class="btn-clone btn btn-xs btn-success" title="Добавить адрес" onclick="clone_div_row($('.routes-block').last())" style="float:right;">
-                                <xsl:if test="position() != count(../../routes/item) and count(../../routes/item) != 0">
-                                    <xsl:attribute name="disabled"/>
-                                </xsl:if>
-                                Добавить адрес
-                            </button>
+                            <xsl:if test="@is_single != 1">
+                                <button type="button" class="btn-clone btn btn-xs btn-success" title="Добавить адрес" onclick="clone_div_row($('.routes-block').last())" style="float:right;">
+                                    <xsl:if test="position() != count(../../routes/item) and count(../../routes/item) != 0">
+                                        <xsl:attribute name="disabled"/>
+                                    </xsl:if>
+                                    Добавить адрес
+                                </button>
+                            </xsl:if>
                             <xsl:call-template name="adresses"/>
                             <!--<label>Дополнительная информация:</label>-->
                             <!--<textarea class="form-control" name="order_comment" placeholder="Комментарий к заказу" title="Комментарий к заказу">-->
@@ -144,6 +152,9 @@
                         </div>
                         <div id="map" style="width: 100%; min-height: 500px"/>
                     </div>
+                    <div class="alert alert-info">
+                        <span class="delivery_sum"/>
+                    </div>
                 </div>
             </form>
             <div style="display:none">
@@ -166,9 +177,6 @@
         <xsl:for-each select="routes/item">
             <xsl:call-template name="routes"/>
         </xsl:for-each>
-        <xsl:if test="count(routes/item) = 0">
-            <xsl:call-template name="routes"/>
-        </xsl:if>
     </xsl:template>
 
     <xsl:template name="routes">
@@ -178,7 +186,7 @@
             </span>
             <div class="form-control" style="width: 55%;">
                 <span class="order-add-title text-info">Улица</span>
-                <input type="search" class="order-route-data spb-streets" name="to[]" title="Улица, проспект и т.д." value="{to}" onchange="" autocomplete="off" required=""/>
+                <input type="search" class="order-route-data spb-streets js-street_upper" name="to[]" title="Улица, проспект и т.д." value="{to}" onchange="" autocomplete="off" required=""/>
             </div>
             <div class="form-control" style="width: 15%;">
                 <span class="order-add-title text-info">Дом</span>
@@ -211,39 +219,39 @@
                     <span class="glyphicon glyphicon-time" aria-hidden="true"/>
                     готов
                 </span>
-                <!--<xsl:call-template name="time_selector">-->
-                <!--<xsl:with-param name="select_class">order-route-data number to_time_ready</xsl:with-param>-->
-                <!--<xsl:with-param name="select_name">to_time_ready[]</xsl:with-param>-->
-                <!--<xsl:with-param name="select_title">Время готовности</xsl:with-param>-->
-                <!--<xsl:with-param name="select_value" select="to_time_ready"/>-->
-                <!--</xsl:call-template>-->
-                <input type="text" class="order-route-data number time-picker to_time_ready" name="to_time_ready[]" title="Время готовности" value="{to_time_ready}" required=""/>
+                <xsl:call-template name="time_selector">
+                    <xsl:with-param name="select_class">order-route-data number to_time_ready</xsl:with-param>
+                    <xsl:with-param name="select_name">to_time_ready[]</xsl:with-param>
+                    <xsl:with-param name="select_title">Время готовности</xsl:with-param>
+                    <xsl:with-param name="select_value" select="to_time_ready"/>
+                </xsl:call-template>
+                <!--<input type="text" class="order-route-data number time-picker to_time_ready" name="to_time_ready[]" title="Время готовности" value="{to_time_ready}" required=""/>-->
             </div>
             <div class="form-control" style="width: 33%;">
                 <span class="order-add-title text-primary">
                     <span class="glyphicon glyphicon-time" aria-hidden="true"/>
                     с
                 </span>
-                <!--<xsl:call-template name="time_selector">-->
-                    <!--<xsl:with-param name="select_class">order-route-data number to_time</xsl:with-param>-->
-                    <!--<xsl:with-param name="select_name">to_time[]</xsl:with-param>-->
-                    <!--<xsl:with-param name="select_title">Время доставки с</xsl:with-param>-->
-                    <!--<xsl:with-param name="select_value" select="to_time"/>-->
-                <!--</xsl:call-template>-->
-                <input type="text" class="order-route-data number time-picker to_time start" name="to_time[]" title="Время доставки с" value="{to_time}" required=""/>
+                <xsl:call-template name="time_selector">
+                    <xsl:with-param name="select_class">order-route-data number to_time</xsl:with-param>
+                    <xsl:with-param name="select_name">to_time[]</xsl:with-param>
+                    <xsl:with-param name="select_title">Время доставки с</xsl:with-param>
+                    <xsl:with-param name="select_value" select="to_time"/>
+                </xsl:call-template>
+                <!--<input type="text" class="order-route-data number time-picker to_time start" name="to_time[]" title="Время доставки с" value="{to_time}" required=""/>-->
             </div>
             <div class="form-control" style="width: 33%;">
                 <span class="order-add-title text-primary">
                     <span class="glyphicon glyphicon-time" aria-hidden="true"/>
                     по
                 </span>
-                <!--<xsl:call-template name="time_selector">-->
-                    <!--<xsl:with-param name="select_class">order-route-data number to_time_end</xsl:with-param>-->
-                    <!--<xsl:with-param name="select_name">to_time_end[]</xsl:with-param>-->
-                    <!--<xsl:with-param name="select_title">Время доставки по</xsl:with-param>-->
-                    <!--<xsl:with-param name="select_value" select="to_time_end"/>-->
-                <!--</xsl:call-template>-->
-                <input type="text" class="order-route-data number time-picker to_time_end end" name="to_time_end[]" title="Время доставки по" value="{to_time_end}" required=""/>
+                <xsl:call-template name="time_selector">
+                    <xsl:with-param name="select_class">order-route-data number to_time_end</xsl:with-param>
+                    <xsl:with-param name="select_name">to_time_end[]</xsl:with-param>
+                    <xsl:with-param name="select_title">Время доставки по</xsl:with-param>
+                    <xsl:with-param name="select_value" select="to_time_end"/>
+                </xsl:call-template>
+                <!--<input type="text" class="order-route-data number time-picker to_time_end end" name="to_time_end[]" title="Время доставки по" value="{to_time_end}" required=""/>-->
             </div>
 
 
@@ -274,9 +282,10 @@
                     оплата
                 </span>
                 <select class="order-route-data pay_type" name="pay_type[]" title="Тип оплаты курьеру" onchange="re_calc(this)">
+                    <xsl:variable name="pay_type" select="pay_type"/>
                     <xsl:for-each select="../../pay_types/item">
                         <option value="{id}">
-                            <xsl:if test="id = ../../pay_type">
+                            <xsl:if test="id = $pay_type">
                                 <xsl:attribute name="selected">selected</xsl:attribute>
                             </xsl:if>
                             <xsl:value-of select="pay_type"/>
@@ -291,18 +300,39 @@
                 </span>
                 <input type="text" class="order-route-data number cost_all" title="Инкассация" value="{number(cost_route)+number(cost_tovar)}" disabled=""/>
             </div>
-            <br/>
-            <textarea name="comment[]" class="form-control" title="Комментарий" placeholder="Примечания к заказу">
+            <textarea name="comment[]" class="form-control" title="Комментарий" placeholder="Примечания к заказу"  style="width: 80%;">
                 <xsl:value-of select="comment"/>
             </textarea>
-            <div class="add_buttons" style="vertical-align: top;">
-                <button type="button" class="btn-delete btn btn-sm btn-danger" title="Удалить" onclick="delete_div_row(this)">
-                    <xsl:if test="position() = 1">
-                        <xsl:attribute name="disabled"/>
-                    </xsl:if>
-                    <span class="glyphicon glyphicon-ban-circle" aria-hidden="true"/>
-                </button>
-            </div>
+
+            <xsl:if test="../../order/id > 0">
+                <div class="form-control" style="width: 20%;">
+                    <span class="order-add-title text-success">
+                        Статус
+                    </span>
+                    <select class="order-route-data" name="status[]" title="Статус заказа">
+                        <xsl:variable name="status_id" select="status_id"/>
+                        <xsl:for-each select="../../statuses/item">
+                            <option value="{id}">
+                                <xsl:if test="id = $status_id">
+                                    <xsl:attribute name="selected">selected</xsl:attribute>
+                                </xsl:if>
+                                <xsl:value-of select="status"/>
+                            </option>
+                        </xsl:for-each>
+                    </select>
+                </div>
+            </xsl:if>
+
+            <xsl:if test="../../@is_single != 1">
+                <div class="add_buttons" style="vertical-align: top;">
+                    <button type="button" class="btn-delete btn btn-sm btn-danger" title="Удалить" onclick="delete_div_row(this)">
+                        <xsl:if test="position() = 1">
+                            <xsl:attribute name="disabled"/>
+                        </xsl:if>
+                        <span class="glyphicon glyphicon-ban-circle" aria-hidden="true"/>
+                    </button>
+                </div>
+            </xsl:if>
         </div>
     </xsl:template>
     <xsl:template name="time_selector">
@@ -310,55 +340,15 @@
         <xsl:param name="select_name"/>
         <xsl:param name="select_title"/>
         <xsl:param name="select_value"/>
-        <select name="{$select_name}" class="{$select_class}" title="{$select_title}" onchange="test_time_routes(this);" required="">
-            <xsl:call-template name="time_options">
-                <xsl:with-param name="value" select="$select_value"/>
-                <xsl:with-param name="num">8</xsl:with-param>
-            </xsl:call-template>
+        <select name="{$select_name}" class="{$select_class}" title="{$select_title}" required="">
+            <xsl:for-each select="../../timer/element">
+                <option value="{.}">
+                    <xsl:if test=". = $select_value">
+                        <xsl:attribute name="selected">selected</xsl:attribute>
+                    </xsl:if>
+                    <xsl:value-of select="."/>
+                </option>
+            </xsl:for-each>
         </select>
-    </xsl:template>
-    <xsl:template name="time_options">
-        <xsl:param name="num"/>
-        <xsl:param name="value"/>
-        <xsl:variable name="time_zero">0<xsl:value-of select="$num"/>:00</xsl:variable>
-        <xsl:variable name="time_norm"><xsl:value-of select="$num"/>:00</xsl:variable>
-        <xsl:variable name="time_zero_half">0<xsl:value-of select="$num"/>:30</xsl:variable>
-        <xsl:variable name="time_norm_half"><xsl:value-of select="$num"/>:30</xsl:variable>
-        <xsl:if test="not($num = 23)">
-            <xsl:if test="$num &lt; 10">
-                <option value="{$time_zero}">
-                    <xsl:if test="$time_zero = $value">
-                        <xsl:attribute name="selected">selected</xsl:attribute>
-                    </xsl:if>
-                    <xsl:value-of select="$time_zero"/>
-                </option>
-                <option value="{$time_zero_half}">
-                    <xsl:if test="$time_zero_half = $value">
-                        <xsl:attribute name="selected">selected</xsl:attribute>
-                    </xsl:if>
-                    <xsl:value-of select="$time_zero_half"/>
-                </option>
-            </xsl:if>
-            <xsl:if test="$num &gt; 9">
-                <option value="{$time_norm}">
-                    <xsl:if test="$time_norm = $value">
-                        <xsl:attribute name="selected">selected</xsl:attribute>
-                    </xsl:if>
-                    <xsl:value-of select="$time_norm"/>
-                </option>
-                <option value="{$time_norm_half}">
-                    <xsl:if test="$time_norm_half = $value">
-                        <xsl:attribute name="selected">selected</xsl:attribute>
-                    </xsl:if>
-                    <xsl:value-of select="$time_norm_half"/>
-                </option>
-            </xsl:if>
-            <xsl:call-template name="time_options">
-                <xsl:with-param name="value" select="$value"/>
-                <xsl:with-param name="num">
-                    <xsl:value-of select="$num + 1"/>
-                </xsl:with-param>
-            </xsl:call-template>
-        </xsl:if>
     </xsl:template>
 </xsl:stylesheet>

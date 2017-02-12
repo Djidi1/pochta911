@@ -9,10 +9,11 @@ class ordersModel extends module_model {
 		$this->query ( $sql );
 		$items = array ();
 		while ( ($row = $this->fetchRowA ()) !== false ) {
+			if (isset($row['to'])) $row['to'] = str_replace('г. Санкт-Петербург,','',$row['to']);
 			if (isset($row['ready'])) $row['ready'] = substr($row['ready'],0,5);
 			if (isset($row['to_time'])) $row['to_time'] = substr($row['to_time'],0,5);
 			if (isset($row['to_time_end'])) $row['to_time_end'] = substr($row['to_time_end'],0,5);
-			if (isset($row['to_time_ready'])) $row['to_time_ready'] = substr($row['to_time_end'],0,5);
+			if (isset($row['to_time_ready'])) $row['to_time_ready'] = substr($row['to_time_ready'],0,5);
 			$items[] = $row;
 		}
 		return $items;
@@ -123,7 +124,8 @@ class ordersModel extends module_model {
 	public function getRoutes($order_id) {
 		$sql = 'SELECT r.id id_route, `to`,to_house,to_corpus,to_appart,
 					  to_fio,to_phone,to_coord,from_coord,lenght,cost_route,cost_tovar,cost_car,
-					  `to_time`,`to_time_end`,r.`comment`, s.status, s.id status_id, r.pay_type, r.to_time_ready
+					  `to_time`,`to_time_end`,r.`comment`, s.status, s.id status_id, r.pay_type, 
+					  r.to_time_ready
 				FROM orders_routes r
 				LEFT JOIN orders_status s ON s.id = r.id_status
 				WHERE id_order = '.$order_id;
@@ -176,9 +178,12 @@ class ordersModel extends module_model {
                        r.to_fio,
                        r.to_phone,
 					   r.cost_route,
-					   r.cost_tovar
+					   r.cost_tovar,
+					   r.id_status,
+					   s.status
 				FROM orders o
 				LEFT JOIN orders_routes r ON o.id = r.id_order
+				LEFT JOIN orders_status s ON r.id_status = s.id
 				WHERE o.id = '.$order_id;
         $items = $this->get_assoc_array($sql);
         return $items;
@@ -322,7 +327,16 @@ class ordersModel extends module_model {
 	}
 
 	public function getLogistList($from, $to) {
-		$sql = 'SELECT o.id, ua.address,ua.comment addr_comment, u.name,u.title, o.ready, o.date, o.comment, u.inkass_proc, o.id_car,
+		$sql = 'SELECT o.id, 
+                       ua.address,
+                       ua.comment addr_comment, 
+                       u.name,
+                       u.title, 
+                       o.ready,
+                       o.date, 
+                       o.comment, 
+                       u.inkass_proc, 
+                       o.id_car,
 					   cc.fio fio_car,
 					   cc.car_number,
 					   c.fio fio_courier,
@@ -411,10 +425,10 @@ class ordersModel extends module_model {
 							\''.$params ['to_appart'][$key].'\',\''.$params ['to_fio'][$key].'\',\''.$params ['to_phone'][$key].'\',
 							\''.$params ['cost_route'][$key].'\',\''.$params ['cost_tovar'][$key].'\',\''.$params ['cost_car'][$key].'\',
 							\''.$params ['to_time'][$key].'\',\''.$params ['to_time_end'][$key].'\',\''.$params ['comment'][$key].'\',
-							\''.$params ['to_time_ready'][$key].'\',\''.$params ['pay_type'][$key].'\'	)';
+							\''.$params ['to_time_ready'][$key].'\',\''.$params ['pay_type'][$key].'\',\''.$params ['status'][$key].'\'	)';
 			}
 			if ($sql_values != '') {
-                $sql = "INSERT INTO orders_routes (id_order,`to`,`to_house`,`to_corpus`,`to_appart`,`to_fio`,`to_phone`,`cost_route`,`cost_tovar`,`cost_car`,`to_time`,`to_time_end`,`comment`, `to_time_ready`, `pay_type`) VALUES $sql_values";
+                $sql = "INSERT INTO orders_routes (id_order,`to`,`to_house`,`to_corpus`,`to_appart`,`to_fio`,`to_phone`,`cost_route`,`cost_tovar`,`cost_car`,`to_time`,`to_time_end`,`comment`, `to_time_ready`, `pay_type`, `id_status`) VALUES $sql_values";
                 $this->query($sql);
             }
 		}
@@ -586,15 +600,18 @@ class ordersProcess extends module_process {
 		
 		if ($action == 'order') {
 			$order_id = $this->Vals->getVal ( 'order', 'GET', 'integer' );
+			$is_single = $this->Vals->getVal ( 'single', 'GET', 'integer' );
 			$without_menu = $this->Vals->getVal ( 'without_menu', 'GET', 'integer' );
 			$order = $this->nModel->getOrder($order_id);
 			$routes = $this->nModel->getRoutes($order_id);
 			$pay_types = $this->nModel->getPayTypes();
+            $statuses = $this->nModel->getStatuses();
 			$prices = $this->nModel->getPrices();
+			$timer = $this->getTimeForSelect();
             $add_prices = $this->nModel->getAddPrices();
 			$stores = $this->nModel->getStores(isset($order['id_user'])?$order['id_user']:$user_id);
 			$client_title = $this->nModel->getClientTitle(isset($order['id_user'])?$order['id_user']:$user_id);
-			$this->nView->viewOrderEdit ( $order, $stores, $routes, $pay_types, $prices, $add_prices, $client_title, $without_menu );
+			$this->nView->viewOrderEdit ( $order, $stores, $routes, $pay_types, $statuses, $timer, $prices, $add_prices, $client_title, $without_menu, $is_single );
 		}
 
 		if ($action == 'orderBan') {
@@ -626,33 +643,32 @@ class ordersProcess extends module_process {
 			$params['cost_car'] = $this->Vals->getVal ( 'cost_car', 'POST', 'array' );
 			$params['pay_type'] = $this->Vals->getVal ( 'pay_type', 'POST', 'array' );
 			$params['comment'] = $this->Vals->getVal ( 'comment', 'POST', 'array' );
+			$params['status'] = $this->Vals->getVal ( 'status', 'POST', 'array' );
 			if ($params['order_id'] > 0) {
 				$order_id = $this->nModel->orderUpdate($params);
                 $message_add_text = "Заказ обновлен";
+                $send_message = false;
 			}else{
                 $order_id = $this->nModel->orderInsert($user_id,$params);
                 $message_add_text = "Заказ принят, ожидайте курьера.";
+                $send_message = true;
 			}
 
-
-			$message  = $this->getOrderTextInfo($order_id);
-            $message .= $message_add_text;
-
-            $chat_id = $this->nModel->getChatIdByOrder($order_id);
-
-            if (isset($chat_id) and $chat_id != '') {
-
-//                $menu = array('inline_keyboard' => array(
-//                    array(
-//                        array(
-//                            'text' => 'Перейти к заказу',
-//                            'url' => 'https://fd.pochta911.ru/orders/order-'.$order_id
-//                        ),
-//                    ),
-//                ));
-                $this->telegram($message, $chat_id);
+			// Если статус больше статуса в исполнении
+            foreach ($params['status'] as $route_statuses) {
+                if ($route_statuses > 3) {
+                    $send_message = true;
+                }
             }
 
+            if ($send_message) {
+                $message = $this->getOrderTextInfo($order_id);
+                $message .= $message_add_text;
+                $chat_id = $this->nModel->getChatIdByOrder($order_id);
+                if (isset($chat_id) and $chat_id != '') {
+                    $this->telegram($message, $chat_id);
+                }
+            }
 			$this->nView->viewMessage('Заказ успешно сохранен. Номер для отслеживания: '.$order_id, 'Сообщение');
             $this->updated = true;
 		}
@@ -812,6 +828,20 @@ class ordersProcess extends module_process {
 
 	}
 
+	public function getTimeForSelect(){
+        $time_arr = array();
+        for ($h = 8; $h <= 23; $h++) {
+            if ($h < 23){
+                for ($i= 0; $i <= 11; $i++){
+                    $time_arr[] = substr('0'.$h,-2).':'.substr('0'.($i*5),-2);
+                }
+            }else{
+                $time_arr[] = $h.':00';
+            }
+        }
+        return $time_arr;
+    }
+
 	public function getOrderTextInfo($order_id){
         $order_info = $this->nModel->getOrderInfo($order_id);
         $order_routes_info = $this->nModel->getOrderRoutesInfo($order_id);
@@ -827,6 +857,9 @@ class ordersProcess extends module_process {
             $order_info_message .= " <b>Готовность:</b> " . $order_route_info['to_time_ready'] . "\r\n";
             $order_info_message .= " <b>Период получения:</b> " . $order_route_info['to_time'] . " - " . $order_route_info['to_time_end'] . "\r\n";
             $order_info_message .= " <b>Получатель:</b> " . $order_route_info['to_fio'] . " [" . $order_route_info['to_phone'] . "]\r\n";
+            if ($order_route_info['id_status'] > 1) {
+                $order_info_message .= " <b>Статус:</b> " . $order_route_info['status'] . "\r\n";
+            }
 //            $order_info_message .= " <b>Стоимость заказа:</b> " . (+$order_route_info['cost_route'] + $order_route_info['cost_tovar']) . "\r\n ";
         }
         return $order_info_message;
@@ -988,21 +1021,36 @@ class ordersView extends module_View {
 		return true;
 	}
 	
-	public function viewOrderEdit($order, $stores, $routes, $pay_types, $prices, $add_prices, $client_title, $without_menu) {
+	public function viewOrderEdit($order, $stores, $routes, $pay_types, $statuses, $timer, $prices, $add_prices, $client_title, $without_menu, $is_single) {
 		$this->pXSL [] = RIVC_ROOT . 'layout/orders/order.edit.xsl';
-		$Container = $this->newContainer ( 'order' );
-        $this->addAttr ( 'today', date('d.m.Y'), $Container );
-        $this->addAttr ( 'time_now', time(), $Container );
+        $Container = $this->newContainer('order');
+        $this->addAttr('today', date('d.m.Y'), $Container);
+        $this->addAttr('time_now', time(), $Container);
 //        $this->addAttr ( 'time_now', date('H:i:s'), $Container );
-        $this->addAttr('without_menu',$without_menu, $Container);
+        $this->addAttr('without_menu', $without_menu, $Container);
+        $this->addAttr('is_single', $is_single, $Container);
 
 		$this->arrToXML ( $order, $Container, 'order' );
+        $this->arrToXML ( $timer, $Container, 'timer' );
+
+        if (count($routes) > 0) {
+            $ContainerRoutes = $this->addToNode($Container, 'routes', '');
+            foreach ($routes as $item) {
+                $this->arrToXML($item, $ContainerRoutes, 'item');
+            }
+        }else{
+            $ContainerRoutes = $this->addToNode($Container, 'routes', '');
+            $this->addToNode($ContainerRoutes, 'item', 'fake');
+        }
 
 		$ContainerClient = $this->addToNode ( $Container, 'client', '' );
 		foreach ( $client_title as $item ) {
 			$this->arrToXML ( $item, $ContainerClient, 'item' );
 		}
-
+        $ContainerStatuses = $this->addToNode ( $Container, 'statuses', '' );
+        foreach ( $statuses as $item ) {
+            $this->arrToXML ( $item, $ContainerStatuses, 'item' );
+        }
         $ContainerPayTypes = $this->addToNode ( $Container, 'pay_types', '' );
         foreach ( $pay_types as $item ) {
             $this->arrToXML ( $item, $ContainerPayTypes, 'item' );
@@ -1010,10 +1058,6 @@ class ordersView extends module_View {
         $ContainerStores = $this->addToNode ( $Container, 'stores', '' );
         foreach ( $stores as $item ) {
             $this->arrToXML ( $item, $ContainerStores, 'item' );
-        }
-        $ContainerRoutes = $this->addToNode ( $Container, 'routes', '' );
-        foreach ( $routes as $item ) {
-            $this->arrToXML ( $item, $ContainerRoutes, 'item' );
         }
         $ContainerPrices = $this->addToNode ( $Container, 'prices', '' );
         foreach ( $prices as $item ) {

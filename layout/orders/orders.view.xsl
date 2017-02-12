@@ -2,30 +2,35 @@
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
     <xsl:template match="container[@module = 'list']">
         <xsl:if test="//page/@isAjax != 1">
-            <form method="post" style="margin-bottom: 2px;">
+            <form id="form_orders" method="post" style="margin-bottom: 2px;">
                 <div class="row">
-                    <div class="col-sm-4">
-                        <span class="btn btn-success" onclick="open_bootbox_dialog('/orders/order-0/')" title="Добавить заказ">
-                            <span class="glyphicon glyphicon-flag"> </span> Новый заказ
-                        </span>
-                        <span class="btn btn-success" onclick="popup_excel('orders/excel-1')" title="Выгрузить в Excel">
-                            <i class="fa fa-file-excel-o" aria-hidden="true"> </i> Excel</span>
-                    </div>
                     <div class="col-sm-3">
-                        <!--<striong>Статусы: </striong>-->
-                        <!--<xsl:for-each select="statuses/item">-->
-                            <!--<label class="btn btn-default btn-xs" style="margin-right:10px;" onchange="filter_table()">-->
-                                <!--<input class="statuses" type="checkbox" aria-label="" value="{id}"/>-->
-                                <!--<xsl:text> </xsl:text>-->
-                                <!--<span style="vertical-align: text-bottom;"><xsl:value-of select="status"/></span>-->
-                            <!--</label>-->
-                        <!--</xsl:for-each>-->
+                        <span class="btn btn-warning btn-sm" onclick="open_bootbox_dialog('/orders/order-0/single-1')" title="Добавить одиночный заказ">
+                            Одиночный
+                        </span>
+                        <span class="btn btn-primary btn-sm" onclick="open_bootbox_dialog('/orders/order-0/')" title="Добавить заказ с несколькими пунктами назначения">
+                            Создать маршрут
+                        </span>
+                    </div>
+                    <div class="col-sm-6">
+                        <striong>Статусы: </striong>
+                        <xsl:for-each select="statuses/item">
+                            <label class="btn btn-default btn-xs" style="margin-right:10px;" onchange="filter_table()">
+                                <input class="statuses" type="checkbox" aria-label="" value="{id}"/>
+                                <xsl:text> </xsl:text>
+                                <span style="vertical-align: text-bottom;"><xsl:value-of select="status"/></span>
+                            </label>
+                        </xsl:for-each>
                     </div>
                     <div class="col-sm-3">
                         <div class="input-group input-group-sm" style="float:right">
-                            <input type="text" class="form-control" id="end_date" name="date_to" value="{@date_to}" style="text-align:center" />
+                            <input type="text" class="form-control" id="end_date" name="date_to" value="{@date_to}" style="text-align:center" onchange="$('#form_orders').submit()"/>
                             <span class="input-group-btn">
                                 <button class="btn btn-info">Обновить</button>
+                            </span>
+                            <span class="input-group-btn">
+                                <span class="btn btn-success" onclick="popup_excel('orders/excel-1')" title="Выгрузить в Excel">
+                                    <i class="fa fa-file-excel-o" aria-hidden="true"> </i></span>
                             </span>
                         </div>
                         <script>
@@ -40,7 +45,7 @@
                 <thead>
                     <!--<th>#</th>-->
                     <th>Заказ</th>
-                    <th>Готовность</th>
+                    <th>Готов</th>
                     <th>Время доставки</th>
                     <th>Адрес приема и контакт</th>
                     <th>Компания</th>
@@ -60,23 +65,23 @@
                     <!--<th>Прим. адрес</th>-->
                     <!--<th/>-->
                 </thead>
-                <tfoot>
-                    <tr>
+                <!--<tfoot>-->
+                    <!--<tr>-->
+                        <!--&lt;!&ndash;<th/>&ndash;&gt;-->
                         <!--<th/>-->
-                        <th/>
-                        <th/>
-                        <th/>
-                        <th/>
-                        <th/>
-                        <th/>
-                        <th/>
-                        <th/>
-                        <th/>
-                        <th/>
-                        <th/>
-                        <th/>
-                    </tr>
-                </tfoot>
+                        <!--<th/>-->
+                        <!--<th/>-->
+                        <!--<th/>-->
+                        <!--<th/>-->
+                        <!--<th/>-->
+                        <!--<th/>-->
+                        <!--<th/>-->
+                        <!--<th/>-->
+                        <!--<th/>-->
+                        <!--<th/>-->
+                        <!--<th/>-->
+                    <!--</tr>-->
+                <!--</tfoot>-->
                 <tbody>
                     <xsl:for-each select="orders/item/route/array">
                         <tr onclick="open_bootbox_dialog('/orders/order-{../../id}/');">
@@ -88,7 +93,7 @@
                             <td>
                                 <xsl:value-of select="../../id"/>
                             </td>
-                            <td><xsl:value-of select="../../ready"/></td>
+                            <td><xsl:value-of select="to_time_ready"/></td>
                             <td><nobr>
                                 <xsl:value-of select="to_time"/>-<xsl:value-of select="to_time_end"/>
                             </nobr></td>

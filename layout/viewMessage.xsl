@@ -15,7 +15,8 @@
 		<xsl:if test="/page/@without_menu = 1">
 			<script>
 				function history_go_back() {
-					history.go(-1)
+					//history.go(-1);
+					window.location.href = "/";
 				}
 				setTimeout(history_go_back, 500);
 			</script>

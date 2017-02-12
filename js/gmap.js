@@ -99,7 +99,7 @@ function calc_route() {
         var route_to_corpus = $(this).parent().parent().find('.to_corpus').val();
         if (route_address != '') {
             way_points.push({
-                location: ('' + route_address + ((route_to_house != '') ? (', ' + route_to_house) : '') + ((route_to_corpus != '') ? (', ' + route_to_corpus) : '')) + ', Ленинградская обл.',
+                location: ('Ленинградская обл., Санкт-Петербург, ' + route_address + ((route_to_house != '') ? (', ' + route_to_house) : '') + ((route_to_corpus != '') ? (', ' + route_to_corpus) : '')) + '',
                 stopover: true
             });
             i++;
@@ -139,7 +139,7 @@ function calc_route() {
             var summaryPanel = document.getElementById('viewContainer');
             summaryPanel.innerHTML = '';
             var shortInfo = '';
-
+            var delivery_sum = 0;
             // For each route, display summary information.
             for (var i = 0; i < route.legs.length; i++) {
                 var distanceInSPb = 0;
@@ -229,8 +229,12 @@ function calc_route() {
                 // summaryPanel.innerHTML += 'От: ' + route.legs[i].start_address + ',<br>';
                 // summaryPanel.innerHTML += 'До: ' + route.legs[i].end_address + '<br>';
                 summaryPanel.innerHTML += moveList + '<br>';
+
+                delivery_sum += parseFloat(cost_km)+parseFloat(cost_km_out)+parseFloat(cost_Neva);
             }
             $('#ShortInfo').html(shortInfo);
+
+            $('.delivery_sum').html('<b>Итоговая сумма заказа: ' + delivery_sum + '.00 руб</b>');
         } else {
             bootbox.alert('Ошибка построения маршрута: ' + status);
         }

@@ -27,7 +27,7 @@ jQuery(function ($) {
 
     add_data_table($('.new-logist-data-table'));
 
-
+/*
     $('.logist-data-table').dataTable({
         "columnDefs": [
             { "visible": false, "targets": 0 }
@@ -75,7 +75,7 @@ jQuery(function ($) {
             "url": "//cdn.datatables.net/plug-ins/1.10.13/i18n/Russian.json"
         }
     } );
-
+*/
     $('.thumbnail').click(function () {
         var src = $(this).attr("src");
         var img = '<img src="' + src + '" style="width: 100%;" />';
@@ -128,6 +128,9 @@ jQuery(function ($) {
         incTimeNow();
     }
 
+    $('.js-street_upper').keyup(function () {
+        $(this).val(firstToUpperCase($(this).val()));
+    });
 
     $('.js-store_address').change(function() {
         if ($(this).val() == 0){

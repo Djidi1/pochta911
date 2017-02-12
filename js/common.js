@@ -25,7 +25,8 @@ function clone_div_row(row) {
     $(new_el).find('.btn-delete').removeAttr('disabled');
     // автозаполение адреса
     $(new_el).remove('.typeahead');
-    // $(new_el).find('.time-picker.start').datetimepicker({format: 'LT',locale: 'ru'});
+    // чистим окна ввода
+    $(new_el).find('input, select, textarea').val('');
     var start_time = $(new_el).find('.time-picker.start').get();
     var end_time = $(new_el).find('.time-picker.end').get();
     set_time_period(start_time,end_time);
@@ -82,17 +83,18 @@ function check_user(obj){
 }
 
 function open_bootbox_dialog(url) {
-    bootbox.dialog({
-        title: "Карточка заказа",
-        message: '<iframe style="border:0;" src="'+url+'/without_menu-1/" height="500" width="100%" ></iframe>',
-        className: "largeWidth",
-        buttons: {
-            'cancel': {
-                label: 'Закрыть',
-                className: 'btn-default pull-left'
-            }
-        }
-    });
+    window.location.href = url;
+    // bootbox.dialog({
+    //     title: "Карточка заказа",
+    //     message: '<iframe style="border:0;" src="'+url+'/without_menu-1/" height="500" width="100%" ></iframe>',
+    //     className: "largeWidth",
+    //     buttons: {
+    //         'cancel': {
+    //             label: 'Закрыть',
+    //             className: 'btn-default pull-left'
+    //         }
+    //     }
+    // });
 }
 
 function popup_excel(url) {
@@ -120,6 +122,7 @@ function chg_courier(order_id){
         //bootbox.alert(data,send_new_status(this));
     });
 }
+
 function send_new_courier(){
     var order_id = $('.bootbox-body').find('input[name=order_id]').val();
     var order_route_id = $('.bootbox-body').find('input[name=order_route_id]').val();
@@ -135,6 +138,7 @@ function send_new_courier(){
     });
 
 }
+
 function chg_status(order_id){
     $.post("/orders/chg_status-1/", {order_id:order_id},  function(data) {
         bootbox.confirm({
@@ -232,6 +236,27 @@ function test_time_routes(obj){
     test_time_routes_each(route_row);
 }
 function test_time_all_routes(){
+    // Проверка времени готовности
+    var first_time = '';
+    var prev_time = '';
+    var need_sync = false;
+    $('div.routes-block').each(function (index) {
+        var this_time = $(this).find('.to_time_ready').val();
+        if (index == 0){
+            first_time = this_time;
+        }
+        if (index != 0 && this_time != prev_time){
+            need_sync = true;
+        }else {
+            prev_time = this_time;
+        }
+    });
+    if (need_sync){
+        bootbox.alert('Время готовности всех заказов должно быть единым.<br/>Мы установили равным времени готовности первого заказа по маршруту');
+        $('div.routes-block').find('.to_time_ready').val(first_time);
+        return false;
+    }
+
     $('div.routes-block').each(function () {
         test_time_routes_each(this);
     });
@@ -275,14 +300,41 @@ function test_time_routes_each(route_row){
         errors += '<li>Заказ на утро с 8:30 до 11:00 можно оставить не позднее 21:00.</li><br/>';
         no_error = false;
     }
+/*
+    // проверка обязательный полей
+    var fail = false;
+    var fail_log = '';
+    $( '#form_id' ).find( 'select, textarea, input' ).each(function(){
+        if( ! $( this ).prop( 'required' )){
 
+        } else {
+            if ( ! $( this ).val() ) {
+                fail = true;
+                var name = $( this ).attr( 'title' );
+                fail_log += "Поле '" + name + "' должно быть заполнено. \n";
+            }
+
+        }
+    });
+*/
+
+
+    // Блокировка при ошибках во времени
     if (!no_error){
         $('input.btn-submit').prop('disabled', true);
-        bootbox.alert(errors+'</ul><br/>Откорректируйте временные рамки.');
+        bootbox.alert(errors+'</ul><br/>Откорректируйте временные рамки.', function(){ $('input.btn-submit').prop('disabled', false); });
     }else{
         $('input.btn-submit').prop('disabled', false);
     }
-
+/*
+    // Блокировка по обязательным полям
+    if ( fail ) {
+        $('input.btn-submit').prop('disabled', true);
+        bootbox.alert( fail_log, function(){ $('input.btn-submit').prop('disabled', false); } );
+        // Если нет других ошибок, то блокируем данной проверкой.
+        no_error = (no_error)?false:fail;
+    }
+*/
     return no_error;
 }
 
@@ -310,40 +362,28 @@ function timestampToTime(){
 }
 
 function add_data_table(obj){
+    /*
     // Setup - add a text input to each footer cell
+
     $(obj).find('tfoot th').each( function () {
         var title = $(this).text();
         $(this).html( '<input type="text" placeholder="Search '+title+'" />' );
     } );
+*/
     // DataTable
-    var table = $(obj).DataTable({
+    $(obj).DataTable({
         "language": {
             "url": "//cdn.datatables.net/plug-ins/1.10.13/i18n/Russian.json"
         }
         , "bLengthChange": false
         , "bPaginate": false
-        , "bFilter": false
-        ,initComplete: function () {
-            this.api().columns().every( function () {
-                var column = this;
-                var select = $('<select><option value=""></option></select>')
-                    .appendTo( $(column.footer()).empty() )
-                    .on( 'change', function () {
-                        var val = $.fn.dataTable.util.escapeRegex(
-                            $(this).val()
-                        );
-
-                        column
-                            .search( val ? '^'+val+'$' : '', true, false )
-                            .draw();
-                    } );
-
-                column.data().unique().sort().each( function ( d, j ) {
-                    select.append( '<option value="'+d+'">'+d+'</option>' )
-                } );
-            } );
-        }
+        , "bFilter": true
     });
+}
+
+
+function firstToUpperCase( str ) {
+    return str.substr(0, 1).toUpperCase() + str.substr(1);
 }
 
 function google_autocomlete(){
