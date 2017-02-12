@@ -234,7 +234,7 @@ function calc_route() {
             }
             $('#ShortInfo').html(shortInfo);
 
-            $('.delivery_sum').html('<b>Итоговая сумма заказа: ' + delivery_sum + '.00 руб</b>');
+            $('.delivery_sum').html('<b>Итоговая сумма доставки заказа: ' + delivery_sum + '.00 руб</b>');
         } else {
             bootbox.alert('Ошибка построения маршрута: ' + status);
         }
