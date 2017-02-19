@@ -1,6 +1,7 @@
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
     <xsl:output method="html" encoding="utf-8" indent="yes"/>
     <xsl:include href="head.main.page.xsl"/>
+    <xsl:include href="head.page.xsl"/>
     <xsl:template match="/">
         <xsl:variable name="content">
             <xsl:value-of select="//page/body/@contentContainer"/>
@@ -15,7 +16,12 @@
                 <div class="body-top">
                     <div class="main" style="width:90%;">
                         <xsl:if test="/page/@without_menu != 1">
-                            <xsl:call-template name="main_headWrap"/>
+                            <xsl:if test="/page/body/module[@name='CurentUser']/container/login = 1">
+                                <xsl:call-template name="main_headWrap"/>
+                            </xsl:if>
+                            <xsl:if test="not(/page/body/module[@name='CurentUser']/container/login) or /page/body/module[@name='CurentUser']/container/login != 1">
+                                <xsl:call-template name="headWrap"/>
+                            </xsl:if>
                         </xsl:if>
                         <div id="content">
                             <div class="wrapper2">

@@ -5,7 +5,7 @@
             <form id="form_orders" method="post" style="margin-bottom: 2px;">
                 <div class="row">
                     <div class="col-sm-2">
-                        <a class="btn btn-success btn-sm" href="/orders/order-0/" title="Добавить заказ" target="_blank">
+                        <a class="btn btn-success btn-sm" href="/orders/order-0/" title="Добавить заказ">
                             <span class="glyphicon glyphicon-flag"> </span>
                             <span>Новый заказ</span>
                         </a>
@@ -24,12 +24,15 @@
                         <div class="input-group input-group-sm" style="float:right">
                             <input type="text" class="form-control" id="end_date" name="date_to" value="{@date_to}" style="text-align:center" onchange="$('#form_orders').submit()"/>
                             <span class="input-group-btn">
-                                <button class="btn btn-info">Обновить</button>
+                                <span class="btn btn-success" onclick="popup_excel('orders/excel-1/logist-1')" title="Выгрузить в Excel">
+                                    <i class="fa fa-file-excel-o" aria-hidden="true"> </i></span>
                             </span>
                         </div>
                         <script>
                             $(function () {
-                                $('#end_date').datetimepicker({format: 'L', locale: 'ru'});
+                                $('#end_date').datetimepicker({format: 'L', locale: 'ru'}).on("dp.change", function (e) {
+                                    $('#form_orders').submit();
+                                });
                             });
                         </script>
                     </div>
@@ -44,11 +47,12 @@
                     <th>Адрес приема и контакт</th>
                     <th>Компания</th>
                     <th>Адрес доставки</th>
-                    <th>Телефон</th>
-                    <th>Получатель</th>
+                    <!--<th>Телефон</th>-->
+                    <!--<th>Получатель</th>-->
                     <th>Статус</th>
                     <th>Курьер и телефон</th>
-                    <th>Стоимость</th>
+                    <th>Стоимость доставки</th>
+                    <th>Инкассация</th>
                     <xsl:if test="/page/body/module[@name='CurentUser']/container/group_id = 1">
                         <!--<th>Инкассация</th>-->
                         <!--<th>% инкассации</th>-->
@@ -99,12 +103,12 @@
                             </td>
                             <td><xsl:value-of select="../../title"/></td>
                             <td><nobr><b><xsl:value-of select="to"/>, <xsl:value-of select="to_house"/>, <xsl:value-of select="to_corpus"/>, <xsl:value-of select="to_appart"/></b></nobr></td>
-                            <td><nobr>
-                                <b>
-                                    <xsl:value-of select="to_phone"/>
-                                </b>
-                            </nobr></td>
-                            <td><xsl:value-of select="to_fio"/></td>
+                            <!--<td><nobr>-->
+                                <!--<b>-->
+                                    <!--<xsl:value-of select="to_phone"/>-->
+                                <!--</b>-->
+                            <!--</nobr></td>-->
+                            <!--<td><xsl:value-of select="to_fio"/></td>-->
                             <td class="order_info">
                                 <xsl:attribute name="rel">{"order_id": "<xsl:value-of select="../../id"/>","from": "<xsl:value-of select="../../address"/>","ready": "<xsl:value-of select="../../ready"/>","to_addr": "<xsl:value-of select="to"/>, д.<xsl:value-of select="to_house"/>, корп.<xsl:value-of select="to_corpus"/>, кв.<xsl:value-of select="to_appart"/>","to_time": "<xsl:value-of select="to_time"/>","to_fio": "<xsl:value-of select="to_fio"/>","to_phone": "<xsl:value-of select="to_phone"/>","cost": "<xsl:value-of select="cost_route"/>"}</xsl:attribute>
                                 <xsl:attribute name="class">
@@ -118,7 +122,11 @@
                             <td>
                                 <xsl:value-of select="../../fio_car"/> (<xsl:value-of select="../../car_number"/>)
                             </td>
-                            <td><xsl:value-of select="cost_tovar"/></td>
+
+                            <td><xsl:value-of select="cost_route"/></td>
+                            <td title="({cost_route} + {cost_tovar}) + ({cost_tovar} * {number(../../inkass_proc) div 100})">
+                                <xsl:value-of select="(number(cost_route)+number(cost_tovar)) + (number(cost_tovar) * number(../../inkass_proc)) div 100"/>
+                            </td>
 
 
                             <xsl:if test="/page/body/module[@name='CurentUser']/container/group_id = 1">

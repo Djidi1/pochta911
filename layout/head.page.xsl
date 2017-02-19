@@ -7,7 +7,7 @@
 			<title>Доставка цветов</title>
 			<link href="/images/favicon.png" rel="shortcut icon" type="image/vnd.microsoft.icon"/>
 			<link rel="stylesheet" href="/css/camera.css"/>
-			<link rel="stylesheet" href="/css/style.css"/>
+			<link rel="stylesheet" href="/css/style.css?v2"/>
 			<link rel="stylesheet" href="/css/font-awesome.min.css"/>
 			<link rel="stylesheet" href="/css/print.css" media="Print"/>
 			<link rel="stylesheet" href="/css/bootstrap.min.css"/>
@@ -24,9 +24,9 @@
 			<script src="/js/bootstrap-datetimepicker.js"/>
 			<script src="/js/bootstrap-typeahead.min.js"/>
 			<script src="/js/camera.min.js"/>
-			<script src="/js/ready.js?v1"/>
-            <script src="/js/common.js?v1"/>
-			<script src="/js/script.js?v1"/>
+			<script src="/js/ready.js?v2"/>
+            <script src="/js/common.js?v2"/>
+			<script src="/js/script.js?v2"/>
             <script src="//cdn.ckeditor.com/4.6.1/full/ckeditor.js"/>
 			<script src="//cdn.datatables.net/1.10.4/js/jquery.dataTables.min.js"/>
 			<script src="//cdn.datatables.net/plug-ins/3cfcc339e89/integration/bootstrap/3/dataTables.bootstrap.js"/>
@@ -48,7 +48,7 @@
 							<span class="icon-bar"/>
 							<span class="icon-bar"/>
 						</button>
-						<a class="navbar-brand" href="#" title="Доставка цветов">
+						<a class="navbar-brand" href="/" title="Доставка цветов">
 							<img src="./images/logo.png" alt="Logo"/>
 							<span class="header1" style="display:none;">Доставка цветов</span>
 						</a>
@@ -57,24 +57,27 @@
 					<!-- Collect the nav links, forms, and other content for toggling -->
 					<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
 						<ul class="nav navbar-nav">
+							<!--<li>-->
+								<!--<a href="/">Главная</a>-->
+							<!--</li>-->
 							<li>
-								<a href="/">Главная</a>
+								<a href="/pages/view-49/">Условия сотрудничества</a>
 							</li>
-							<li class="item-207">
-								<a href="/pages/view-28/">О нас</a>
-							</li>
-							<li>
-								<a href="/orders/">Заказы</a>
-							</li>
-							<li>
-								<a href="/pages/view-49/">Акции</a>
-							</li>
-							<li>
-								<a href="/pages/view-52/">Услуги</a>
-							</li>
-							<li>
-								<a href="#">Контакты</a>
-							</li>
+							<!--<li class="item-207">-->
+								<!--<a href="/pages/view-28/">О нас</a>-->
+							<!--</li>-->
+							<!--<li>-->
+								<!--<a href="/orders/">Заказы</a>-->
+							<!--</li>-->
+							<!--<li>-->
+								<!--<a href="/pages/view-49/">Акции</a>-->
+							<!--</li>-->
+							<!--<li>-->
+								<!--<a href="/pages/view-52/">Услуги</a>-->
+							<!--</li>-->
+							<!--<li>-->
+								<!--<a href="#">Контакты</a>-->
+							<!--</li>-->
 						</ul>
 						<script>
 							var now_path = window.location.pathname;

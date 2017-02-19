@@ -43,6 +43,7 @@ if(intval($User->isAutch()) > 0 and !$module) {
         $module = 'orders';
     }elseif (in_array($group_id, array('1','3'))){
         $module = 'orders';
+        $values->setValTo('LogistList','1','GET');
     }
 }else{
  // ???

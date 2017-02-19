@@ -2,9 +2,6 @@
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 	<xsl:template match="container[@module = 'userlist']">
 		<xsl:if test="//page/@isAjax != 1">
-			<style type="">
-	tr.selected {background-color: #EDEDED;}
-	</style>
 			<div id="cpanel">
 				<table class="adminform" width="100%">
 					<tbody>
@@ -13,7 +10,7 @@
 								<h2>Список клиентов</h2>
 								<div style="float: left;">
 									<div class="icon">
-										<a class="btn btn-success" href="/admin/userEdit-0/" title="Добавить пользователя">
+										<a class="btn btn-success" href="/admin/userEdit-0/idg-{users/@id_group}/" title="Добавить пользователя">
 											<span class="glyphicon glyphicon-user"> </span>
 											<span> Новый пользователь</span>
 										</a>
@@ -43,7 +40,7 @@
 							<table style="width: 100%">
 								<tbody>
 									<tr>
-										<td>Ф.И.О.:<br/>
+										<td>Контактное лицо:<br/>
 											<input id="f_name" type="text" name="f_name" class="form-control" size="15" onkeyup="sendFilter('/admin/userList-1/', 'langFilter', 'viewListlang');"/>
 										</td>
 										<td>Логин:<br/>
@@ -92,8 +89,8 @@
 					<thead>
 						<tr>
 							<th>№  [ID]</th>
-							<th>Ф.И.О.</th>
-							<th>Агент</th>
+							<th>Контактное лицо</th>
+							<th>Компания</th>
                             <th>Логин</th>
                             <th>Группа</th>
 							<th>Телефон</th>

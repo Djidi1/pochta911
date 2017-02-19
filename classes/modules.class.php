@@ -898,7 +898,7 @@ class module_model extends database {
 	}
 
 	public function getGroups() {
-		$sql = 'SELECT * FROM '.TAB_PREF.'`groups`';		
+		$sql = 'SELECT * FROM `groups` WHERE hidden != 1';
 		$this->query($sql);
 		$groups = array();		
 		while($row = $this->fetchRowA()) {			

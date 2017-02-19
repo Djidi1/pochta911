@@ -57,17 +57,17 @@
         <ul class="nav navbar-nav">
             <li class="dropdown" style="float:left;">
                 <a class="dropdown-toggle" data-toggle="dropdown" href="#">
-                    <i class="glyphicon glyphicon-user"/>
+                    <i class="glyphicon glyphicon-user"/> <xsl:value-of select="error"/>
                     <i class="caret"/>
                 </a>
                 <ul class="dropdown-menu dropdown-user">
-                    <li>
-                        <xsl:value-of select="error"/>
-                    </li>
+                    <!--<li>-->
+                        <!--<xsl:value-of select="error"/>-->
+                    <!--</li>-->
                     <li class="divider"/>
                     <li>
                         <a href="/?logout">
-                            <i class="glyphicon glyphicon-log-out" title="Выход из системы"></i>
+                            <i class="glyphicon glyphicon-log-out" title="Выход из системы"/>
                             Выход
                         </a>
                     </li>

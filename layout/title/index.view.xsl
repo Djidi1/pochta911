@@ -17,18 +17,20 @@
                         <xsl:call-template name="newsListIndex"/>
                     </div>
                     <!-- КОНЕЦ НОВОСТЕЙ -->
+                </div>
+                <div class="col-md-6">
                     <div class="panel panel-info">
                         <div class="panel-heading">
-                            <h3 class="panel-title">ДОБРО ПОЖАЛОВАТЬ НА САЙТ ДОСТАВКИ ЦВЕТОВ!</h3>
+                            <h3 class="panel-title">Добро пожаловать на сайт Цветочного Такси!</h3>
                         </div>
                         <div id="viewListlang" class="panel-body">
                             <p>Очень надеемся, что этот сайт сделает более легким и удобным наше общение.
                                 <br/>
-                                <strong>на сайте можно:</strong>
+                                <strong>На нашем сайте можно:</strong>
                             </p>
 
                             <ul>
-                                <li>быстро и легко заказать цветы</li>
+                                <li>быстро и легко заказать доставку цветов</li>
                                 <li>отслеживать состояние вашего заказа</li>
                                 <!--&lt;!&ndash; <li>оплатить тур не выходя из дома и распечатать договор, ваучер и путевку (<span style="color:#FF8C00"><strong>после 10.10.2014</strong></span>)</li> &ndash;&gt;-->
                                 <!--<li>увидеть сколько мест осталось в продаже</li>-->
@@ -42,21 +44,20 @@
                             </ul>
                         </div>
                     </div>
-
                 </div>
-                <div class="col-md-6">
-                    <div class="panel panel-info">
-                        <div class="panel-heading">
-                            <a href="#" title="" class="btn btn-warning btn-xs"
-                               style="color: #fff;width: 100px;float: right;">Перейти
-                            </a>
-                            <h3 class="panel-title">Калькулятор доставки</h3>
-                        </div>
-                        <div id="viewListlang" class="panel-body">
+                <!--<div class="col-md-6">-->
+                    <!--<div class="panel panel-info">-->
+                        <!--<div class="panel-heading">-->
+                            <!--<a href="#" title="" class="btn btn-warning btn-xs"-->
+                               <!--style="color: #fff;width: 100px;float: right;">Перейти-->
+                            <!--</a>-->
+                            <!--<h3 class="panel-title">Калькулятор доставки</h3>-->
+                        <!--</div>-->
+                        <!--<div id="viewListlang" class="panel-body">-->
 
-                        </div>
-                    </div>
-                </div>
+                        <!--</div>-->
+                    <!--</div>-->
+                <!--</div>-->
             </div>
             <br/>
             <br/>

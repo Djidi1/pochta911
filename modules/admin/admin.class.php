@@ -537,20 +537,18 @@ u.name,lu.ip,lu.date,lu.referer,lu.browser,lu.os,g.name as group_name,
 	
 	}
 	
-	public function groupAdd($group_name, $group_name, $parent = 0, $position = 100) {
+	public function groupAdd($group_name, $parent = 0, $position = 100) {
 		$sql = "INSERT INTO `groups` (`name`, `admin`, `parent`) VALUES ('$group_name', 1, $parent)";
 		$this->query ( $sql );
 		$group_id = $this->insertID ();
 		
 		if ($group_id > 0) {
-			$tree = new TreeNodes ( 'groups' );
-			$tree->add ( $group_id, $parent, 1, $position );
-			$this->System->actionLog ( $this->mod_id, $group_id, 'Создана новая группа: ' . $group_name . '/' . $group_name, date ( 'Y-d-m h-i-s' ), $this->User->getUserID (), 1, 'groupAdd' );
+			$this->System->actionLog ( $this->mod_id, $group_id, 'Создана новая группа: ' . $group_name, date ( 'Y-d-m h-i-s' ), $this->User->getUserID (), 1, 'groupAdd' );
 		}
 		return $group_id;
 	}
 	
-	public function groupUpdate($group_name, $group_name, $group_id) {
+	public function groupUpdate($group_name, $group_id) {
 		if ($group_id == 0)
 			return false;
 		$sql = "UPDATE groups SET name = '$group_name' WHERE id = $group_id";
@@ -812,6 +810,7 @@ class adminProcess extends module_process {
 		if ($user_id > 0 && ! $_action) {
 			$this->User->nView->viewLoginParams ( 'FD', '', $user_id, array (), array (), $this->User->getRightModule ( 'admin' ) );
 		}*/
+        $this->User->nView->viewLoginParams ( 'FD', '', $user_id, array (), array (), $this->User->getRightModule ( 'admin' ) );
 		
 		if ($action == 'newUser') {
 			$groups = $this->nModel->getGroups ();
@@ -944,13 +943,14 @@ class adminProcess extends module_process {
 		
 		if ($action == 'userEdit') {
 			$user_id = $this->Vals->getVal ( 'userEdit', 'GET', 'integer' );
+			$group_id = $this->Vals->getVal ( 'idg', 'GET', 'integer' );
 
 			$user = ($user_id > 0)?$this->nModel->userGet ( $user_id ):array();
 			$address = ($user_id > 0)?$this->nModel->getAddress ($user_id):array();
 			$cards = ($user_id > 0)?$this->nModel->getCards ($user_id):array();
 			$groups = $this->nModel->getGroups ();
 
-			$this->nView->viewUserEdit ( $user, $groups, $address, $cards );
+			$this->nView->viewUserEdit ( $user, $groups, $address, $cards, $group_id );
 
 			$this->updated = true;
 		}
@@ -1052,7 +1052,7 @@ class adminProcess extends module_process {
 		if ($action == 'groupAdd') {
 			$group_name = $this->Vals->getVal ( 'name', 'POST', 'string' );
 			if ($group_name != '')
-				$this->nModel->groupAdd ( $group_name, $group_name );
+				$this->nModel->groupAdd ( $group_name );
 			else
 				$this->nView->viewError ( array ('Укажите название группы (rus)' ) );
 			$action = 'groupList';
@@ -1061,13 +1061,13 @@ class adminProcess extends module_process {
 		if ($action == 'groupEdit') {
 			$group_id = $this->Vals->getVal ( 'groupEdit', 'GET', 'integer' );
 			$group_name = $this->nModel->getGroupName ( $group_id );
-			$this->nView->viewEditGroup ( $group_name, $group_name, $group_id );
+			$this->nView->viewEditGroup ( $group_name, $group_id );
 			$this->updated = true;
 		}
 		if ($action == 'groupUpdate') {
 			$group_id = $this->Vals->getVal ( 'group_id', 'POST', 'integer' );
 			$group_name = $this->Vals->getVal ( 'name', 'POST', 'string' );
-			if (! $this->nModel->groupUpdate ( $group_name, $group_name, $group_id ))
+			if (! $this->nModel->groupUpdate ( $group_name, $group_id ))
 				$this->nView->viewError ( array ('Ошибка обновления группы' ) );
 			
 		//	else $this->System->actionLog($this->mod_id, $group_id, 'Обновлена группа: '.$group_name.'/'.$group_name, dateToDATETIME (date('d-m-Y h-i-s')), $this->User->getUserID(), 1, $action);
@@ -1314,9 +1314,10 @@ class adminView extends module_view {
 		return true;
 	}
 	
-	public function viewUserEdit($user, $groups, $address, $cards) {
+	public function viewUserEdit($user, $groups, $address, $cards, $group_id) {
 		$this->pXSL [] = RIVC_ROOT . 'layout/users/user.edit.xsl';
-		$Container = $this->newContainer ( 'useredit' );
+		$Container = $this->newContainer ( 'useredit' );;
+        $this->addAttr ( 'group_id', $group_id, $Container );
 		$this->arrToXML ( $user, $Container, 'user' );
 		$ContainerGroups = $this->addToNode ( $Container, 'groups', '' );
 		foreach ( $groups as $item ) {
@@ -1366,12 +1367,11 @@ class adminView extends module_view {
 		return true;
 	}
 	
-	public function viewEditGroup($group_name, $group_name, $group_id) {
+	public function viewEditGroup($group_name, $group_id) {
 		$this->pXSL [] = RIVC_ROOT . 'layout/users/group.edit.xsl';
 		$Container = $this->newContainer ( 'groupedit' );
 		$groupC = $this->addToNode ( $Container, 'group', '' );
 		$this->addAttr ( 'group_id', $group_id, $groupC );
-		$this->addAttr ( 'group_name', $group_name, $groupC );
 		$this->addAttr ( 'group_name', $group_name, $groupC );
 		return true;
 	}

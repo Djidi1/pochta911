@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
     <xsl:template match="container[@module = 'excel']">
-        <form method="post" style="margin-bottom: 2px;">
+        <form method="post" style="margin-bottom: 2px;" action="?logist={@logist}">
             <div class="row">
                 <div class="col-xs-9">
                     <xsl:call-template name="datepickers"/>

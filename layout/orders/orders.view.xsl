@@ -4,15 +4,16 @@
         <xsl:if test="//page/@isAjax != 1">
             <form id="form_orders" method="post" style="margin-bottom: 2px;">
                 <div class="row">
-                    <div class="col-sm-3">
-                        <span class="btn btn-warning btn-sm" onclick="open_bootbox_dialog('/orders/order-0/single-1')" title="Добавить одиночный заказ">
-                            Одиночный
-                        </span>
-                        <span class="btn btn-primary btn-sm" onclick="open_bootbox_dialog('/orders/order-0/')" title="Добавить заказ с несколькими пунктами назначения">
-                            Создать маршрут
-                        </span>
+                    <div class="col-sm-2">
+                        <a class="btn btn-success btn-sm" href="/orders/order-0/" title="Добавить заказ">
+                            <span class="glyphicon glyphicon-flag"> </span>
+                            <span>Новый заказ</span>
+                        </a>
+                        <!--<span class="btn btn-primary btn-sm" onclick="open_bootbox_dialog('/orders/order-0/')" title="Добавить заказ с несколькими пунктами назначения">-->
+                            <!--Создать маршрут-->
+                        <!--</span>-->
                     </div>
-                    <div class="col-sm-6">
+                    <div class="col-sm-7">
                         <striong>Статусы: </striong>
                         <xsl:for-each select="statuses/item">
                             <label class="btn btn-default btn-xs" style="margin-right:10px;" onchange="filter_table()">
@@ -25,9 +26,9 @@
                     <div class="col-sm-3">
                         <div class="input-group input-group-sm" style="float:right">
                             <input type="text" class="form-control" id="end_date" name="date_to" value="{@date_to}" style="text-align:center" onchange="$('#form_orders').submit()"/>
-                            <span class="input-group-btn">
-                                <button class="btn btn-info">Обновить</button>
-                            </span>
+                            <!--<span class="input-group-btn">-->
+                                <!--<button class="btn btn-info">Обновить</button>-->
+                            <!--</span>-->
                             <span class="input-group-btn">
                                 <span class="btn btn-success" onclick="popup_excel('orders/excel-1')" title="Выгрузить в Excel">
                                     <i class="fa fa-file-excel-o" aria-hidden="true"> </i></span>
@@ -35,7 +36,9 @@
                         </div>
                         <script>
                             $(function () {
-                                $('#end_date').datetimepicker({format: 'L', locale: 'ru'});
+                                $('#end_date').datetimepicker({format: 'L', locale: 'ru'}).on("dp.change", function (e) {
+                                    $('#form_orders').submit();
+                                });
                             });
                         </script>
                     </div>
@@ -54,9 +57,10 @@
                     <th>Получатель</th>
                     <th>Статус</th>
                     <th>Курьер и телефон</th>
-                    <th>Стоимость</th>
+                    <th>Стоимость доставки</th>
+                    <th>Инкассация</th>
                     <xsl:if test="/page/body/module[@name='CurentUser']/container/group_id = 1">
-                        <!--<th>Инкассация</th>-->
+                        <!---->
                         <!--<th>% инкассации</th>-->
                         <!--<th>Заработок курьера</th>-->
                         <!--<th>Заработок компании</th>-->
@@ -124,7 +128,12 @@
                             <td>
                                 <xsl:value-of select="../../fio_car"/> (<xsl:value-of select="../../car_number"/>)
                             </td>
-                            <td><xsl:value-of select="cost_tovar"/></td>
+
+
+                            <td><xsl:value-of select="cost_route"/></td>
+                            <td title="({cost_route} + {cost_tovar}) + ({cost_tovar} * {number(../../inkass_proc) div 100})">
+                                <xsl:value-of select="(number(cost_route)+number(cost_tovar)) + (number(cost_tovar) * number(../../inkass_proc)) div 100"/>
+                            </td>
 
 
                             <xsl:if test="/page/body/module[@name='CurentUser']/container/group_id = 1">

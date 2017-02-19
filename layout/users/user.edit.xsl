@@ -77,6 +77,11 @@
                                                             <xsl:attribute name="selected">selected
                                                             </xsl:attribute>
                                                         </xsl:if>
+                                                        <xsl:if test="id = //@group_id and not(//user/group_id)">
+                                                            <xsl:attribute name="selected">selected
+                                                            </xsl:attribute>
+                                                        </xsl:if>
+
                                                         <xsl:value-of select="name"/>
                                                     </option>
                                                 </xsl:for-each>

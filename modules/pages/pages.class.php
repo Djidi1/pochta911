@@ -100,13 +100,13 @@ class pageModel extends module_model {
 	}
 
 	public function getPageID($pageName) {
-		$sql = 'SELECT id FROM '.TAB_PREF.'pages WHERE name = \'%1$s\'';
+		$sql = 'SELECT id FROM pages WHERE name = \'%1$s\'';
 		$this->query($sql, $pageName);
 		$id = $this->getOne();
 		return $id;
 	}
 	public function getInfoPages() {
-		$sql = 'SELECT * FROM '.TAB_PREF.'pages WHERE module=13 ORDER BY title';
+		$sql = 'SELECT * FROM pages WHERE module=13 ORDER BY title';
 		$this->query($sql);
 	
 		$collection = Array();
@@ -117,7 +117,7 @@ class pageModel extends module_model {
 	}
 
 	public function getAllPages() {
-		$sql = 'SELECT id, module, access, title FROM '.TAB_PREF.'pages ORDER BY module,title';
+		$sql = 'SELECT id, module, access, title FROM pages ORDER BY module,title';
 		$this->query($sql);
 		
 		$collection = Array();
@@ -128,7 +128,7 @@ class pageModel extends module_model {
 	}
 
 	public function get($id) {
-		$sql = 'SELECT * FROM '.TAB_PREF.'pages WHERE id = %1$u AND (module=%2$u OR `parent_module` = 0)';
+		$sql = 'SELECT * FROM pages WHERE id = %1$u AND (module=%2$u OR `parent_module` = 0)';
 		$this->query($sql, $id,$this->mod_id);
 		$row = $this->fetchOneRowA();
 		$page = new pageItem($row);
@@ -136,18 +136,18 @@ class pageModel extends module_model {
 	}
 
 	public function del($id) {
-		$sql = 'DELETE FROM '.TAB_PREF.'pages WHERE id = %1$u';
+		$sql = 'DELETE FROM pages WHERE id = %1$u';
 		$query = $this->query($sql, $id);
 		return $query;
 	}
 	public function copy($id) {
-		$sql = 'insert into '.TAB_PREF.'pages (name,module,parent_module,title,content,access,date,date_change,description,keywords,page_title,user_id)
+		$sql = 'insert into pages (name,module,parent_module,title,content,access,date,date_change,description,keywords,page_title,user_id)
 				select CONCAT(name,\'_\',id),module,parent_module,CONCAT(title,\' copy\'),content,access,date,date_change,description,keywords,page_title,user_id
-				FROM '.TAB_PREF.'pages where id = %1$u';
+				FROM pages where id = %1$u';
 		$query = $this->query($sql, $id);
 		return $query;
 	}
-
+/*
 	public function sendSupport ($fio, $email, $message) {
 		$sql = 'INSERT INTO messages (dateadd, ipadress, uname, umail, letter) VALUES (NOW(), \'%1$s\',\'%2$s\',\'%3$s\',\'%4$s\')';
 		$ip = $_SERVER["REMOTE_ADDR"];
@@ -171,6 +171,7 @@ class pageModel extends module_model {
 		$res = ($sr & $ok);
 		return $res;
 	}
+*/
 }
 
 
@@ -235,13 +236,10 @@ class pageProcess extends module_process {
 			$this->updated = true;
 			return;
 		}
+
+        $this->User->nView->viewLoginParams('Цветочное такси','',$user_id, array(),array(), $this->User->getRight('admin','view'));
+
 /*
-		if ($user_right == 0 && $user_id == 0 && !$_action) {
-			$this->nView->viewLogin('Балтиклайнс Тур','',$user_id, array(),array());
-			$this->updated = true;
-			return;
-		}
-			
 		if ($user_id > 0 && !$_action) {
 			$this->User->nView->viewLoginParams('Балтиклайнс Тур','',$user_id, array(),array(), $this->User->getRight('admin','view'));
 		}
@@ -379,7 +377,7 @@ class pageProcess extends module_process {
 			$page_id = $this->vals->getVal('view', 'GET');
 			if ($this->vals->isNaN($page_id)) $page_id = $this->nModel->getPageID($page_id);
 			#$page_id = $this->nModel->getPageID('index');
-			
+			/*
 			if ($page_id == 30)
 				$this->nView->viewLogin('Вход для Магазинов','',$user_id);
 				
@@ -391,7 +389,7 @@ class pageProcess extends module_process {
 				</ul><br />
 				Все бронирования должны осуществлять после авторизации в разделе "Клиентам"','');
 			}
-
+*/
 			$page = $this->nModel->get($page_id);
 			if ($page->id > 0) {
 				$this->nView->viewPage($page);
@@ -568,5 +566,3 @@ class pageView extends module_view {
 	}
 
 }
-
-?>

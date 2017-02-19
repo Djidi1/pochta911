@@ -53,7 +53,7 @@
                                         <xsl:if test="count(order/id_address) = 0 or order/id_address > 0">
                                             <xsl:attribute name="style">display:none</xsl:attribute>
                                         </xsl:if>
-                                        <input class="form-control store_address_new" name="store_new" value="{order/address_new}" placeholder="ручной ввод"/>
+                                        <input class="form-control store_address_new address" name="store_new" value="{order/address_new}" placeholder="ручной ввод"/>
                                     </div>
                                 </div>
                             </div>
@@ -79,7 +79,7 @@
                                             <i>
                                                 <xsl:value-of select="order/fio_car"/>
                                             </i>
-                                            <xsl:if test="/page/body/module[@name='CurentUser']/container/group_id = 1">
+                                            <xsl:if test="/page/body/module[@name='CurentUser']/container/group_id = 1 or /page/body/module[@name='CurentUser']/container/group_id = 3 or /page/body/module[@name='CurentUser']/container/group_id = 4">
                                                 <span title="Назначить курьера" class="btn btn-info btn-xs chg-status" onclick="chg_courier({order/id})" style="float:right;">
                                                     <i class="fa fa-car" aria-hidden="true"/>
                                                 </span>
@@ -269,14 +269,19 @@
                 </span>
                 <input type="text" class="order-route-data number cost_route" name="cost_route[]" title="Стоимость доставки" value="{cost_route}" onkeyup="re_calc(this)" required=""/>
             </div>
+            <xsl:if test="/page/body/module[@name='CurentUser']/container/group_id != 2">
+                <div class="form-control" style="width: 20%;">
+                    <span class="order-add-title text-success">
+                        <span class="glyphicon glyphicon-usd" aria-hidden="true"/>
+                        курьер
+                    </span>
+                    <input type="text" class="order-route-data number cost_car" name="cost_car[]" title="Заработок курьера" value="{cost_car}" onkeyup="re_calc(this)"/>
+                </div>
+            </xsl:if>
             <div class="form-control" style="width: 20%;">
-                <span class="order-add-title text-success">
-                    <span class="glyphicon glyphicon-usd" aria-hidden="true"/>
-                    курьер
-                </span>
-                <input type="text" class="order-route-data number cost_car" name="cost_car[]" title="Заработок курьера" value="{cost_car}" onkeyup="re_calc(this)"/>
-            </div>
-            <div class="form-control" style="width: 20%;">
+                <xsl:if test="/page/body/module[@name='CurentUser']/container/group_id = 2">
+                    <xsl:attribute name="style">width:40%</xsl:attribute>
+                </xsl:if>
                 <span class="order-add-title text-success">
                     <span class="glyphicon glyphicon-usd" aria-hidden="true"/>
                     оплата
@@ -344,6 +349,9 @@
             <xsl:for-each select="../../timer/element">
                 <option value="{.}">
                     <xsl:if test=". = $select_value">
+                        <xsl:attribute name="selected">selected</xsl:attribute>
+                    </xsl:if>
+                    <xsl:if test="not(../../order/id) and . = ../../@time_now_five">
                         <xsl:attribute name="selected">selected</xsl:attribute>
                     </xsl:if>
                     <xsl:value-of select="."/>

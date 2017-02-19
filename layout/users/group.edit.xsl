@@ -6,7 +6,6 @@
                 <tbody>
                     <tr>
                         <td valign="top">
-
                             <h2>Редактирование группы:</h2>
                             <form action="http://{//page/@host}/admin/groupUpdate-{group/@group_id}/" method="post">
                                 <input type="hidden" value="{group/@group_id}" name="group_id"/>
@@ -15,12 +14,12 @@
                                         <tr>
                                             <td>Название:</td>
                                             <td>
-                                                <input type="text" name="name" value="{group/@group_name}"/>
+                                                <input class="form-control" type="text" name="name" value="{group/@group_name}"/>
                                             </td>
                                         </tr>
                                         <tr>
                                             <td colspan="2">
-                                                <input type="submit" value="сохранить" name="submit"/>
+                                                <input class="btn btn-success" type="submit" value="сохранить" name="submit"/>
                                             </td>
                                         </tr>
                                     </tbody>

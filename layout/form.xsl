@@ -6,6 +6,25 @@
                 <xsl:when test="@noform = 1">
                     <xsl:apply-templates select="form"/>
                 </xsl:when>
+                <xsl:when test="//page/@name = 'pages'">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <form class="alert alert-info">
+                                <xsl:attribute name="ENCTYPE">multipart/form-data</xsl:attribute>
+                                <xsl:attribute name="name">
+                                    <xsl:value-of select="form/@name"/>
+                                </xsl:attribute>
+                                <xsl:attribute name="action">
+                                    <xsl:value-of select="form/@action"/>
+                                </xsl:attribute>
+                                <xsl:attribute name="method">
+                                    <xsl:value-of select="form/@method"/>
+                                </xsl:attribute>
+                                <xsl:apply-templates select="form"/>
+                            </form>
+                        </div>
+                    </div>
+                </xsl:when>
                 <xsl:otherwise>
                     <div class="row">
                         <div class="col-sm-4">

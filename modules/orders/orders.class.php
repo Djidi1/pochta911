@@ -264,9 +264,10 @@ class ordersModel extends module_model {
         $row = $this->get_assoc_array($sql);
         return $row[0]['status'];
     }
-    public function getOrdersListExcel($from, $to) {
+    public function getOrdersListExcel($from, $to, $user_id = 0) {
         $sql = 'SELECT o.id, 
-                       o.ready, 
+                       o.date, 
+                       r.to_time_ready, 
                        r.to_time,
                        r.to_time_end,
                        a.address `from`,
@@ -276,11 +277,12 @@ class ordersModel extends module_model {
                        r.to_fio,
                        s.status,
 					   cc.fio fio_car,
+					   r.cost_route,
 					   r.cost_tovar,
-					   r.cost_route + r.cost_tovar inkass,
-					   \'\' inkas_proc,
-					   \'\' money_car,
-					   \'\' money_comp,
+					   (r.cost_route + r.cost_tovar + (r.cost_tovar)*(u.inkass_proc/100)) inkass,
+					   ((r.cost_tovar)*(u.inkass_proc/100)) inkas_proc,
+					   r.cost_car money_car,
+					   (r.cost_route - r.cost_car) money_comp,
                        o.comment
                   FROM orders o
                 LEFT JOIN orders_routes r ON r.id_order = o.id
@@ -289,9 +291,10 @@ class ordersModel extends module_model {
 				LEFT JOIN cars_couriers cc ON cc.id = o.id_car
 				LEFT JOIN couriers c ON c.id = o.id_car
                 LEFT JOIN users u ON u.id = o.id_user
-                  WHERE o.dk BETWEEN \''.$this->dmy_to_mydate($from).'\' AND \''.$this->dmy_to_mydate($to).' 23:59:59\'
+                  WHERE o.date BETWEEN \''.$this->dmy_to_mydate($from).'\' AND \''.$this->dmy_to_mydate($to).' 23:59:59\'
+                  AND (o.id_user = \''.$user_id.'\' or \''.$user_id.'\' = 0)
                   and o.isBan = 0
-                ORDER BY o.id desc
+                ORDER BY o.date, r.to_time_ready, o.id desc
                 LIMIT 0,1000';
         $orders = $this->get_assoc_array($sql);
         $result_orders = array();
@@ -302,6 +305,7 @@ class ordersModel extends module_model {
         }
         return $result_orders;
     }
+    /*
 	public function getOrdersList($from, $to) {
 		$sql = 'SELECT o.id, o.comment, o.cost, o.ready, a.address `from`, a.comment addr_comment,
 					   u.name, u.title, o.dk, o.id_user,
@@ -314,7 +318,7 @@ class ordersModel extends module_model {
 				LEFT JOIN cars_couriers cc ON cc.id = o.id_car
 				LEFT JOIN couriers c ON c.id = o.id_car
                 LEFT JOIN users u ON u.id = o.id_user
-                  WHERE o.dk BETWEEN \''.$this->dmy_to_mydate($from).'\' AND \''.$this->dmy_to_mydate($to).' 23:59:59\'
+                  WHERE o.date BETWEEN \''.$this->dmy_to_mydate($from).'\' AND \''.$this->dmy_to_mydate($to).' 23:59:59\'
                   and o.isBan = 0
                 ORDER BY o.id desc
                 LIMIT 0,1000';
@@ -325,8 +329,8 @@ class ordersModel extends module_model {
 		}
 		return $orders;
 	}
-
-	public function getLogistList($from, $to) {
+*/
+	public function getLogistList($from, $to, $user_id = 0) {
 		$sql = 'SELECT o.id, 
                        ua.address,
                        ua.comment addr_comment, 
@@ -346,7 +350,8 @@ class ordersModel extends module_model {
 			  LEFT JOIN cars_couriers cc ON cc.id = o.id_car
 			  LEFT JOIN couriers c ON c.id = o.id_car
 			  LEFT JOIN users u ON u.id = o.id_user
-                  WHERE o.dk BETWEEN \''.$this->dmy_to_mydate($from).'\' AND \''.$this->dmy_to_mydate($to).' 23:59:59\'
+                  WHERE o.date BETWEEN \''.$this->dmy_to_mydate($from).'\' AND \''.$this->dmy_to_mydate($to).' 23:59:59\'
+                  AND (o.id_user = \''.$user_id.'\' or \''.$user_id.'\' = 0)
                 LIMIT 0,1000';
 		$orders = $this->get_assoc_array($sql);
 		foreach ($orders as $key => $order) {
@@ -412,6 +417,15 @@ class ordersModel extends module_model {
 		$sql = "INSERT INTO order_courier_history (user_id, order_route_id, new_courier, new_car, comment, dk)
 				VALUES ($user_id, $order_id, $new_courier, $new_car_courier, '$courier_comment', NOW())";
 		$this->query($sql);
+
+        // При назначении курьера, статус заказа должен меняться на исполняется
+        $sql = "SELECT id FROM orders_routes WHERE id_order = '$order_id'";
+        $routes = $this->get_assoc_array($sql);
+
+        foreach ($routes as $route){
+            $this->updOrderStatus($user_id, $route['id'], '3', 'Назначен курьер');
+        }
+
 	}
 
 	public function update_routes($order_id,$params){
@@ -588,14 +602,20 @@ class ordersProcess extends module_process {
 
         if ($action == 'excel'){
             $sub_action = $this->Vals->getVal ( 'sub_action', 'POST', 'string' );
+            $logist = $this->Vals->getVal ( 'logist', 'GET', 'string' );
             list($from, $to) = $this->get_post_date('all');
             if ($sub_action == 'excel') {
-                $titles = array('номер заказа','время готовности','время доставки','адрес приема','компания','адрес доставки','телефон','ФИО получателя','статус заказа','курьер','стоимость','инкассация','% инкас.','заработок курьера','заработок компании','примечания');
-                $orders = $this->nModel->getOrdersListExcel($from, $to);
+                if ($logist == 1) {
+                    $titles = array('номер заказа', 'дата', 'время готовности', 'время доставки', 'адрес приема', 'компания', 'адрес доставки', 'телефон', 'ФИО получателя', 'статус заказа', 'курьер', 'стоимость доставки', 'стоимость цветов', 'инкассация', '% инкас.', 'заработок курьера', 'заработок компании', 'примечания');
+                    $orders = $this->nModel->getOrdersListExcel($from, $to);
+                }else{
+                    $titles = array('номер заказа', 'дата', 'время готовности', 'время доставки', 'адрес приема', 'компания', 'адрес доставки', 'телефон', 'ФИО получателя', 'статус заказа', 'курьер', 'стоимость доставки', 'стоимость цветов', 'инкассация', '% инкас.', 'заработок курьера', 'заработок компании', 'примечания');
+                    $orders = $this->nModel->getOrdersListExcel($from, $to, $user_id);
+                }
                 $this->nModel->exportToExcel($titles,$orders);
                 stop($orders);
             }
-            $this->nView->viewExcelDialog($from, $to);
+            $this->nView->viewExcelDialog($from, $to, $logist);
         }
 		
 		if ($action == 'order') {
@@ -792,7 +812,7 @@ class ordersProcess extends module_process {
             list($from, $to) = $this->get_post_date();
             $statuses = $this->nModel->getStatuses();
 //			$orders = $this->nModel->getOrdersList($from, $to);
-			$orders = $this->nModel->getLogistList($from, $to);
+			$orders = $this->nModel->getLogistList($from, $to, $user_id);
 			$this->nView->viewOrders ($from, $to, $orders, $statuses);
 		}
 
@@ -956,10 +976,11 @@ class ordersView extends module_View {
 		$this->pXSL = array ();
 	}
 
-    public function viewExcelDialog($from, $to) {
+    public function viewExcelDialog($from, $to, $logist) {
         $this->pXSL [] = RIVC_ROOT . 'layout/orders/orders.excel.xsl';
         $Container = $this->newContainer ( 'excel' );
 
+        $this->addAttr('logist', $logist, $Container);
         $this->addAttr('date_from', $from, $Container);
         $this->addAttr('date_to', $to, $Container);
 
@@ -1026,7 +1047,15 @@ class ordersView extends module_View {
         $Container = $this->newContainer('order');
         $this->addAttr('today', date('d.m.Y'), $Container);
         $this->addAttr('time_now', time(), $Container);
-//        $this->addAttr ( 'time_now', date('H:i:s'), $Container );
+//        $this->addAttr('time_now_five', $time_now_five_h . ":" . $this->roundUpToAny(date('i')), $Container);
+        $time_now_five_min = substr('0'.($this->roundUpToAny(date('i'))),-2);
+        $time_now_five_h = date('H');
+        if ($time_now_five_min == 60){
+            $time_now_five_min = '00';
+            $time_now_five_h = substr('0'.($time_now_five_h+1),-2);
+        }
+        $this->addAttr('time_now_five', $time_now_five_h . ":" . $time_now_five_min, $Container);
+//        $this->addAttr('time_now_five', "16:" . $time_now_five_min, $Container);
         $this->addAttr('without_menu', $without_menu, $Container);
         $this->addAttr('is_single', $is_single, $Container);
 
@@ -1092,6 +1121,8 @@ class ordersView extends module_View {
 
 		return true;
 	}
-	
+    public function roundUpToAny($n,$x=5) {
+        return round(($n+$x/2)/$x)*$x;
+    }
 
 }

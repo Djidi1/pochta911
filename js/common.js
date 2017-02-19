@@ -264,7 +264,7 @@ function test_time_all_routes(){
 
 function test_time_routes_each(route_row){
     var to_time_ready = $(route_row).find('.to_time_ready').val();
-    // var to_time = $(route_row).find('.to_time').val();
+    var to_time = $(route_row).find('.to_time').val();
     var to_time_end = $(route_row).find('.to_time_end').val();
 /*
      iLog('to_time_ready: '+TimeToFloat(to_time_ready));
@@ -273,7 +273,7 @@ function test_time_routes_each(route_row){
      iLog('time_now: '+TimeToFloat(timestampToTime()));
 */
     var tt_ready = TimeToFloat(to_time_ready);
-    // var tt = TimeToFloat(to_time);
+    var tt = TimeToFloat(to_time);
     var tt_end = TimeToFloat(to_time_end);
     var t_now = TimeToFloat(timestampToTime());
 
@@ -293,6 +293,11 @@ function test_time_routes_each(route_row){
     // Проверка от времени заказа
     if ((tt_end_2 - t_now) <= 2.9 ){
         errors += '<li>Крайнее время доставки не может быть меньше 3 часов от времени заказа.</li><br/>';
+        no_error = false;
+    }
+    // Проверка от и до не менее 40 мин
+    if ((tt_end_2 - tt) <= 0.65 ){
+        errors += '<li>Интервал доставки не может быть менее 40 минут.</li><br/>';
         no_error = false;
     }
     // Заказы вечером запрещены на утро
@@ -322,7 +327,7 @@ function test_time_routes_each(route_row){
     // Блокировка при ошибках во времени
     if (!no_error){
         $('input.btn-submit').prop('disabled', true);
-        bootbox.alert(errors+'</ul><br/>Откорректируйте временные рамки.', function(){ $('input.btn-submit').prop('disabled', false); });
+        bootbox.alert(errors+'</ul><br/>Откорректируйте, пожалуйста, временные рамки.', function(){ $('input.btn-submit').prop('disabled', false); });
     }else{
         $('input.btn-submit').prop('disabled', false);
     }
@@ -378,6 +383,7 @@ function add_data_table(obj){
         , "bLengthChange": false
         , "bPaginate": false
         , "bFilter": true
+        , "order": [[ 1, 'asc' ]]
     });
 }
 

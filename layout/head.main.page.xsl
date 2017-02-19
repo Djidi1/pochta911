@@ -7,7 +7,7 @@
             <title>Доставка цветов</title>
             <link href="/images/favicon.png" rel="shortcut icon" type="image/vnd.microsoft.icon"/>
             <link rel="stylesheet" href="/css/camera.css"/>
-            <link rel="stylesheet" href="/css/style.css?v2.0"/>
+            <link rel="stylesheet" href="/css/style.css?v2.2"/>
             <link rel="stylesheet" href="/css/font-awesome.min.css"/>
             <link rel="stylesheet" href="/css/print.css" media="Print"/>
             <link rel="stylesheet" href="/css/bootstrap.min.css"/>
@@ -24,9 +24,9 @@
             <script src="/js/bootstrap-datetimepicker.js"/>
             <script src="/js/bootstrap-typeahead.min.js"/>
             <script src="/js/camera.min.js"/>
-            <script src="/js/ready.js?v2.1"/>
-            <script src="/js/common.js?v2.1"/>
-            <script src="/js/script.js?v2.1"/>
+            <script src="/js/ready.js?v2.2"/>
+            <script src="/js/common.js?v2.2"/>
+            <script src="/js/script.js?v2.2"/>
             <script src="//cdn.ckeditor.com/4.6.1/full/ckeditor.js"/>
             <script src="//cdn.datatables.net/1.10.13/js/jquery.dataTables.min.js"/>
             <script src="//cdn.datatables.net/1.10.13/js/dataTables.bootstrap.min.js"/>
@@ -75,27 +75,38 @@
                             <span class="icon-bar"/>
                             <span class="icon-bar"/>
                         </button>
-                        <a class="navbar-brand" href="/title/" title="Доставка цветов">
+                        <a class="navbar-brand" href="/title/" title="Цветочное такси">
                             <img src="./images/logo.png" alt="Logo"/>
-                            <span class="header1" style="display:none;">Доставка цветов</span>
+                            <span class="header1" style="display:none;">Цветочное такси</span>
                         </a>
                     </div>
 
                     <!-- Collect the nav links, forms, and other content for toggling -->
                     <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                         <ul class="nav navbar-nav">
-                            <li class="dropdown">
-                                <a href="/orders"><i class="fa fa-flag" aria-hidden="true"> </i> Заказы</a>
-                            </li>
-                            <li>
-                                <a href="/orders/LogistList-1"><i class="fa fa-bus" aria-hidden="true"> </i> Логист</a>
-                            </li>
-                            <li>
-                                <a href="/admin/carsList-1/"><i class="fa fa-car" aria-hidden="true"> </i> Автоштат</a>
-                            </li>
-                            <li>
-                                <a href="/admin/userList-1/"><span class="glyphicon glyphicon-user"> </span> Клиенты</a>
-                            </li>
+                            <xsl:if test="/page/body/module[@name='CurentUser']/container/group_id = 1 or /page/body/module[@name='CurentUser']/container/group_id = 2">
+                                <li class="dropdown">
+                                    <a href="/orders/"><i class="fa fa-flag" aria-hidden="true"> </i> Заказы</a>
+                                </li>
+                                <li>
+                                    <a href="/pages/view-49/"><i class="fa fa-info" aria-hidden="true"> </i> Условия сотрудничества</a>
+                                </li>
+                            </xsl:if>
+                            <xsl:if test="/page/body/module[@name='CurentUser']/container/group_id = 1 or /page/body/module[@name='CurentUser']/container/group_id = 3 or /page/body/module[@name='CurentUser']/container/group_id = 4">
+                                <li>
+                                    <a href="/orders/LogistList-1/"><i class="fa fa-bus" aria-hidden="true"> </i> Логист</a>
+                                </li>
+                            </xsl:if>
+                            <xsl:if test="/page/body/module[@name='CurentUser']/container/group_id = 1 or /page/body/module[@name='CurentUser']/container/group_id = 3 or /page/body/module[@name='CurentUser']/container/group_id = 4">
+                                <li>
+                                    <a href="/admin/carsList-1/"><i class="fa fa-car" aria-hidden="true"> </i> Автоштат</a>
+                                </li>
+                            </xsl:if>
+                            <xsl:if test="/page/body/module[@name='CurentUser']/container/group_id = 1 or /page/body/module[@name='CurentUser']/container/group_id = 4">
+                                <li>
+                                    <a href="/admin/userList-1/idg-2/"><span class="glyphicon glyphicon-user"> </span> Клиенты</a>
+                                </li>
+                            </xsl:if>
                         </ul>
                         <script>
                             var now_path = window.location.pathname;
@@ -134,7 +145,7 @@
                     <span/>
                 </a>
             </p>
-            <div class="well wrapper">
+            <xsl:if test="/page/body/module[@name='CurentUser']/container/group_id = 1">
                 <div class="moduletable">
                     <ul class="bottom-menu navbar-nav">
                         <li>
@@ -164,9 +175,10 @@
                         </li>
                     </ul>
                 </div>
+            </xsl:if>
+            <div class="well wrapper">
                 <div class="footerText">
-                    <div class="footer1">Copyright © <xsl:value-of select="//@year"/> Доставка
-                        цветов. Все права защищены.
+                    <div class="footer1">Copyright © <xsl:value-of select="//@year"/> Цветочное такси. Все права защищены.
                     </div>
                 </div>
             </div>
