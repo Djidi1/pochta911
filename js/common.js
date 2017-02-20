@@ -280,8 +280,9 @@ function test_time_routes_each(route_row){
     // Если время доставки меньше готовности, то заказ на следующий день
     tt_end = (tt_end - tt_ready) < 0 ? tt_end + 24 : tt_end;
 
-    // Если время доставки меньше текущего, то заказ на следующий день
+    // Если время доставки меньше текущего, то заказ на следующий день (проверяю по второму времени)
     var tt_end_2 = (tt_end - t_now) < 0 ? tt_end + 24 : tt_end;
+    var tt_2 = (tt_end - t_now) < 0 ? tt + 24 : tt;
 
     var no_error = true;
     var errors = '<ul>';
@@ -296,7 +297,7 @@ function test_time_routes_each(route_row){
         no_error = false;
     }
     // Проверка от и до не менее 40 мин
-    if ((tt_end_2 - tt) <= 0.65 ){
+    if ((tt_end_2 - tt_2) <= 0.65 ){
         errors += '<li>Интервал доставки не может быть менее 40 минут.</li><br/>';
         no_error = false;
     }
@@ -304,6 +305,10 @@ function test_time_routes_each(route_row){
     if ((t_now > 21) && (tt_ready < 11) ){
         errors += '<li>Заказ на утро с 8:30 до 11:00 можно оставить не позднее 21:00.</li><br/>';
         no_error = false;
+    }
+    // Добавляем день, если заказ на текущей и время готовности меньше текушего
+    if (moment($('input[name=date]').val(), 'DD.MM.YYYY').isSame(Date.now(), 'day') && (tt_end - t_now) < 0){
+        $('input[name=date]').val(moment($('input[name=date]').val(), 'DD.MM.YYYY').add(1, 'days').format('L'));
     }
 /*
     // проверка обязательный полей

@@ -314,17 +314,21 @@
                     <span class="order-add-title text-success">
                         Статус
                     </span>
-                    <select class="order-route-data" name="status[]" title="Статус заказа">
-                        <xsl:variable name="status_id" select="status_id"/>
-                        <xsl:for-each select="../../statuses/item">
-                            <option value="{id}">
-                                <xsl:if test="id = $status_id">
-                                    <xsl:attribute name="selected">selected</xsl:attribute>
-                                </xsl:if>
-                                <xsl:value-of select="status"/>
-                            </option>
-                        </xsl:for-each>
-                    </select>
+
+                        <select class="order-route-data" name="status[]" title="Статус заказа">
+                            <xsl:if test="/page/body/module[@name='CurentUser']/container/group_id = 2">
+                                <xsl:attribute name="disabled">disabled</xsl:attribute>
+                            </xsl:if>
+                            <xsl:variable name="status_id" select="status_id"/>
+                            <xsl:for-each select="../../statuses/item">
+                                <option value="{id}">
+                                    <xsl:if test="id = $status_id">
+                                        <xsl:attribute name="selected">selected</xsl:attribute>
+                                    </xsl:if>
+                                    <xsl:value-of select="status"/>
+                                </option>
+                            </xsl:for-each>
+                        </select>
                 </div>
             </xsl:if>
 

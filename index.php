@@ -41,7 +41,7 @@ if(intval($User->isAutch()) > 0 and !$module) {
     $group_id = $User->getUserGroup();
     if (in_array($group_id, array('2'))) {
         $module = 'orders';
-    }elseif (in_array($group_id, array('1','3'))){
+    }elseif (in_array($group_id, array('1','3','4'))){
         $module = 'orders';
         $values->setValTo('LogistList','1','GET');
     }

@@ -131,11 +131,16 @@
 
 
                             <td><xsl:value-of select="cost_route"/></td>
-                            <td title="({cost_route} + {cost_tovar}) + ({cost_tovar} * {number(../../inkass_proc) div 100})">
-                                <xsl:value-of select="(number(cost_route)+number(cost_tovar)) + (number(cost_tovar) * number(../../inkass_proc)) div 100"/>
-                            </td>
-
-
+                            <xsl:if test="pay_type = 2">
+                                <td title="({cost_route} + {cost_tovar}) + ({cost_tovar} * {number(../../inkass_proc) div 100})">
+                                    <xsl:value-of select="(number(cost_route)+number(cost_tovar)) + (number(cost_tovar) * number(../../inkass_proc)) div 100"/>
+                                </td>
+                            </xsl:if>
+                            <xsl:if test="pay_type != 2">
+                                <td title="{cost_tovar} + ({cost_tovar} * {number(../../inkass_proc) div 100})">
+                                    <xsl:value-of select="(number(cost_tovar)) + (number(cost_tovar) * number(../../inkass_proc)) div 100"/>
+                                </td>
+                            </xsl:if>
                             <xsl:if test="/page/body/module[@name='CurentUser']/container/group_id = 1">
                                 <!--<td><xsl:value-of select="number(cost_route)+number(cost_tovar)"/></td>-->
                                 <!--<td>-->

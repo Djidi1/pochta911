@@ -19,35 +19,55 @@
                                         <td>Название:</td>
                                         <td>
                                             <input class="form-control" type="text" name="title" onkeyup="check_user(this)"
-                                                   value="{user/title}" size="30" required=""/>
+                                                   value="{user/title}" size="30">
+                                                <xsl:if test="/page/body/module[@name='CurentUser']/container/group_id != 1">
+                                                    <xsl:attribute name="required">required</xsl:attribute>
+                                                </xsl:if>
+                                            </input>
                                         </td>
                                     </tr>
                                     <tr>
                                         <td>Контактное лицо:</td>
                                         <td>
                                             <input class="form-control" type="text" name="username"
-                                                   value="{user/name}" size="30" required=""/>
+                                                   value="{user/name}" size="30">
+                                                <xsl:if test="/page/body/module[@name='CurentUser']/container/group_id != 1">
+                                                    <xsl:attribute name="required">required</xsl:attribute>
+                                                </xsl:if>
+                                            </input>
                                         </td>
                                     </tr>
                                     <tr>
                                         <td>E-mail:</td>
                                         <td>
                                             <input class="form-control" type="email" name="email" id="email"
-                                                   value="{user/email}" size="30" required=""/>
+                                                   value="{user/email}" size="30">
+                                                <xsl:if test="/page/body/module[@name='CurentUser']/container/group_id != 1">
+                                                    <xsl:attribute name="required">required</xsl:attribute>
+                                                </xsl:if>
+                                            </input>
                                         </td>
                                     </tr>
                                     <tr>
                                         <td>Телефон:</td>
                                         <td>
                                             <input class="form-control" type="phone" name="phone"
-                                                   value="{user/phone}" size="30" required=""/>
+                                                   value="{user/phone}" size="30">
+                                                <xsl:if test="/page/body/module[@name='CurentUser']/container/group_id != 1">
+                                                    <xsl:attribute name="required">required</xsl:attribute>
+                                                </xsl:if>
+                                            </input>
                                         </td>
                                     </tr>
                                     <tr>
                                         <td>Уведомления:</td>
                                         <td>
                                             <input class="form-control" type="phone" name="phone_mess"
-                                                   value="{user/phone_mess}" size="30" required=""/>
+                                                   value="{user/phone_mess}" size="30">
+                                                <xsl:if test="/page/body/module[@name='CurentUser']/container/group_id != 1">
+                                                    <xsl:attribute name="required">required</xsl:attribute>
+                                                </xsl:if>
+                                            </input>
                                         </td>
                                     </tr>
                                     <tr>
@@ -58,13 +78,20 @@
                                                 <xsl:if test="user/login != ''">
                                                     <xsl:attribute name="readonly">readonly</xsl:attribute>
                                                 </xsl:if>
+                                                <xsl:if test="/page/body/module[@name='CurentUser']/container/group_id != 1">
+                                                    <xsl:attribute name="required">required</xsl:attribute>
+                                                </xsl:if>
                                             </input>
                                         </td>
                                     </tr>
                                     <tr>
                                         <td>Пароль:</td>
                                         <td>
-                                            <input class="form-control" type="password" name="pass" id="pass"/>
+                                            <input class="form-control" type="password" name="pass" id="pass">
+                                                <xsl:if test="/page/body/module[@name='CurentUser']/container/group_id != 1">
+                                                    <xsl:attribute name="required">required</xsl:attribute>
+                                                </xsl:if>
+                                            </input>
                                         </td>
                                     </tr>
                                     <tr>
@@ -81,7 +108,6 @@
                                                             <xsl:attribute name="selected">selected
                                                             </xsl:attribute>
                                                         </xsl:if>
-
                                                         <xsl:value-of select="name"/>
                                                     </option>
                                                 </xsl:for-each>
@@ -177,7 +203,7 @@
             <span class="input-group-addon">
                 <xsl:value-of select="position()"/>
             </span>
-            <input type="text" class="form-control" name="credit_card[]" placeholder="Номер кредитной карты" size="20" value="{card_num}"/>
+            <input type="text" class="form-control" name="credit_card[]" placeholder="Номер карты Сбербанка" size="20" value="{card_num}"/>
             <br/>
             <textarea name="card_comment[]" class="form-control">
                 <xsl:value-of select="comment"/>

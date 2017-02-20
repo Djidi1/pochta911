@@ -161,9 +161,11 @@ class ordersModel extends module_model {
     public function getOrderInfo($order_id) {
         $sql = 'SELECT o.id,
                        ua.address `from`,
+                       u.inkass_proc,
 					   o.ready
 				FROM orders o
 				LEFT JOIN users_address ua ON ua.id = o.id_address
+				LEFT JOIN users u ON u.id = o.id_user
 				WHERE o.id = '.$order_id;
         $items = $this->get_assoc_array($sql);
         return isset($items[0])?$items[0]:array();
@@ -177,6 +179,7 @@ class ordersModel extends module_model {
                        CONCAT(r.`to`,\', д.\',r.`to_house`,\', корп.\',r.`to_corpus`,\', кв.\',r.`to_appart`) to_addr,
                        r.to_fio,
                        r.to_phone,
+                       r.pay_type,
 					   r.cost_route,
 					   r.cost_tovar,
 					   r.id_status,
@@ -434,6 +437,7 @@ class ordersModel extends module_model {
 			$this->query ( $sql );
             $sql_values = '';
 			foreach ($params ['to'] as $key => $item) {
+                $params ['status'][$key] = $params ['status'][$key] == 0 ? 1 : $params ['status'][$key];
 				$sql_values .= ($key > 0)?',':'';
                 $sql_values .= ' (\''.$order_id.'\',\''.$params ['to'][$key].'\',\''.$params ['to_house'][$key].'\',\''.$params ['to_corpus'][$key].'\',
 							\''.$params ['to_appart'][$key].'\',\''.$params ['to_fio'][$key].'\',\''.$params ['to_phone'][$key].'\',
@@ -675,9 +679,11 @@ class ordersProcess extends module_process {
 			}
 
 			// Если статус больше статуса в исполнении
-            foreach ($params['status'] as $route_statuses) {
-                if ($route_statuses > 3) {
-                    $send_message = true;
+            if (isset($params['status']) and is_array($params['status'])) {
+                foreach ($params['status'] as $route_statuses) {
+                    if ($route_statuses > 3) {
+                        $send_message = true;
+                    }
                 }
             }
 
@@ -873,10 +879,18 @@ class ordersProcess extends module_process {
             if (count($order_routes_info) > 1){
                 $order_info_message .= "<b>Участок № $i:</b>\r\n";
             }
+
+            if ($order_route_info['pay_type'] == 2){
+                $inkass = $order_route_info['cost_route']+$order_route_info['cost_tovar']+$order_route_info['cost_tovar']*$order_info['inkass_proc']/100;
+            }else{
+                $inkass = $order_route_info['cost_tovar']+$order_route_info['cost_tovar']*$order_info['inkass_proc']/100;
+            }
+
             $order_info_message .= " <b>Адрес доставки:</b> " . $order_route_info['to_addr'] . "\r\n";
             $order_info_message .= " <b>Готовность:</b> " . $order_route_info['to_time_ready'] . "\r\n";
             $order_info_message .= " <b>Период получения:</b> " . $order_route_info['to_time'] . " - " . $order_route_info['to_time_end'] . "\r\n";
             $order_info_message .= " <b>Получатель:</b> " . $order_route_info['to_fio'] . " [" . $order_route_info['to_phone'] . "]\r\n";
+            $order_info_message .= " <b>Инкассация:</b> " . $inkass . "\r\n";
             if ($order_route_info['id_status'] > 1) {
                 $order_info_message .= " <b>Статус:</b> " . $order_route_info['status'] . "\r\n";
             }
