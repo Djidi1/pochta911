@@ -1,6 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
     <xsl:template match="container[@module = 'order']">
+        <xsl:variable name="no_edit">
+            <xsl:if test="/page/body/module[@name='CurentUser']/container/group_id != 2
+                                        and /page/body/module[@name='orders']/container/routes/item/status_id != 3
+                                        and /page/body/module[@name='orders']/container/routes/item/status_id != 4
+                                        and /page/body/module[@name='orders']/container/routes/item/status_id != 5">0</xsl:if>
+        </xsl:variable>
         <div class="row">
             <form class="order_edit" action="/orders/orderUpdate-{order/id}/without_menu-1/" method="post" name="main_form">
                 <div class="col-sm-8">
@@ -114,7 +120,7 @@
                             <!--</div>-->
                             <hr/>
                             <label>Адреса доставки:</label>
-                            <xsl:if test="@is_single != 1">
+                            <xsl:if test="@is_single != 1 and $no_edit = 0">
                                 <button type="button" class="btn-clone btn btn-xs btn-success" title="Добавить адрес" onclick="clone_div_row($('.routes-block').last())" style="float:right;">
                                     <xsl:if test="position() != count(../../routes/item) and count(../../routes/item) != 0">
                                         <xsl:attribute name="disabled"/>
@@ -122,25 +128,29 @@
                                     Добавить адрес
                                 </button>
                             </xsl:if>
-                            <xsl:call-template name="adresses"/>
+                            <xsl:call-template name="adresses">
+                                <xsl:with-param name="no_edit" select="$no_edit"/>
+                            </xsl:call-template>
                             <!--<label>Дополнительная информация:</label>-->
                             <!--<textarea class="form-control" name="order_comment" placeholder="Комментарий к заказу" title="Комментарий к заказу">-->
                                 <!--<xsl:value-of select="order/comment"/>-->
                             <!--</textarea>-->
                             <!--<font color="red">* Поля обязательны для заполнения.</font>-->
                         </div>
-                        <div class="row">
-                            <div class="col-sm-6">
-                                <div style="text-align: center">
-                                    <span class="btn btn-info calc_route" onclick="calc_route()">Рассчитать маршрут</span>
+                        <xsl:if test="$no_edit = 0">
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <div style="text-align: center">
+                                        <span class="btn btn-info calc_route" onclick="calc_route()">Рассчитать маршрут</span>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <div style="text-align: center">
+                                        <input class="btn btn-success btn-submit" type="submit" value="сохранить" name="submit" onclick="return test_time_all_routes()"/>
+                                    </div>
                                 </div>
                             </div>
-                            <div class="col-sm-6">
-                                <div style="text-align: center">
-                                    <input class="btn btn-success btn-submit" type="submit" value="сохранить" name="submit" onclick="return test_time_all_routes()"/>
-                                </div>
-                            </div>
-                        </div>
+                        </xsl:if>
                         <br/>
                     </div>
                 </div>
@@ -174,12 +184,16 @@
         </script>
     </xsl:template>
     <xsl:template name="adresses">
+        <xsl:param name="no_edit"/>
         <xsl:for-each select="routes/item">
-            <xsl:call-template name="routes"/>
+            <xsl:call-template name="routes">
+                <xsl:with-param name="no_edit" select="$no_edit"/>
+            </xsl:call-template>
         </xsl:for-each>
     </xsl:template>
 
     <xsl:template name="routes">
+        <xsl:param name="no_edit"/>
         <div class="input-group routes-block" rel="{position()}">
             <span class="input-group-addon">
                 <xsl:value-of select="position()"/>
@@ -332,7 +346,7 @@
                 </div>
             </xsl:if>
 
-            <xsl:if test="../../@is_single != 1">
+            <xsl:if test="../../@is_single != 1 and $no_edit = 0">
                 <div class="add_buttons" style="vertical-align: top;">
                     <button type="button" class="btn-delete btn btn-sm btn-danger" title="Удалить" onclick="delete_div_row(this)">
                         <xsl:if test="position() = 1">
