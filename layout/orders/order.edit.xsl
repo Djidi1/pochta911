@@ -2,10 +2,10 @@
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
     <xsl:template match="container[@module = 'order']">
         <xsl:variable name="no_edit">
-            <xsl:if test="/page/body/module[@name='CurentUser']/container/group_id != 2
+            <xsl:if test="not(order/id) or (/page/body/module[@name='CurentUser']/container/group_id != 2
                                         and /page/body/module[@name='orders']/container/routes/item/status_id != 3
                                         and /page/body/module[@name='orders']/container/routes/item/status_id != 4
-                                        and /page/body/module[@name='orders']/container/routes/item/status_id != 5">0</xsl:if>
+                                        and /page/body/module[@name='orders']/container/routes/item/status_id != 5)">0</xsl:if>
         </xsl:variable>
         <div class="row">
             <form class="order_edit" action="/orders/orderUpdate-{order/id}/without_menu-1/" method="post" name="main_form">
