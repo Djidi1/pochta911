@@ -2,11 +2,16 @@
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
     <xsl:template match="container[@module = 'order']">
         <xsl:variable name="no_edit">
-            <xsl:if test="not(order/id) or (/page/body/module[@name='CurentUser']/container/group_id != 2
+            <xsl:if test="not(order/id) or (/page/body/module[@name='CurentUser']/container/group_id = 2
                                         and /page/body/module[@name='orders']/container/routes/item/status_id != 3
                                         and /page/body/module[@name='orders']/container/routes/item/status_id != 4
-                                        and /page/body/module[@name='orders']/container/routes/item/status_id != 5)">0</xsl:if>
+                                        and /page/body/module[@name='orders']/container/routes/item/status_id != 5)">1</xsl:if>
         </xsl:variable>
+
+        <!--<xsl:value-of select="/page/body/module[@name='CurentUser']/container/group_id"/><br/>-->
+        <!--<xsl:value-of select="/page/body/module[@name='orders']/container/routes/item/status_id"/><br/>-->
+        <!--<xsl:value-of select="order/id"/><br/>-->
+        <!--<xsl:value-of select="$no_edit"/>-->
         <div class="row">
             <form class="order_edit" action="/orders/orderUpdate-{order/id}/without_menu-1/" method="post" name="main_form">
                 <div class="col-sm-8">
@@ -120,7 +125,7 @@
                             <!--</div>-->
                             <hr/>
                             <label>Адреса доставки:</label>
-                            <xsl:if test="@is_single != 1 and $no_edit = 0">
+                            <xsl:if test="@is_single != 1 and $no_edit != 1">
                                 <button type="button" class="btn-clone btn btn-xs btn-success" title="Добавить адрес" onclick="clone_div_row($('.routes-block').last())" style="float:right;">
                                     <xsl:if test="position() != count(../../routes/item) and count(../../routes/item) != 0">
                                         <xsl:attribute name="disabled"/>
@@ -137,7 +142,7 @@
                             <!--</textarea>-->
                             <!--<font color="red">* Поля обязательны для заполнения.</font>-->
                         </div>
-                        <xsl:if test="$no_edit = 0">
+                        <xsl:if test="$no_edit != 1">
                             <div class="row">
                                 <div class="col-sm-6">
                                     <div style="text-align: center">
@@ -346,7 +351,7 @@
                 </div>
             </xsl:if>
 
-            <xsl:if test="../../@is_single != 1 and $no_edit = 0">
+            <xsl:if test="../../@is_single != 1 and $no_edit != 1">
                 <div class="add_buttons" style="vertical-align: top;">
                     <button type="button" class="btn-delete btn btn-sm btn-danger" title="Удалить" onclick="delete_div_row(this)">
                         <xsl:if test="position() = 1">

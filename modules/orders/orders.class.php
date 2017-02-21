@@ -282,7 +282,12 @@ class ordersModel extends module_model {
 					   cc.fio fio_car,
 					   r.cost_route,
 					   r.cost_tovar,
-					   (r.cost_route + r.cost_tovar + (r.cost_tovar)*(u.inkass_proc/100)) inkass,
+					   (CASE 
+					        WHEN r.pay_type = 1 and r.cost_tovar = 0 THEN r.cost_route
+					        WHEN r.pay_type = 2 THEN r.cost_route + r.cost_tovar
+					        ELSE r.cost_tovar
+					    END) AS inkass,
+					/*   (r.cost_route + r.cost_tovar + (r.cost_tovar)*(u.inkass_proc/100)) inkass,*/
 					   ((r.cost_tovar)*(u.inkass_proc/100)) inkas_proc,
 					   r.cost_car money_car,
 					   (r.cost_route - r.cost_car) money_comp,
@@ -880,17 +885,19 @@ class ordersProcess extends module_process {
                 $order_info_message .= "<b>Участок № $i:</b>\r\n";
             }
 
-            if ($order_route_info['pay_type'] == 2){
-                $inkass = $order_route_info['cost_route']+$order_route_info['cost_tovar']+$order_route_info['cost_tovar']*$order_info['inkass_proc']/100;
-            }else{
-                $inkass = $order_route_info['cost_tovar']+$order_route_info['cost_tovar']*$order_info['inkass_proc']/100;
-            }
-
             $order_info_message .= " <b>Адрес доставки:</b> " . $order_route_info['to_addr'] . "\r\n";
             $order_info_message .= " <b>Готовность:</b> " . $order_route_info['to_time_ready'] . "\r\n";
             $order_info_message .= " <b>Период получения:</b> " . $order_route_info['to_time'] . " - " . $order_route_info['to_time_end'] . "\r\n";
             $order_info_message .= " <b>Получатель:</b> " . $order_route_info['to_fio'] . " [" . $order_route_info['to_phone'] . "]\r\n";
-            $order_info_message .= " <b>Инкассация:</b> " . $inkass . "\r\n";
+	        if ($order_route_info['pay_type'] == 1) {
+		        $order_info_message .= " <b>Взять в магазине:</b> " . ($order_route_info['cost_route']) . "\r\n";
+	        }
+	        if ($order_route_info['pay_type'] == 2) {
+		        $order_info_message .= " <b>Наличные у клиента:</b> " . ($order_route_info['cost_route']+$order_route_info['cost_tovar']) . "\r\n";
+	        }
+	        if ($order_route_info['pay_type'] == 3) {
+		        $order_info_message .= " <b>Наличные у клиента:</b> 0 руб. \r\n";
+	        }
             if ($order_route_info['id_status'] > 1) {
                 $order_info_message .= " <b>Статус:</b> " . $order_route_info['status'] . "\r\n";
             }

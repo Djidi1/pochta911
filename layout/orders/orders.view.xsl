@@ -131,16 +131,23 @@
 
 
                             <td><xsl:value-of select="cost_route"/></td>
+
                             <xsl:if test="pay_type = 2">
-                                <td title="({cost_route} + {cost_tovar}) + ({cost_tovar} * {number(../../inkass_proc) div 100})">
-                                    <xsl:value-of select="(number(cost_route)+number(cost_tovar)) + (number(cost_tovar) * number(../../inkass_proc)) div 100"/>
+                                <td title="({cost_route} + {cost_tovar})">
+                                    <xsl:value-of select="(number(cost_route)+number(cost_tovar))"/>
                                 </td>
                             </xsl:if>
-                            <xsl:if test="pay_type != 2">
-                                <td title="{cost_tovar} + ({cost_tovar} * {number(../../inkass_proc) div 100})">
-                                    <xsl:value-of select="(number(cost_tovar)) + (number(cost_tovar) * number(../../inkass_proc)) div 100"/>
+                            <xsl:if test="pay_type = 3 or (pay_type = 1 and cost_tovar > 0)">
+                                <td title="{cost_tovar}">
+                                    <xsl:value-of select="cost_tovar"/>
                                 </td>
                             </xsl:if>
+                            <xsl:if test="(pay_type = 1 and cost_tovar = 0)">
+                                <td title="{cost_route}">
+                                    <xsl:value-of select="cost_route"/>
+                                </td>
+                            </xsl:if>
+
                             <xsl:if test="/page/body/module[@name='CurentUser']/container/group_id = 1">
                                 <!--<td><xsl:value-of select="number(cost_route)+number(cost_tovar)"/></td>-->
                                 <!--<td>-->
