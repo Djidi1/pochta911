@@ -907,35 +907,29 @@ class adminProcess extends module_process {
 				$pass = $this->generatePass ( 6 );
 				$Params ['pass'] = $pass;
 			}
-			// $username, $email, $login, $pass, $ip, $group_id
-			if ($Params ['username'] != '' && $Params ['email'] != '' && $Params ['group_id'] > 0) {
-				if ($Params ['user_id'] == 0) {
-					$res = $this->nModel->userInsert ( $Params );
-					$msg = 'добавлен';
-				}else{
-					$res = $this->nModel->userUpdate ( $Params );
-					$msg = 'обновлен';
+			if ($Params ['user_id'] == 0) {
+				$res = $this->nModel->userInsert ( $Params );
+				$msg = 'добавлен';
+			}else{
+				$res = $this->nModel->userUpdate ( $Params );
+				$msg = 'обновлен';
+			}
+			if ($res) {
+				//					$this->System->actionLog($this->mod_id, $Params['user_id'], 'Пользователь обновлен: '.$Params['username'], dateToDATETIME (date('Y-d-m h-i-s')), $this->User->getUserID(), 1, $action);
+				$this->nView->viewMessage ( 'Профиль клиента успешно '.$msg, 'Сообщение' );
+				$message1 = ' Ваш профиль '.$msg.'<br />' . rn . rn;
+				$message2 = ' Профиль клиента успешно '.$msg.'<br />' . rn . rn;
+				$usInfo = '';
+				foreach ( $Params as $key => $val ) {
+					$usInfo .= $key . ' : ' . (is_array($val)?json_encode($val):$val) . '<br />' . rn;
 				}
-				if ($res) {
-					//					$this->System->actionLog($this->mod_id, $Params['user_id'], 'Пользователь обновлен: '.$Params['username'], dateToDATETIME (date('Y-d-m h-i-s')), $this->User->getUserID(), 1, $action);
-					$this->nView->viewMessage ( 'Профиль клиента успешно '.$msg, 'Сообщение' );
-					$message1 = ' Ваш профиль '.$msg.'<br />' . rn . rn;
-					$message2 = ' Профиль клиента успешно '.$msg.'<br />' . rn . rn;
-					$usInfo = '';
-					foreach ( $Params as $key => $val ) {
-						$usInfo .= $key . ' : ' . (is_array($val)?json_encode($val):$val) . '<br />' . rn;
-					}
-					$message1 .= $usInfo;
-					$message2 .= $usInfo;
-				
-					sendMail('Профиль '.$msg, $message1, $Params['email'],'Интранет портал');
-					sendMail('Пользователь '.$msg, $message2, 'djidi@mail.ru','Интранет портал');
-				} else {
-					$this->nView->viewError ( array ('Ошибка профиля' ) );
-				}
+				$message1 .= $usInfo;
+				$message2 .= $usInfo;
+
+				sendMail('Профиль '.$msg, $message1, $Params['email'],'Интранет портал');
+				sendMail('Пользователь '.$msg, $message2, 'djidi@mail.ru','Интранет портал');
 			} else {
-				$this->nView->viewError ( array ('Заполнены не все обязательные поля', $Params ['username'], $Params ['email'], $Params ['group_id'] ) );
-				return true;
+				$this->nView->viewError ( array ('Ошибка профиля' ) );
 			}
 			$action = 'userList';
 			$this->updated = true;
