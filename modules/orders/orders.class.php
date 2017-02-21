@@ -10,6 +10,13 @@ class ordersModel extends module_model {
 		$items = array ();
 		while ( ($row = $this->fetchRowA ()) !== false ) {
 			if (isset($row['to'])) $row['to'] = str_replace('г. Санкт-Петербург,','',$row['to']);
+			if (isset($row['to'])) $row['to'] = str_replace('Г. Санкт-Петербург,','',$row['to']);
+            if (isset($row['address'])) $row['address'] = str_replace('город Санкт-Петербург,','',$row['address']);
+            if (isset($row['address'])) $row['address'] = str_replace('Санкт-Петербург,','',$row['address']);
+            if (isset($row['address'])) $row['address'] = str_replace('Россия','',$row['address']);
+            if (isset($row['from'])) $row['from'] = str_replace('город Санкт-Петербург,','',$row['from']);
+            if (isset($row['from'])) $row['from'] = str_replace('Санкт-Петербург,','',$row['from']);
+            if (isset($row['from'])) $row['from'] = str_replace('Россия','',$row['from']);
 			if (isset($row['ready'])) $row['ready'] = substr($row['ready'],0,5);
 			if (isset($row['to_time'])) $row['to_time'] = substr($row['to_time'],0,5);
 			if (isset($row['to_time_end'])) $row['to_time_end'] = substr($row['to_time_end'],0,5);
@@ -275,7 +282,10 @@ class ordersModel extends module_model {
 		}
 	    $sql .= '      r.to_time,
                        r.to_time_end,
-                       a.address `from`,
+                       (CASE 
+					        WHEN o.id_address = 0 THEN o.address_new
+					        ELSE a.address
+					    END) AS `from`,
                        u.title,
                        concat(r.`to`, \', \', r.to_house, \'-\', r.to_corpus, \'-\', r.to_appart) `to`,
                        r.to_phone,
@@ -344,7 +354,10 @@ class ordersModel extends module_model {
 */
 	public function getLogistList($from, $to, $user_id = 0) {
 		$sql = 'SELECT o.id, 
-                       ua.address,
+                      (CASE 
+					        WHEN o.id_address = 0 THEN o.address_new
+					        ELSE ua.address
+					    END) AS address,
                        ua.comment addr_comment, 
                        u.name,
                        u.title, 

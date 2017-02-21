@@ -2,16 +2,14 @@
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
     <xsl:template match="container[@module = 'order']">
         <xsl:variable name="no_edit">
-            <xsl:if test="not(order/id) or (/page/body/module[@name='CurentUser']/container/group_id = 2
-                                        and /page/body/module[@name='orders']/container/routes/item/status_id != 3
-                                        and /page/body/module[@name='orders']/container/routes/item/status_id != 4
-                                        and /page/body/module[@name='orders']/container/routes/item/status_id != 5)">1</xsl:if>
+            <xsl:if test="(order/id > 0) and (/page/body/module[@name='CurentUser']/container/group_id = 2
+                                        and /page/body/module[@name='orders']/container/routes/item/status_id != 1)">1</xsl:if>
         </xsl:variable>
 
-        <!--<xsl:value-of select="/page/body/module[@name='CurentUser']/container/group_id"/><br/>-->
-        <!--<xsl:value-of select="/page/body/module[@name='orders']/container/routes/item/status_id"/><br/>-->
-        <!--<xsl:value-of select="order/id"/><br/>-->
-        <!--<xsl:value-of select="$no_edit"/>-->
+        <!--group_id<xsl:value-of select="/page/body/module[@name='CurentUser']/container/group_id"/><br/>-->
+        <!--status_id<xsl:value-of select="/page/body/module[@name='orders']/container/routes/item/status_id"/><br/>-->
+        <!--order/id<xsl:value-of select="(order/id)"/><br/>-->
+        <!--$no_edit<xsl:value-of select="$no_edit"/>-->
         <div class="row">
             <form class="order_edit" action="/orders/orderUpdate-{order/id}/without_menu-1/" method="post" name="main_form">
                 <div class="col-sm-8">
@@ -64,7 +62,7 @@
                                         <xsl:if test="count(order/id_address) = 0 or order/id_address > 0">
                                             <xsl:attribute name="style">display:none</xsl:attribute>
                                         </xsl:if>
-                                        <input class="form-control store_address_new address" name="store_new" value="{order/address_new}" placeholder="ручной ввод"/>
+                                        <input class="form-control store_address_new address" name="store_new" value="{order/address_new}" placeholder="Введите адрес"/>
                                     </div>
                                 </div>
                             </div>
