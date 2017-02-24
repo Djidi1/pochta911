@@ -266,35 +266,23 @@ class adminModel extends module_model {
 	}
 
 	
-	public function userList($order='', $f_name='', $f_tabno='', $f_login='', $f_group='', $f_otdel='', $id_group='') {
+	public function userList($id_group='', $user_group='') {
 
 		$fsql = '';
 		if ($id_group != '') {
 			$fsql .= ' AND g.id = \'' . $id_group . '\' ';
 		}
-		if ($f_name != '') {
-			$fsql .= ' AND u.name like \'%%%1$s%%\' ';
-		}
-		if ($f_tabno != '') {
-			$fsql .= ' AND u.tab_no like \'%%%2$s%%\' ';
-		}
-		if ($f_login != '') {
-			$fsql .= ' AND u.login like \'%%%3$s%%\' ';
-		}
-		if ($f_group != '') {
-			$fsql .= ' AND g.name like \'%%%4$s%%\' ';
-		}
-		$order_by = ' ORDER BY u.name';
-		if ($order != '') {
-			$order_by = " ORDER BY $order";
-		}
+        if ($id_group == '0' and $user_group == 1) {
+            $fsql = '  AND g.id != 2 ';
+        }
+
 
 		$sql = "SELECT u.id as user_id, u.*,g.id as group_id, g.name as group_name
 				FROM `users` u
 				LEFT JOIN `groups_user` gu ON u.id = gu.user_id
 				LEFT JOIN `groups` g ON gu.group_id = g.id
-				WHERE u.isBan < 2 $fsql $order_by ";
-		$this->query ( $sql, $f_name, $f_tabno, $f_login, $f_group, $f_otdel );
+				WHERE u.isBan < 2 $fsql ";
+		$this->query ( $sql );
 		$users = array ();
 		while ( ($row = $this->fetchRowA ()) !== false ) {
 			$row ['date_reg'] = date ( 'd.m.Y', strtotime ( substr ( $row ['date_reg'], 0, 20 ) ) );
@@ -537,7 +525,7 @@ u.name,lu.ip,lu.date,lu.referer,lu.browser,lu.os,g.name as group_name,
 	
 	}
 	
-	public function groupAdd($group_name, $parent = 0, $position = 100) {
+	public function groupAdd($group_name, $parent = 0) {
 		$sql = "INSERT INTO `groups` (`name`, `admin`, `parent`) VALUES ('$group_name', 1, $parent)";
 		$this->query ( $sql );
 		$group_id = $this->insertID ();
@@ -750,66 +738,19 @@ class adminProcess extends module_process {
 		}
 
 		$user_id = $this->User->getUserID ();
+		$user_group = $this->User->getUserGroup();
         $user_right = $this->User->getRight ( $this->modName, $action );
-        if ($user_right == 0 && ! $_action) {
+
+        $user_edit = $this->Vals->getVal ( 'userEdit', 'GET', 'integer' );
+        $user_edit = ($user_edit == '')?$this->Vals->getVal ( 'userUpdate', 'GET', 'integer' ):$user_edit;
+
+        if ($user_right == 0 and !$_action and (!in_array($action, array('userEdit','userUpdate')) or $user_edit != $user_id)) {
             $this->User->nView->viewLoginParams ( '', '', $user_id, array (), array () );
             $this->nView->viewMessage ( 'У вас нет прав на работу с этим модулем.','' );
             $this->updated = true;
             return true;
         }
-		
-//		$useMod = $this->Vals->getVal ( 'mod', 'GET', 'string' );
-//		$useAct = $this->Vals->getVal ( 'act', 'GET', 'string' );
-//		$useVal = $this->Vals->getVal ( 'actval', 'GET', 'string' );
-		
-//		$user_right = $this->User->getRight ( $useMod, $useAct );
-		/*
-		if ($useMod) {
-			if ($this->User->getRight ( $useMod, $useAct ) == 0) {
-				$p = array ('У Вас нет прав доступа к этому модулю', $useMod, $useAct );
-//				$this->nView->viewLoginParams ( $p [0], '', $user_id );
-				//$this->nView->viewError($p, false);
-				$this->Log->addError ( $p, __LINE__, __METHOD__ );
-				$this->updated = true;
-				return false;
-			}
-			$modData = modulePreload ( $useMod );
-			
-			if ($modData) {
-				if (is_file ( 'modules/' . $modData->module_defModName . '/' . $modData->module_defModName . '.class.php' )) {
-					$this->Log->addWarning ( array ('Модуль подключен', $useMod ), __LINE__, 'index.php' );
-				} else {
-					$this->Log->addWarning ( array ('подключен виртуальный модуль', $useMod ), __LINE__, 'index.php' );
-				}
-				//stop($modData->module_isSystem.' '.$modData->module_processName,0 );
-				if (! $modData->module_isSystem && ! class_exists ( $modData->module_processName ))
-					include ('modules/' . $modData->module_defModName . '/' . $modData->module_defModName . '.class.php');
-				if ($modData->module_isSystem && ! class_exists ( $modData->module_processName ))
-					include ('classes/' . $modData->module_defModName . '.class.php');
-				$autoClass = $modData->module_processName;
-				//$values->URLparams($modData->module_defQueryString);
-				$sysMod = new $autoClass ( $modData->module_codename );
-				$sysMod->setDefaultAction ( $modData->module_defAction );
-				$this->Vals->setValTo ( $useAct, $useVal, 'GET' );
-				$sysMod->update ( $useAct );
-				$modBodySet = $sysMod->getBody ( 'xml' );
-				$this->nView->addXML ( $modBodySet, 'adm_' . $modData->module_codename );
-				//$this->nView->mergeXML($this->)
-				$this->updated = true;
-			}
-		
-		}
-		*/
-		/* * Пользователи * */
-	/*	if ($user_right == 0 && $user_id == 0 && ! $_action) {
-			$this->nView->viewLogin ( 'FD', '', $user_id );
-			$this->updated = true;
-			return true;
-		}
-		
-		if ($user_id > 0 && ! $_action) {
-			$this->User->nView->viewLoginParams ( 'FD', '', $user_id, array (), array (), $this->User->getRightModule ( 'admin' ) );
-		}*/
+
         $this->User->nView->viewLoginParams ( 'FD', '', $user_id, array (), array (), $this->User->getRightModule ( 'admin' ) );
 		
 		if ($action == 'newUser') {
@@ -817,8 +758,6 @@ class adminProcess extends module_process {
 			$this->nView->viewNewUser ( $groups );
 			$this->updated = true;
 		}
-		
-
 		
 		if ($action == 'groupHide') {
 			$Params ['group_id'] = $this->Vals->getVal ( 'groupHide', 'GET', 'integer' );
@@ -830,14 +769,6 @@ class adminProcess extends module_process {
 				$res = $this->nModel->groupHide ( $Params ['group_id'] );
 				if ($res) {
 					$this->nView->viewMessage ( 'Группа перемещена в корзину', 'Сообщение' );
-//					$message1 = ' Группа удалена "SkyLC"<br />' . rn . rn;
-//					$message2 = ' Группа успешно удалена<br />' . rn . rn;
-//					$usInfo = '';
-//					foreach ( $Params as $key => $val ) {
-//						$usInfo .= $key . ' : ' . $val . '<br />' . rn;
-//					}
-//					$message1 .= $usInfo;
-//					$message2 .= $usInfo;
 				} else {
 					$this->nView->viewError ( array ('Ошибка удаления группы' ) );
 				}
@@ -851,14 +782,6 @@ class adminProcess extends module_process {
 			$res = $this->nModel->userBan ( $Params ['user_id'], $Params ['full'] );
 			if ($res) {
 				$this->nView->viewMessage ( 'Пользователь перемещен в корзину', 'Сообщение' );
-//				$message1 = ' Ваш профиль удален <br />' . rn . rn;
-//				$message2 = ' Пользователь успешно удален<br />' . rn . rn;
-//				$usInfo = '';
-//				foreach ( $Params as $key => $val ) {
-//					$usInfo .= $key . ' : ' . $val . '<br />' . rn;
-//				}
-//				$message1 .= $usInfo;
-//				$message2 .= $usInfo;
 			} else {
 				$this->nView->viewError ( array ('Ошибка удаления пользователя' ) );
 			}
@@ -870,14 +793,6 @@ class adminProcess extends module_process {
 			$res = $this->nModel->userUnBan ( $Params ['user_id'] );
 			if ($res) {
 				$this->nView->viewMessage ( 'Пользователь восстановлен из корзины', 'Сообщение' );
-//				$message1 = ' Ваш профиль восстановлен<br />' . rn . rn;
-//				$message2 = ' Пользователь успешно восстановлен<br />' . rn . rn;
-//				$usInfo = '';
-//				foreach ( $Params as $key => $val ) {
-//					$usInfo .= $key . ' : ' . $val . '<br />' . rn;
-//				}
-//				$message1 .= $usInfo;
-//				$message2 .= $usInfo;
 			} else {
 				$this->nView->viewError ( array ('Ошибка восстановления пользователя' ) );
 			}
@@ -915,7 +830,6 @@ class adminProcess extends module_process {
 				$msg = 'обновлен';
 			}
 			if ($res) {
-				//					$this->System->actionLog($this->mod_id, $Params['user_id'], 'Пользователь обновлен: '.$Params['username'], dateToDATETIME (date('Y-d-m h-i-s')), $this->User->getUserID(), 1, $action);
 				$this->nView->viewMessage ( 'Профиль клиента успешно '.$msg, 'Сообщение' );
 				$message1 = ' Ваш профиль '.$msg.'<br />' . rn . rn;
 				$message2 = ' Профиль клиента успешно '.$msg.'<br />' . rn . rn;
@@ -931,20 +845,21 @@ class adminProcess extends module_process {
 			} else {
 				$this->nView->viewError ( array ('Ошибка профиля' ) );
 			}
-			$action = 'userList';
+			//$action = 'userList';
 			$this->updated = true;
 		}
 		
 		if ($action == 'userEdit') {
 			$user_id = $this->Vals->getVal ( 'userEdit', 'GET', 'integer' );
 			$group_id = $this->Vals->getVal ( 'idg', 'GET', 'integer' );
+			$add_data = $this->Vals->getVal ( 'add_data', 'GET', 'integer' );
 
 			$user = ($user_id > 0)?$this->nModel->userGet ( $user_id ):array();
 			$address = ($user_id > 0)?$this->nModel->getAddress ($user_id):array();
 			$cards = ($user_id > 0)?$this->nModel->getCards ($user_id):array();
 			$groups = $this->nModel->getGroups ();
 
-			$this->nView->viewUserEdit ( $user, $groups, $address, $cards, $group_id );
+			$this->nView->viewUserEdit ( $user, $groups, $address, $cards, $group_id, $add_data );
 
 			$this->updated = true;
 		}
@@ -962,14 +877,9 @@ class adminProcess extends module_process {
 		
 		if ($action == 'userList') {
 			$order = $this->Vals->getVal ( 'srt', 'POST', 'string' );
-			$f_name = $this->Vals->getVal ( 'f_name', 'POST', 'string' );
-			$f_tabno = $this->Vals->getVal ( 'f_tabno', 'POST', 'string' );
-			$f_login = $this->Vals->getVal ( 'f_login', 'POST', 'string' );
-			$f_group = $this->Vals->getVal ( 'f_group', 'POST', 'string' );
-			$f_otdel = $this->Vals->getVal ( 'f_otdel', 'POST', 'string' );
 			$id_group = $this->Vals->getVal ( 'idg', 'INDEX', 'string' );
 			$isAjax = $this->Vals->getVal ( 'ajax', 'INDEX' );
-			$users = $this->nModel->userList ( $order, $f_name, $f_tabno, $f_login, $f_group, $f_otdel, $id_group );
+			$users = $this->nModel->userList ( $id_group, $user_group );
 			$groups = $this->nModel->getGroups ();
 			$this->nView->viewUserList ( $users, $order, $isAjax, $id_group, $groups );
 			$this->updated = true;
@@ -1308,10 +1218,11 @@ class adminView extends module_view {
 		return true;
 	}
 	
-	public function viewUserEdit($user, $groups, $address, $cards, $group_id) {
+	public function viewUserEdit($user, $groups, $address, $cards, $group_id, $add_data) {
 		$this->pXSL [] = RIVC_ROOT . 'layout/users/user.edit.xsl';
 		$Container = $this->newContainer ( 'useredit' );;
         $this->addAttr ( 'group_id', $group_id, $Container );
+        $this->addAttr ( 'add_data', $add_data, $Container );
 		$this->arrToXML ( $user, $Container, 'user' );
 		$ContainerGroups = $this->addToNode ( $Container, 'groups', '' );
 		foreach ( $groups as $item ) {

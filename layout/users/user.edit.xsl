@@ -3,6 +3,11 @@
     <xsl:template match="container[@module = 'useredit']">
 
         <h2>Профиль клиента:</h2>
+        <xsl:if test="@add_data = 1">
+            <div class="alert alert-danger">
+                <span class="glyphicon glyphicon-exclamation-sign"/> Прежде чем оставить заказ Вам необходимо заполнить всю информацию в своей карточке клиента.
+            </div>
+        </xsl:if>
         <form action="/admin/userUpdate-{user/user_id}/" method="post" name="main_form">
             <div class="row">
                 <div class="col-md-6">
@@ -97,7 +102,17 @@
                                     <tr>
                                         <td>Группа:</td>
                                         <td>
-                                            <select class="form-control" name="group_id">
+                                            <b>
+                                                <xsl:for-each select="groups/item">
+                                                    <xsl:if test="id = //user/group_id">
+                                                        <xsl:value-of select="name"/>
+                                                    </xsl:if>
+                                                    <xsl:if test="id = //@group_id and not(//user/group_id)">
+                                                        <xsl:value-of select="name"/>
+                                                    </xsl:if>
+                                                </xsl:for-each>
+                                            </b>
+                                            <select class="form-control" name="group_id" style="display:none">
                                                 <xsl:for-each select="groups/item">
                                                     <option value="{id}">
                                                         <xsl:if test="id = //user/group_id">

@@ -301,14 +301,21 @@ function test_time_routes_each(route_row){
         errors += '<li>Интервал доставки не может быть менее 40 минут.</li><br/>';
         no_error = false;
     }
-    // Заказы вечером запрещены на утро (проверка по крайнему времени доставки)
-    if ((t_now > 21) && (tt_end < 12) ){
+    var today = $('.today-date').val();
+    var tomarrow = moment(today, 'DD.MM.YYYY').add(1, 'days').format('L');
+    var set_date = $('input[name=date]').val();
+
+    // Заказы вечером на завтра и утром на сегодня запрещены на утро (проверка по крайнему времени доставки)
+    if ((set_date == tomarrow && t_now > 21 && tt_end < 12) || (set_date == today && t_now < 12 && tt_end < 12 ) ){
         errors += '<li>Заказ с доставкой в период с 8:00 до 12:00 можно оставить не позднее 21:00.</li><br/>';
         no_error = false;
     }
-    // Добавляем день, если заказ на текущей и время готовности меньше текушего
-    if (moment($('input[name=date]').val(), 'DD.MM.YYYY').isSame(Date.now(), 'day') && (tt_end - t_now) < 0){
-        $('input[name=date]').val(moment($('input[name=date]').val(), 'DD.MM.YYYY').add(1, 'days').format('L'));
+    // Только для новых заказов
+    if ($('#order_id').val() == '') {
+        // Добавляем день, если заказ на текущей и время готовности меньше текушего
+        if (moment($('input[name=date]').val(), 'DD.MM.YYYY').isSame(Date.now(), 'day') && (tt_end - t_now) < 0) {
+            $('input[name=date]').val(moment($('input[name=date]').val(), 'DD.MM.YYYY').add(1, 'days').format('L'));
+        }
     }
 /*
     // проверка обязательный полей

@@ -8,14 +8,34 @@
 						<tr>
 							<td valign="top">
 								<h2>Список клиентов</h2>
-								<div style="float: left;">
-									<div class="icon">
-										<a class="btn btn-success" href="/admin/userEdit-0/idg-{users/@id_group}/" title="Добавить пользователя">
+								<xsl:if test="users/@id_group = 2">
+									<div style="float: left;">
+										<a class="btn btn-sm btn-success" href="/admin/userEdit-0/idg-2/" title="Добавить клиента">
 											<span class="glyphicon glyphicon-user"> </span>
-											<span> Новый пользователь</span>
+											<span> Новый клиент</span>
 										</a>
 									</div>
-								</div>
+								</xsl:if>
+								<xsl:if test="users/@id_group != 2">
+									<div style="float: left;">
+										<a class="btn btn-sm btn-success" href="/admin/userEdit-0/idg-3/" title="Добавить логиста">
+											<span class="glyphicon glyphicon-plus"> </span>
+											<span> Логист</span>
+										</a>
+									</div>
+									<div style="float: left;">
+										<a class="btn btn-sm btn-success" href="/admin/userEdit-0/idg-4/" title="Добавить оператора">
+											<span class="glyphicon glyphicon-plus"> </span>
+											<span> Оператор</span>
+										</a>
+									</div>
+									<div style="float: left;">
+										<a class="btn btn-sm btn-success" href="/admin/userEdit-0/idg-1/" title="Добавить администратора">
+											<span class="glyphicon glyphicon-plus"> </span>
+											<span> Администратор</span>
+										</a>
+									</div>
+								</xsl:if>
 								<!--<div style="float: right;">-->
 									<!--<input class="btn btn-info btn-sm" type="button" onclick="printBlock('#printlist');" value="Печать"/>-->
                                     <!--<input class="btn btn-info btn-sm" type="button" onclick="buttonSetFilter('langFilter', '1', 'ajax','input', '/admin/userList-1/xls-1/', true)" value="Excel"/>-->
@@ -26,7 +46,7 @@
 				</table>
 			</div>
 			<hr/>
-			<table class="viewList" cellpadding="2" cellspacing="1" width="100%">
+			<table class="viewList" style="display:none;">
 				<tr>
 					<th colspan="11">Поиск по полям
 					</th>
@@ -85,7 +105,7 @@
 	<xsl:template name="viewTable">
 		<div>
 			<form name="app_form" style="margin:0px" method="post" action="" id="printlist">
-				<table class="table table-hover table-stripsed table-condensed">
+				<table class="table table-hover table-stripsed table-condensed data-table">
 					<thead>
 						<tr>
 							<th>№  [ID]</th>
@@ -98,7 +118,8 @@
 							<th>Почта</th>
 							<th>Дата регистрации</th>
 							<xsl:if test="count(//page/@xls)=0">
-							<th colspan="3" align="center">*</th>
+							<th> </th>
+							<th> </th>
 							</xsl:if>
 						</tr>
 					</thead>

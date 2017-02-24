@@ -25,7 +25,7 @@
             <script src="/js/bootstrap-typeahead.min.js"/>
             <script src="/js/camera.min.js"/>
             <script src="/js/ready.js?v2.2"/>
-            <script src="/js/common.js?v2.4"/>
+            <script src="/js/common.js?v2.6"/>
             <script src="/js/script.js?v2.2"/>
             <script src="//cdn.ckeditor.com/4.6.1/full/ckeditor.js"/>
             <script src="//cdn.datatables.net/1.10.13/js/jquery.dataTables.min.js"/>
@@ -84,9 +84,12 @@
                     <!-- Collect the nav links, forms, and other content for toggling -->
                     <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                         <ul class="nav navbar-nav">
-                            <xsl:if test="/page/body/module[@name='CurentUser']/container/group_id = 1 or /page/body/module[@name='CurentUser']/container/group_id = 2">
+                            <xsl:if test="/page/body/module[@name='CurentUser']/container/group_id = 2">
                                 <li class="dropdown">
                                     <a href="/orders/"><i class="fa fa-flag" aria-hidden="true"> </i> Заказы</a>
+                                </li>
+                                <li class="dropdown">
+                                    <a href="/admin/userEdit-{/page/body/module[@name='CurentUser']/container/user_id}/"><i class="fa fa-user" aria-hidden="true"> </i> Карточка клиента</a>
                                 </li>
                                 <li>
                                     <a href="/pages/view-49/"><i class="fa fa-info" aria-hidden="true"> </i> Условия сотрудничества</a>
@@ -94,7 +97,7 @@
                             </xsl:if>
                             <xsl:if test="/page/body/module[@name='CurentUser']/container/group_id = 1 or /page/body/module[@name='CurentUser']/container/group_id = 3 or /page/body/module[@name='CurentUser']/container/group_id = 4">
                                 <li>
-                                    <a href="/orders/LogistList-1/"><i class="fa fa-bus" aria-hidden="true"> </i> Логист</a>
+                                    <a href="/orders/LogistList-1/"><i class="fa fa-bus" aria-hidden="true"> </i> Логистика</a>
                                 </li>
                             </xsl:if>
                             <xsl:if test="/page/body/module[@name='CurentUser']/container/group_id = 1 or /page/body/module[@name='CurentUser']/container/group_id = 3 or /page/body/module[@name='CurentUser']/container/group_id = 4">
@@ -106,6 +109,17 @@
                                 <li>
                                     <a href="/admin/userList-1/idg-2/"><span class="glyphicon glyphicon-user"> </span> Клиенты</a>
                                 </li>
+                            </xsl:if>
+                            <xsl:if test="/page/body/module[@name='CurentUser']/container/group_id = 1">
+                                <li>
+                                    <a href="/admin/userList-1/idg-0/"><span class="glyphicon glyphicon-user"> </span> Сотрудники</a>
+                                </li>
+                                <!--<li>-->
+                                    <!--<a href="/admin/userList-1/idg-3/"><span class="glyphicon glyphicon-user"> </span> Логисты</a>-->
+                                <!--</li>-->
+                                <!--<li>-->
+                                    <!--<a href="/admin/userList-1/idg-4/"><span class="glyphicon glyphicon-user"> </span> Операторы</a>-->
+                                <!--</li>-->
                             </xsl:if>
                         </ul>
                         <script>

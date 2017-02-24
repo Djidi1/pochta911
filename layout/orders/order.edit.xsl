@@ -11,6 +11,7 @@
         <!--order/id<xsl:value-of select="(order/id)"/><br/>-->
         <!--$no_edit<xsl:value-of select="$no_edit"/>-->
         <div class="row">
+            <input class="today-date" type="hidden" value="{@today}"/>
             <form class="order_edit" action="/orders/orderUpdate-{order/id}/without_menu-1/" method="post" name="main_form">
                 <div class="col-sm-8">
                     <div class="panel panel-success">

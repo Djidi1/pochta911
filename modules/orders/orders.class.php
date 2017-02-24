@@ -164,10 +164,33 @@ class ordersModel extends module_model {
 	    return $row[0];
     }
 
+    public function checkUserCard($user_id){
+        $not_all = false;
+	    $sql = "SELECT id, name, email, login, pass, date_reg, isban, prior, title, phone, phone_mess, inkass_proc 
+                FROM users WHERE id = $user_id";
+	    $this->query($sql);
+	    $user = $this->fetchOneRowA();
+        if ($user['name'] == ''){
+            $not_all = true;
+        }
+        if ($user['email'] == ''){
+            $not_all = true;
+        }
+        if ($user['title'] == ''){
+            $not_all = true;
+        }
+        if ($user['phone'] == ''){
+            $not_all = true;
+        }
+        return $not_all;
+    }
 
     public function getOrderInfo($order_id) {
         $sql = 'SELECT o.id,
-                       ua.address `from`,
+                      (CASE 
+					        WHEN o.id_address = 0 THEN o.address_new
+					        ELSE ua.address
+					    END) AS `from`,
                        u.inkass_proc,
 					   o.ready
 				FROM orders o
@@ -819,7 +842,7 @@ class ordersProcess extends module_process {
 				$select2 .= "</select></div>";*/
                 $input2 = "<input type='hidden' name='new_courier' value='1'/>";
                 $comment = "<textarea class='form-control' name='courier_comment' placeholder='Комментарий для курьера'></textarea>";
-                $info = "<div class='alert alert-success'>".str_replace("\r\n","<br/>",$order_info_message)."</div>";
+                $info = "<div class='alert alert-success' style='display: none;'>".str_replace("\r\n","<br/>",$order_info_message)."</div>";
 				$info .= "<div class='alert alert-info'>Выберите курьера для данного заказа.</div>
 						<input type='hidden' name='order_id' value='$order_id' />
 						<input type='hidden' name='order_info_message' value='$order_info_message' />";
@@ -837,6 +860,10 @@ class ordersProcess extends module_process {
 		}
 */
 		if ($action == 'view') {
+		    $check_user_card = $this->nModel->checkUserCard($user_id);
+		    if ($check_user_card){
+		        header('location: /admin/userEdit-'.$user_id.'/add_data-1/');
+            }
             list($from, $to) = $this->get_post_date();
             $statuses = $this->nModel->getStatuses();
 //			$orders = $this->nModel->getOrdersList($from, $to);
@@ -907,13 +934,13 @@ class ordersProcess extends module_process {
             $order_info_message .= " <b>Период получения:</b> " . $order_route_info['to_time'] . " - " . $order_route_info['to_time_end'] . "\r\n";
             $order_info_message .= " <b>Получатель:</b> " . $order_route_info['to_fio'] . " [" . $order_route_info['to_phone'] . "]\r\n";
 	        if ($order_route_info['pay_type'] == 1) {
-		        $order_info_message .= " <b>Взять в магазине:</b> " . ($order_route_info['cost_route']) . "\r\n";
+		        $order_info_message .= " <b>Взять в магазине:</b> " . ($order_route_info['cost_route']) . " руб.\r\n";
 	        }
 	        if ($order_route_info['pay_type'] == 2) {
-		        $order_info_message .= " <b>Наличные у клиента:</b> " . ($order_route_info['cost_route']+$order_route_info['cost_tovar']) . "\r\n";
+		        $order_info_message .= " <b>Наличные у клиента:</b> " . ($order_route_info['cost_route']+$order_route_info['cost_tovar']) . " руб.\r\n";
 	        }
 	        if ($order_route_info['pay_type'] == 3) {
-		        $order_info_message .= " <b>Наличные у клиента:</b> 0 руб. \r\n";
+		        $order_info_message .= " <b>Наличные у клиента:</b> " . $order_route_info['cost_tovar'] . " руб. \r\n";
 	        }
             if ($order_route_info['id_status'] > 1) {
                 $order_info_message .= " <b>Статус:</b> " . $order_route_info['status'] . "\r\n";
