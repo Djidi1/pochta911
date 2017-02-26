@@ -153,7 +153,7 @@
                 <div class="col-md-6">
                     <div class="panel panel-info">
                         <div class="panel-heading">
-                            <strong>Адреса</strong>
+                            <strong>Адреса магазинов</strong>
                         </div>
                         <div class="panel-body">
                             <xsl:for-each select="address/item">

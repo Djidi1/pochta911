@@ -277,6 +277,10 @@ function test_time_routes_each(route_row){
     var tt_end = TimeToFloat(to_time_end);
     var t_now = TimeToFloat(timestampToTime());
 
+    var today = $('.today-date').val();
+    var tomarrow = moment(today, 'DD.MM.YYYY').add(1, 'days').format('L');
+    var set_date = $('input[name=date]').val();
+
     // Если время доставки меньше готовности, то заказ на следующий день
     tt_end = (tt_end - tt_ready) < 0 ? tt_end + 24 : tt_end;
 
@@ -291,8 +295,8 @@ function test_time_routes_each(route_row){
         errors += '<li>Крайнее время доставки не может быть меньше 2,5 часов от времени готовности.</li><br/>';
         no_error = false;
     }
-    // Проверка от времени заказа
-    if ((tt_end_2 - t_now) <= 2.9 ){
+    // Проверка от времени заказа (только сегодня)
+    if (set_date == today && (tt_end_2 - t_now) <= 2.9 ){
         errors += '<li>Крайнее время доставки не может быть меньше 3 часов от времени заказа.</li><br/>';
         no_error = false;
     }
@@ -301,9 +305,7 @@ function test_time_routes_each(route_row){
         errors += '<li>Интервал доставки не может быть менее 40 минут.</li><br/>';
         no_error = false;
     }
-    var today = $('.today-date').val();
-    var tomarrow = moment(today, 'DD.MM.YYYY').add(1, 'days').format('L');
-    var set_date = $('input[name=date]').val();
+
 
     // Заказы вечером на завтра и утром на сегодня запрещены на утро (проверка по крайнему времени доставки)
     if ((set_date == tomarrow && t_now > 21 && tt_end < 12) || (set_date == today && t_now < 12 && tt_end < 12 ) ){

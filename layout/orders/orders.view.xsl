@@ -158,7 +158,7 @@
                                 <!--<td><xsl:value-of select="number(cost_route) * 0.25"/></td>-->
                             </xsl:if>
                             <td>
-                                <xsl:value-of select="../../comment"/>
+                                <xsl:value-of select="comment"/>
                             </td>
                             <!--<td>-->
                                 <!--<xsl:value-of select="comment"/>-->
