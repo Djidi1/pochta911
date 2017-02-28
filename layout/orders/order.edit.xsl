@@ -203,30 +203,30 @@
                 <xsl:value-of select="position()"/>
             </span>
             <div class="form-control" style="width: 55%;">
-                <span class="order-add-title text-info">Улица</span>
+                <span class="order-add-title text-info">Адрес доставки</span>
                 <input type="search" class="order-route-data spb-streets js-street_upper" name="to[]" title="Улица, проспект и т.д." value="{to}" onchange="" autocomplete="off" required=""/>
             </div>
             <div class="form-control" style="width: 15%;">
-                <span class="order-add-title text-info">Дом</span>
+                <span class="order-add-title text-info">дом</span>
                 <input type="text" class="order-route-data to_house number" name="to_house[]" title="Дом" value="{to_house}" onchange="calc_route()" required=""/>
             </div>
             <div class="form-control" style="width: 15%;">
-                <span class="order-add-title text-info">Корп.</span>
+                <span class="order-add-title text-info">корп/строение</span>
                 <input type="text" class="order-route-data to_corpus number" name="to_corpus[]" title="Корпус" value="{to_corpus}" onchange="calc_route()" required=""/>
             </div>
             <div class="form-control" style="width: 15%;">
-                <span class="order-add-title text-info">Кв.</span>
+                <span class="order-add-title text-info">кв/офис/помещ</span>
                 <input type="text" class="order-route-data number" name="to_appart[]" title="Квартира" value="{to_appart}" required=""/>
             </div>
 
 
             <div class="form-control" style="width: 50%;">
-                <span class="order-add-title text-warning">Кому</span>
+                <span class="order-add-title text-warning">Получатель ФИО</span>
                 <input type="text" class="order-route-data" name="to_fio[]" title="Получатель" value="{to_fio}" required=""/>
             </div>
             <div class="form-control" style="width: 50%;">
                 <span class="order-add-title text-warning">
-                    <span class="glyphicon glyphicon-phone-alt" aria-hidden="true"/>
+                    Телефон получателя
                 </span>
                 <input type="text" class="order-route-data" name="to_phone[]" title="Телефон получателя" value="{to_phone}" required=""/>
             </div>
@@ -234,8 +234,7 @@
 
             <div class="form-control" style="width: 34%;">
                 <span class="order-add-title text-danger">
-                    <span class="glyphicon glyphicon-time" aria-hidden="true"/>
-                    готов
+                    Можно забрать в
                 </span>
                 <xsl:call-template name="time_selector">
                     <xsl:with-param name="select_class">order-route-data number to_time_ready</xsl:with-param>
@@ -247,8 +246,7 @@
             </div>
             <div class="form-control" style="width: 33%;">
                 <span class="order-add-title text-primary">
-                    <span class="glyphicon glyphicon-time" aria-hidden="true"/>
-                    с
+                    Доставить С
                 </span>
                 <xsl:call-template name="time_selector">
                     <xsl:with-param name="select_class">order-route-data number to_time</xsl:with-param>
@@ -260,8 +258,7 @@
             </div>
             <div class="form-control" style="width: 33%;">
                 <span class="order-add-title text-primary">
-                    <span class="glyphicon glyphicon-time" aria-hidden="true"/>
-                    по
+                    Доставить По
                 </span>
                 <xsl:call-template name="time_selector">
                     <xsl:with-param name="select_class">order-route-data number to_time_end</xsl:with-param>
@@ -275,15 +272,13 @@
 
             <div class="form-control" style="width: 20%;">
                 <span class="order-add-title text-success">
-                    <span class="glyphicon glyphicon-usd" aria-hidden="true"/>
-                    товар
+                    Цена букета
                 </span>
                 <input type="text" class="order-route-data number cost_tovar" name="cost_tovar[]" title="Стоимость товара" value="{cost_tovar}" onkeyup="re_calc(this)" required=""/>
             </div>
             <div class="form-control" style="width: 20%;">
                 <span class="order-add-title text-success">
-                    <span class="glyphicon glyphicon-usd" aria-hidden="true"/>
-                    дост.
+                    Цена доставки
                 </span>
                 <input type="text" class="order-route-data number cost_route" name="cost_route[]" title="Стоимость доставки" value="{cost_route}" onkeyup="re_calc(this)" required=""/>
             </div>
@@ -301,8 +296,7 @@
                     <xsl:attribute name="style">width:40%</xsl:attribute>
                 </xsl:if>
                 <span class="order-add-title text-success">
-                    <span class="glyphicon glyphicon-usd" aria-hidden="true"/>
-                    оплата
+                    Оплата доставки
                 </span>
                 <select class="order-route-data pay_type" name="pay_type[]" title="Тип оплаты курьеру" onchange="re_calc(this)">
                     <xsl:variable name="pay_type" select="pay_type"/>
@@ -318,8 +312,7 @@
             </div>
             <div class="form-control" style="width: 20%;">
                 <span class="order-add-title text-success">
-                    <span class="glyphicon glyphicon-usd" aria-hidden="true"/>
-                    инк.
+                    Инкассация
                 </span>
                 <input type="text" class="order-route-data number cost_all" title="Инкассация" value="{number(cost_route)+number(cost_tovar)}" disabled=""/>
             </div>
