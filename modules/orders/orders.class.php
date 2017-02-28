@@ -138,6 +138,10 @@ class ordersModel extends module_model {
 				WHERE id_order = '.$order_id;
 		return $this->get_assoc_array($sql);
 	}
+    public function getUsers() {
+        $sql = 'SELECT id, name, title FROM users u';
+        return $this->get_assoc_array($sql);
+    }
     public function getPrices() {
         $sql = 'SELECT id, km_from, km_to, km_cost FROM routes_price r';
         return $this->get_assoc_array($sql);
@@ -434,6 +438,7 @@ class ordersModel extends module_model {
 	public function orderUpdate($params) {
 		$sql = "
 		UPDATE orders SET
+		`id_user` = '".$params['id_user']."',
 		`ready` = '".$params['ready']."',
 		`date` = '".$this->dmy_to_mydate($params['date'])."',
 		`id_address` = '".$params['store_id']."',
@@ -626,6 +631,7 @@ class ordersProcess extends module_process {
 			$action = $this->actionDefault;
 		}
 		$user_id = $this->User->getUserID ();
+        $group_id = $this->User->getUserGroup();
 
 		if ($user_id > 0) {
 			$this->User->nView->viewLoginParams ( 'Доставка', '', $user_id, array (), array (), $this->User->getRight ( 'admin', 'view' ) );
@@ -645,8 +651,18 @@ class ordersProcess extends module_process {
 			if ($type_data == 'spbStreets'){
 				$items = $this->nModel->getSpbStreets();
 				echo json_encode($items);
-				exit();
 			}
+			if ($type_data == 'userStores'){
+                $user_id = $this->Vals->getVal ( 'user_id', 'POST', 'string' );
+                $stores = $this->nModel->getStores($user_id);
+                $opt = '';
+                foreach ($stores as $store){
+                    $opt .= '<option value="'.$store['id'].'">'.$store['address'].'</option>';
+                }
+                $opt .= '<option value="0" style="color:maroon;">Ручной ввод</option>';
+                echo $opt;
+            }
+            exit();
 		}
 
         if ($action == 'excel'){
@@ -675,12 +691,13 @@ class ordersProcess extends module_process {
 			$routes = $this->nModel->getRoutes($order_id);
 			$pay_types = $this->nModel->getPayTypes();
             $statuses = $this->nModel->getStatuses();
+			$users = $this->nModel->getUsers();
 			$prices = $this->nModel->getPrices();
 			$timer = $this->getTimeForSelect();
             $add_prices = $this->nModel->getAddPrices();
 			$stores = $this->nModel->getStores(isset($order['id_user'])?$order['id_user']:$user_id);
 			$client_title = $this->nModel->getClientTitle(isset($order['id_user'])?$order['id_user']:$user_id);
-			$this->nView->viewOrderEdit ( $order, $stores, $routes, $pay_types, $statuses, $timer, $prices, $add_prices, $client_title, $without_menu, $is_single );
+			$this->nView->viewOrderEdit ( $order, $users, $stores, $routes, $pay_types, $statuses, $timer, $prices, $add_prices, $client_title, $without_menu, $is_single );
 		}
 
 		if ($action == 'orderBan') {
@@ -713,11 +730,21 @@ class ordersProcess extends module_process {
 			$params['pay_type'] = $this->Vals->getVal ( 'pay_type', 'POST', 'array' );
 			$params['comment'] = $this->Vals->getVal ( 'comment', 'POST', 'array' );
 			$params['status'] = $this->Vals->getVal ( 'status', 'POST', 'array' );
+
 			if ($params['order_id'] > 0) {
+                if ($group_id != 2){
+                    $user_id = $this->Vals->getVal ( 'new_user_id', 'POST', 'integer' );
+                    if ($user_id > 0){
+                        $params['id_user'] = $user_id;
+                    }
+                }
 				$order_id = $this->nModel->orderUpdate($params);
                 $message_add_text = "Заказ обновлен";
                 $send_message = false;
 			}else{
+			    if ($group_id != 2){
+                    $user_id = $this->Vals->getVal ( 'new_user_id', 'POST', 'integer' );
+                }
                 $order_id = $this->nModel->orderInsert($user_id,$params);
                 $message_add_text = "Заказ принят, ожидайте курьера.";
                 $send_message = true;
@@ -1107,7 +1134,7 @@ class ordersView extends module_View {
 		return true;
 	}
 	
-	public function viewOrderEdit($order, $stores, $routes, $pay_types, $statuses, $timer, $prices, $add_prices, $client_title, $without_menu, $is_single) {
+	public function viewOrderEdit($order, $users, $stores, $routes, $pay_types, $statuses, $timer, $prices, $add_prices, $client_title, $without_menu, $is_single) {
 		$this->pXSL [] = RIVC_ROOT . 'layout/orders/order.edit.xsl';
         $Container = $this->newContainer('order');
         $this->addAttr('today', date('d.m.Y'), $Container);
@@ -1148,6 +1175,10 @@ class ordersView extends module_View {
         $ContainerPayTypes = $this->addToNode ( $Container, 'pay_types', '' );
         foreach ( $pay_types as $item ) {
             $this->arrToXML ( $item, $ContainerPayTypes, 'item' );
+        }
+        $ContainerUsers = $this->addToNode ( $Container, 'users', '' );
+        foreach ( $users as $item ) {
+            $this->arrToXML ( $item, $ContainerUsers, 'item' );
         }
         $ContainerStores = $this->addToNode ( $Container, 'stores', '' );
         foreach ( $stores as $item ) {

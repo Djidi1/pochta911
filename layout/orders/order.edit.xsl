@@ -25,7 +25,21 @@
                                     <input type="hidden" id="time_now" value="{@time_now}"/>
                                 </div>
                                 <div class="col-sm-7" style="text-align:right;">
-                                    <input class="form-control" type="text" name="title" onkeyup="check_user(this)" value="{client/item/title}" size="30" readonly=""/>
+                                    <xsl:if test="(/page/body/module[@name='CurentUser']/container/group_id = 2)">
+                                        <input class="form-control" type="text" name="title" onkeyup="check_user(this)" value="{client/item/title}" size="30" readonly=""/>
+                                    </xsl:if>
+                                    <xsl:if test="(/page/body/module[@name='CurentUser']/container/group_id != 2)">
+                                        <select class="form-control" name="new_user_id" onchange="updUserStores(this)">
+                                            <xsl:for-each select="users/item">
+                                                <option value="{id}">
+                                                    <xsl:if test="../../order/id_user = id">
+                                                        <xsl:attribute name="selected">selected</xsl:attribute>
+                                                    </xsl:if>
+                                                    <xsl:value-of select="title"/>
+                                                </option>
+                                            </xsl:for-each>
+                                        </select>
+                                    </xsl:if>
                                 </div>
                             </div>
                         </div>

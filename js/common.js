@@ -198,6 +198,13 @@ function autoc_spb_streets(){
     */
 }
 
+function updUserStores(obj){
+    var user_id = $(obj).val();
+    $.post("/orders/get_data-userStores/", {user_id:user_id},  function(data) {
+        $('.js-store_address').html(data).change();
+    });
+}
+
 
 
 function filter_table(){
@@ -295,7 +302,7 @@ function test_time_routes_each(route_row){
         errors += '<li>Крайнее время доставки не может быть меньше 2,5 часов от времени готовности.</li><br/>';
         no_error = false;
     }
-    // Проверка от времени заказа (только сегодня)
+    // Проверка от времени заказа ()
     if (set_date == today && (tt_end_2 - t_now) <= 2.9 ){
         errors += '<li>Крайнее время доставки не может быть меньше 3 часов от времени заказа.</li><br/>';
         no_error = false;
