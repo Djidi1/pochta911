@@ -7,7 +7,7 @@
             <title>Доставка цветов</title>
             <link href="/images/favicon.png" rel="shortcut icon" type="image/vnd.microsoft.icon"/>
             <link rel="stylesheet" href="/css/camera.css"/>
-            <link rel="stylesheet" href="/css/style.css?v2.2"/>
+            <link rel="stylesheet" href="/css/style.css?v2.3"/>
             <link rel="stylesheet" href="/css/font-awesome.min.css"/>
             <link rel="stylesheet" href="/css/print.css" media="Print"/>
             <link rel="stylesheet" href="/css/bootstrap.min.css"/>
@@ -25,7 +25,7 @@
             <script src="/js/bootstrap-typeahead.min.js"/>
             <script src="/js/camera.min.js"/>
             <script src="/js/ready.js?v2.2"/>
-            <script src="/js/common.js?v2.8"/>
+            <script src="/js/common.js?v2.9"/>
             <script src="/js/script.js?v2.2"/>
             <script src="//cdn.ckeditor.com/4.6.1/full/ckeditor.js"/>
             <script src="//cdn.datatables.net/1.10.13/js/jquery.dataTables.min.js"/>

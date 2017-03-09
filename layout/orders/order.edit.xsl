@@ -328,7 +328,13 @@
                 <span class="order-add-title text-success">
                     Инкассация
                 </span>
-                <input type="text" class="order-route-data number cost_all" title="Инкассация" value="{number(cost_route)+number(cost_tovar)}" disabled=""/>
+                <input type="text" class="order-route-data number cost_all" title="Инкассация" disabled="">
+                <xsl:if test="string(number(cost_route)+number(cost_tovar)) != 'NaN'">
+                    <xsl:attribute name="value">
+                        <xsl:value-of select="(number(cost_route)+number(cost_tovar))"/>
+                    </xsl:attribute>
+                </xsl:if>
+                </input>
             </div>
             <textarea name="comment[]" class="form-control" title="Комментарий" placeholder="Примечания к заказу"  style="width: 80%;">
                 <xsl:value-of select="comment"/>

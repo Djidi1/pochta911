@@ -4,7 +4,14 @@ class titleModel extends module_model {
 	public function __construct($modName) {
 		parent::__construct ( $modName );
 	}
-
+    public function get_assoc_array($sql){
+        $this->query ( $sql );
+        $items = array ();
+        while ( ($row = $this->fetchRowA ()) !== false ) {
+            $items[] = $row;
+        }
+        return $items;
+    }
 	public function getNewsList($limCount) {
 		$page = 1;
 		$limStart = ($page - 1) * $limCount;
@@ -20,6 +27,14 @@ class titleModel extends module_model {
 		}
 		return $collect;
 	}
+    public function getPrices() {
+        $sql = 'SELECT id, km_from, km_to, km_cost FROM routes_price r';
+        return $this->get_assoc_array($sql);
+    }
+    public function getAddPrices() {
+        $sql = 'SELECT id, type, cost_route FROM routes_add_price r';
+        return $this->get_assoc_array($sql);
+    }
 }
 class titleProcess extends module_process {
 	public function __construct($modName) {
@@ -68,7 +83,9 @@ class titleProcess extends module_process {
 		/********************************************************************************/
 		if ($action == 'view') {
             $news = $this->nModel->getNewsList(3);
-			$this->nView->view_Index ( $news );
+            $prices = $this->nModel->getPrices();
+            $add_prices = $this->nModel->getAddPrices();
+			$this->nView->view_Index ( $news, $prices, $add_prices );
 			$this->updated = true;
 		}
 		
@@ -83,13 +100,21 @@ class titleView extends module_View {
 		$this->pXSL = array ();
 	}
 	
-	public function view_Index($news) {
+	public function view_Index($news, $prices, $add_prices) {
 		$Container = $this->newContainer ( 'index' );
 		$this->pXSL [] = RIVC_ROOT . 'layout/' . $this->modName . '/index.view.xsl';
 
         $ContainerNews = $this->addToNode ( $Container, 'news', '' );
         foreach ( $news as $item ) {
             $this->arrToXML ( $item, $ContainerNews, 'item' );
+        }
+        $ContainerPrices = $this->addToNode ( $Container, 'prices', '' );
+        foreach ( $prices as $item ) {
+            $this->arrToXML ( $item, $ContainerPrices, 'item' );
+        }
+        $ContainerAddPrices = $this->addToNode ( $Container, 'add_prices', '' );
+        foreach ( $add_prices as $item ) {
+            $this->arrToXML ( $item, $ContainerAddPrices, 'item' );
         }
 	}
 

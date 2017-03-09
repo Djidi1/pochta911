@@ -230,11 +230,13 @@ function re_calc(obj){
     var cost_tovar = $(route_row).find('.cost_tovar').val();
     var cost_route = $(route_row).find('.cost_route').val();
     var pay_type = $(route_row).find('.pay_type').val();
+    var inkass = 0;
     if (pay_type == 2){
-        $(route_row).find('.cost_all').val(Number(cost_tovar)+Number(cost_route));
+        inkass = Number(cost_tovar)+Number(cost_route);
     }else{
-        $(route_row).find('.cost_all').val(Number(cost_tovar));
+        inkass = Number(cost_tovar);
     }
+    $(route_row).find('.cost_all').val(inkass);
 }
 
 

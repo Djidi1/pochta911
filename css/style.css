@@ -3,17 +3,21 @@ BODY {min-width: 320px;}
 #logo img { width: 120px;}
 .header1 {display: block}
 .phoneheader { font-size: 90%; padding-top: 10px !important; padding-right: 0 !important;}
+.phone-in-header {float: left;padding: 8px 4px;font-weight: bold;font-size: 24px; }
+.right { float: right;}
+.phone-in-header .city-code { font-size: 70%; color: #999; }
 span.phone { display: block;  text-align: right; font-weight: bold}
 span.address { display: block;  text-align: right;}
 /*.moduletable_LoginForm .form {font-size: 80%;  text-align: right;}*/
-.moduletable { position: relative; bottom: 20px; left: -70px;}
+.moduletable { position: relative; bottom: -20px; left: -40px;}
 #header{ z-index: 1000;    position: relative;}
 .phoneheader {     text-shadow: 0 0 5px white;    margin-top: -2px !important;}
 .navbar-brand img { width: 175px;  margin: -20px 0;}
-.bottom-menu li { list-style: none;  margin-left: 30px;  margin-top: -10px;  height: 40px;}
+.bottom-menu li { list-style: none;  margin-left: 10px;  margin-top: -10px;  height: 40px;}
 #foot {   bottom: 0;   width: 100%; }
 #content {min-height: 500px;}
 .footerText { float: right;   margin-top: -10px;}
+.callme_viewform {color: maroon !important;font-weight: bold;}
 
 .main { width: 90%;  margin: 0 auto;  }
 .clear {clear: both}

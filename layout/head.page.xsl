@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+	<!-- Это гостевой заголовок -->
 	<xsl:template name="head">
 		<head>
 			<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
@@ -7,7 +8,7 @@
 			<title>Доставка цветов</title>
 			<link href="/images/favicon.png" rel="shortcut icon" type="image/vnd.microsoft.icon"/>
 			<link rel="stylesheet" href="/css/camera.css"/>
-			<link rel="stylesheet" href="/css/style.css?v2"/>
+			<link rel="stylesheet" href="/css/style.css?v2.4"/>
 			<link rel="stylesheet" href="/css/font-awesome.min.css"/>
 			<link rel="stylesheet" href="/css/print.css" media="Print"/>
 			<link rel="stylesheet" href="/css/bootstrap.min.css"/>
@@ -25,11 +26,18 @@
 			<script src="/js/bootstrap-typeahead.min.js"/>
 			<script src="/js/camera.min.js"/>
 			<script src="/js/ready.js?v2"/>
-            <script src="/js/common.js?v2.8"/>
+            <script src="/js/common.js?v2.9"/>
 			<script src="/js/script.js?v2"/>
             <script src="//cdn.ckeditor.com/4.6.1/full/ckeditor.js"/>
 			<script src="//cdn.datatables.net/1.10.4/js/jquery.dataTables.min.js"/>
 			<script src="//cdn.datatables.net/plug-ins/3cfcc339e89/integration/bootstrap/3/dataTables.bootstrap.js"/>
+			<xsl:text disable-output-escaping="yes">
+                <![CDATA[
+            <script src="//maps.googleapis.com/maps/api/js?key=AIzaSyAnDrB-qO4i5uCua-4krGQsloWYJBRtgNU&libraries=places"></script>
+                ]]>
+            </xsl:text>
+			<script src="/js/gmap.js?v2.0"/>
+			<script type="text/javascript" src="/callme/js/callme.js"/>
 		</head>
 	</xsl:template>
 	<xsl:template name="headWrap">
@@ -52,6 +60,9 @@
 							<img src="./images/logo.png?v2" alt="Logo"/>
 							<span class="header1" style="display:none;">Доставка цветов</span>
 						</a>
+						<div class="phone-in-header phone">
+							<span class="city-code">(812)</span> 407-24-52
+						</div>
 					</div>
 
 					<!-- Collect the nav links, forms, and other content for toggling -->
@@ -60,6 +71,9 @@
 							<!--<li>-->
 								<!--<a href="/">Главная</a>-->
 							<!--</li>-->
+							<li>
+								<a class="callme_viewform" href="#">Зарегистрироваться</a>
+							</li>
 							<li>
 								<a href="/pages/view-49/">Условия сотрудничества</a>
 							</li>

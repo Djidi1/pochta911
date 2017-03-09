@@ -117,8 +117,15 @@ function calc_route() {
     // Исклюаем конечную точку маршрута из промежуточных
     var destination_point = way_points.pop();
 
+    if (origin_point == ''){
+        origin_point = way_points.pop();
+        origin_point = origin_point.location;
+    }else{
+        origin_point = 'Санкт-Петербург, ' + origin_point;
+    }
+
     directionsService.route({
-        origin: 'Санкт-Петербург, '+origin_point,
+        origin: origin_point,
         destination: destination_point.location,
         waypoints: way_points,
         region: 'ru',
@@ -213,7 +220,7 @@ function calc_route() {
                  if (neva_cross) {
                      cost_Neva = $('input#km_neva').val();
                      moveList += ' Нева: ' + cost_Neva + ' р<br/>';
-                     shortInfo += '<i>+ ' + cost_Neva + ' р</i><br/>'
+                     // shortInfo += '<i>+ ' + cost_Neva + ' р</i><br/>'
                 }
                 if (distanceOutSideSPb > 0) {
                     cost_km_out = getOutKADprice(MetersToKilo(distanceOutSideSPb));
