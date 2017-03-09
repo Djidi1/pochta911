@@ -196,6 +196,7 @@ class ordersModel extends module_model {
 					        ELSE ua.address
 					    END) AS `from`,
                        u.inkass_proc,
+                       o.id_car,
 					   o.ready
 				FROM orders o
 				LEFT JOIN users_address ua ON ua.id = o.id_address
@@ -217,6 +218,7 @@ class ordersModel extends module_model {
 					   r.cost_route,
 					   r.cost_tovar,
 					   r.id_status,
+					   r.comment,
 					   s.status
 				FROM orders o
 				LEFT JOIN orders_routes r ON o.id = r.id_order
@@ -437,13 +439,14 @@ class ordersModel extends module_model {
 
 	public function orderUpdate($params) {
 		$sql = "
-		UPDATE orders SET
+		UPDATE orders SET 
 		`id_user` = '".$params['id_user']."',
 		`ready` = '".$params['ready']."',
 		`date` = '".$this->dmy_to_mydate($params['date'])."',
 		`id_address` = '".$params['store_id']."',
 		`address_new` = '".$params['store_new']."',
 		`comment` = '".$params['order_comment']."',
+		`id_car` = '".$params['car_courier']."',
 		`dk` = NOW()
 		WHERE id = ".$params['order_id']."
 		";
@@ -464,8 +467,8 @@ class ordersModel extends module_model {
 	}
 
 	public function updOrderRouteCourier($user_id, $order_id, $new_courier, $new_car_courier, $courier_comment){
-		$sql = "UPDATE orders SET id_courier = $new_courier, id_car = $new_car_courier, `dk` = NOW() WHERE id = ".$order_id." ";
-		$this->query($sql);
+//		$sql = "UPDATE orders SET id_courier = $new_courier, id_car = $new_car_courier, `dk` = NOW() WHERE id = ".$order_id." ";
+//		$this->query($sql);
 
 		$sql = "INSERT INTO order_courier_history (user_id, order_route_id, new_courier, new_car, comment, dk)
 				VALUES ($user_id, $order_id, $new_courier, $new_car_courier, '$courier_comment', NOW())";
@@ -691,13 +694,14 @@ class ordersProcess extends module_process {
 			$routes = $this->nModel->getRoutes($order_id);
 			$pay_types = $this->nModel->getPayTypes();
             $statuses = $this->nModel->getStatuses();
+            $car_couriers = $this->nModel->getCarCouriers();
 			$users = $this->nModel->getUsers();
 			$prices = $this->nModel->getPrices();
 			$timer = $this->getTimeForSelect();
             $add_prices = $this->nModel->getAddPrices();
 			$stores = $this->nModel->getStores(isset($order['id_user'])?$order['id_user']:$user_id);
 			$client_title = $this->nModel->getClientTitle(isset($order['id_user'])?$order['id_user']:$user_id);
-			$this->nView->viewOrderEdit ( $order, $users, $stores, $routes, $pay_types, $statuses, $timer, $prices, $add_prices, $client_title, $without_menu, $is_single );
+			$this->nView->viewOrderEdit ( $order, $users, $stores, $routes, $pay_types, $statuses,$car_couriers, $timer, $prices, $add_prices, $client_title, $without_menu, $is_single );
 		}
 
 		if ($action == 'orderBan') {
@@ -730,6 +734,7 @@ class ordersProcess extends module_process {
 			$params['pay_type'] = $this->Vals->getVal ( 'pay_type', 'POST', 'array' );
 			$params['comment'] = $this->Vals->getVal ( 'comment', 'POST', 'array' );
 			$params['status'] = $this->Vals->getVal ( 'status', 'POST', 'array' );
+			$params['car_courier'] = $this->Vals->getVal ( 'car_courier', 'POST', 'integer' );
 
 			if ($params['order_id'] > 0) {
                 if ($group_id != 2){
@@ -738,28 +743,30 @@ class ordersProcess extends module_process {
                         $params['id_user'] = $user_id;
                     }
                 }
+                $order_info = $this->nModel->getOrderInfo($params['order_id']);
 				$order_id = $this->nModel->orderUpdate($params);
                 $message_add_text = "Заказ обновлен";
-                $send_message = false;
+                $send_message_to_client = false;
 			}else{
 			    if ($group_id != 2){
                     $user_id = $this->Vals->getVal ( 'new_user_id', 'POST', 'integer' );
                 }
                 $order_id = $this->nModel->orderInsert($user_id,$params);
+                $order_info = $this->nModel->getOrderInfo($order_id);
                 $message_add_text = "Заказ принят, ожидайте курьера.";
-                $send_message = true;
+                $send_message_to_client = true;
 			}
 
 			// Если статус больше статуса в исполнении
             if (isset($params['status']) and is_array($params['status'])) {
                 foreach ($params['status'] as $route_statuses) {
                     if ($route_statuses > 3) {
-                        $send_message = true;
+                        $send_message_to_client = true;
                     }
                 }
             }
 
-            if ($send_message) {
+            if ($send_message_to_client) {
                 $message = $this->getOrderTextInfo($order_id);
                 $message .= $message_add_text;
                 $chat_id = $this->nModel->getChatIdByOrder($order_id);
@@ -767,6 +774,12 @@ class ordersProcess extends module_process {
                     $this->telegram($message, $chat_id);
                 }
             }
+
+            //отправка сообщения курьеру
+            if ($params['car_courier'] > 0 and $order_info['id_car'] != $params['car_courier']){
+                $this->saveCourier($user_id,$order_id,$params['car_courier']);
+            }
+
 			$this->nView->viewMessage('Заказ успешно сохранен. Номер для отслеживания: '.$order_id, 'Сообщение');
             $this->updated = true;
 		}
@@ -893,7 +906,6 @@ class ordersProcess extends module_process {
             }
             list($from, $to) = $this->get_post_date();
             $statuses = $this->nModel->getStatuses();
-//			$orders = $this->nModel->getOrdersList($from, $to);
 			$orders = $this->nModel->getLogistList($from, $to, $user_id);
 			$this->nView->viewOrders ($from, $to, $orders, $statuses);
 		}
@@ -944,6 +956,25 @@ class ordersProcess extends module_process {
         return $time_arr;
     }
 
+    public function saveCourier($user_id,$order_id,$new_car_courier){
+        $order_info_message = $this->getOrderTextInfo($order_id);
+        $this->nModel->updOrderRouteCourier($user_id, $order_id, '0', $new_car_courier, 'Изменен из заказа');
+        $chat_id = $this->nModel->getChatIdByCarCourier($new_car_courier);
+        if (isset($chat_id) and $chat_id != '') {
+            $message = '<i>Вы назначены на заказ</i>'."\r\n";
+            $message .= $order_info_message."\r\n";
+            $menu = array('inline_keyboard' => array(
+                array(
+                    array(
+                        'text' => 'принять заказ', 'callback_data' => '/order_accepted_'.$order_id,
+                    ),
+                ),
+            ),
+            );
+            $this->telegram($message, $chat_id, $menu);
+        }
+    }
+
 	public function getOrderTextInfo($order_id){
         $order_info = $this->nModel->getOrderInfo($order_id);
         $order_routes_info = $this->nModel->getOrderRoutesInfo($order_id);
@@ -957,6 +988,7 @@ class ordersProcess extends module_process {
             }
 
             $order_info_message .= " <b>Адрес доставки:</b> " . $order_route_info['to_addr'] . "\r\n";
+            $order_info_message .= ($order_route_info['comment'] != '')?" <b>Комментарий:</b> " . $order_route_info['comment'] . "\r\n":"";
             $order_info_message .= " <b>Готовность:</b> " . $order_route_info['to_time_ready'] . "\r\n";
             $order_info_message .= " <b>Период получения:</b> " . $order_route_info['to_time'] . " - " . $order_route_info['to_time_end'] . "\r\n";
             $order_info_message .= " <b>Получатель:</b> " . $order_route_info['to_fio'] . " [" . $order_route_info['to_phone'] . "]\r\n";
@@ -1134,7 +1166,7 @@ class ordersView extends module_View {
 		return true;
 	}
 	
-	public function viewOrderEdit($order, $users, $stores, $routes, $pay_types, $statuses, $timer, $prices, $add_prices, $client_title, $without_menu, $is_single) {
+	public function viewOrderEdit($order, $users, $stores, $routes, $pay_types, $statuses, $car_couriers, $timer, $prices, $add_prices, $client_title, $without_menu, $is_single) {
 		$this->pXSL [] = RIVC_ROOT . 'layout/orders/order.edit.xsl';
         $Container = $this->newContainer('order');
         $this->addAttr('today', date('d.m.Y'), $Container);
@@ -1171,6 +1203,10 @@ class ordersView extends module_View {
         $ContainerStatuses = $this->addToNode ( $Container, 'statuses', '' );
         foreach ( $statuses as $item ) {
             $this->arrToXML ( $item, $ContainerStatuses, 'item' );
+        }
+        $ContainerCouriers = $this->addToNode ( $Container, 'couriers', '' );
+        foreach ( $car_couriers as $item ) {
+            $this->arrToXML ( $item, $ContainerCouriers, 'item' );
         }
         $ContainerPayTypes = $this->addToNode ( $Container, 'pay_types', '' );
         foreach ( $pay_types as $item ) {

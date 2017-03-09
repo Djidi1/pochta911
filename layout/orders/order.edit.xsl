@@ -99,16 +99,21 @@
                                         <label>Курьер:</label>
                                     </div>
                                     <div class="col-sm-4">
-                                        <div class="form-control">
-                                            <i>
-                                                <xsl:value-of select="order/fio_car"/>
-                                            </i>
-                                            <xsl:if test="/page/body/module[@name='CurentUser']/container/group_id = 1 or /page/body/module[@name='CurentUser']/container/group_id = 3 or /page/body/module[@name='CurentUser']/container/group_id = 4">
-                                                <span title="Назначить курьера" class="btn btn-info btn-xs chg-status" onclick="chg_courier({order/id})" style="float:right;">
-                                                    <i class="fa fa-car" aria-hidden="true"/>
-                                                </span>
+                                        <select class="form-control" name="car_courier" title="Курьер">
+                                            <xsl:if test="/page/body/module[@name='CurentUser']/container/group_id = 2">
+                                                <xsl:attribute name="disabled">disabled</xsl:attribute>
                                             </xsl:if>
-                                        </div>
+                                            <option value="0">Не назначен</option>
+                                            <xsl:variable name="courier_id" select="order/id_car"/>
+                                            <xsl:for-each select="couriers/item">
+                                                <option value="{id}">
+                                                    <xsl:if test="id = $courier_id">
+                                                        <xsl:attribute name="selected">selected</xsl:attribute>
+                                                    </xsl:if>
+                                                    <xsl:value-of select="fio"/> (<xsl:value-of select="car_number"/>)
+                                                </option>
+                                            </xsl:for-each>
+                                        </select>
                                     </div>
                                 </xsl:if>
                                 <!--<div class="col-sm-2">-->
