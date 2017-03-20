@@ -350,6 +350,7 @@ function FilterSend() {
 		success: function(data){
 			jQuery('#'+backID).html(data);
 			jQuery(".datepicker").datepicker(jQuery.extend({showOn: 'button', buttonImage: '/images/calendar.gif', buttonImageOnly: true},jQuery.datepicker.regional['ru']));
+            add_data_table($('.new-logist-data-table'));
 		},
 		error: function() {
 		}
@@ -461,3 +462,29 @@ function email_log_online(){
 		  }
 		});
 }
+
+
+var milisec = 0;
+var seconds_def = 30;
+var seconds = seconds_def;
+var url_set = '';
+$('#counter_input').val(seconds_def);
+function refresh_page(url) {
+    url_set = (url_set != '')?url_set:url;
+    if (milisec <= 0) {
+        milisec = 9;
+        seconds -= 1;
+    }
+    if (seconds <= -1) {
+        milisec = 0;
+        sendFilter(url_set+'/ajax-1/', 'sFilter', 'orders_table');
+        $('#counter_input').val(seconds_def);
+        seconds = seconds_def;
+    } else
+        milisec -= 1;
+
+    $('#counter_input').val(seconds + "." + milisec);
+    setTimeout("refresh_page()", 100);
+}
+
+

@@ -195,6 +195,7 @@ class ordersModel extends module_model {
 					        WHEN o.id_address = 0 THEN o.address_new
 					        ELSE ua.address
 					    END) AS `from`,
+					   ua.comment from_comment,
                        u.inkass_proc,
                        o.id_car,
 					   o.ready
@@ -979,7 +980,8 @@ class ordersProcess extends module_process {
         $order_info = $this->nModel->getOrderInfo($order_id);
         $order_routes_info = $this->nModel->getOrderRoutesInfo($order_id);
         $order_info_message = "<b>Заказ №</b> " . $order_id . "\r\n";
-        $order_info_message .= "<b>Откуда:</b> " . $order_info['from'] . "\r\n\r\n";
+        $order_info_message .= "<b>Откуда:</b> " . $order_info['from'] . "\r\n";
+        $order_info_message .= ($order_info['from_comment'] != '')?"<i>" . $order_info['from_comment'] . "</i>\r\n\r\n":'';
         $i = 0;
         foreach ($order_routes_info as $order_route_info) {
             $i++;
