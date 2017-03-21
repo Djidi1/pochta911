@@ -64,17 +64,19 @@
                                             </input>
                                         </td>
                                     </tr>
-                                    <tr>
-                                        <td>Уведомления:</td>
-                                        <td>
-                                            <input class="form-control" type="phone" name="phone_mess"
-                                                   value="{user/phone_mess}" size="30">
-                                                <xsl:if test="/page/body/module[@name='CurentUser']/container/group_id != 1">
-                                                    <xsl:attribute name="required">required</xsl:attribute>
-                                                </xsl:if>
-                                            </input>
-                                        </td>
-                                    </tr>
+                                    <xsl:if test="/page/body/module[@name='CurentUser']/container/group_id = 1">
+                                        <tr>
+                                            <td>Уведомления:</td>
+                                            <td>
+                                                <input class="form-control" type="phone" name="phone_mess"
+                                                       value="{user/phone_mess}" size="30">
+                                                    <xsl:if test="/page/body/module[@name='CurentUser']/container/group_id != 1">
+                                                        <xsl:attribute name="required">required</xsl:attribute>
+                                                    </xsl:if>
+                                                </input>
+                                            </td>
+                                        </tr>
+                                    </xsl:if>
                                     <tr>
                                         <td>Логин:</td>
                                         <td>
@@ -93,9 +95,9 @@
                                         <td>Пароль:</td>
                                         <td>
                                             <input class="form-control" type="password" name="pass" id="pass">
-                                                <xsl:if test="/page/body/module[@name='CurentUser']/container/group_id != 1">
-                                                    <xsl:attribute name="required">required</xsl:attribute>
-                                                </xsl:if>
+                                                <!--<xsl:if test="/page/body/module[@name='CurentUser']/container/group_id != 1">-->
+                                                    <!--<xsl:attribute name="required">required</xsl:attribute>-->
+                                                <!--</xsl:if>-->
                                             </input>
                                         </td>
                                     </tr>

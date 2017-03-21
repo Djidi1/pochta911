@@ -110,7 +110,7 @@ class adminModel extends module_model {
 			$this->query($sql, $Params ['group_id'], $user_id);
 
 			$Params ['user_id'] = $user_id;
-			$this->updateAddrAndCard($Params);
+			$this->updateAddrAndCard($Params, 1);
 		}
 		return $test;
 	}
@@ -142,21 +142,21 @@ class adminModel extends module_model {
 		$sql = 'UPDATE `groups_user` SET `group_id`  = \'%1$u\' WHERE `user_id` = \'%2$u\'';
 		$this->query ( $sql, $Params ['group_id'], $Params ['user_id'] );
 
-		$this->updateAddrAndCard($Params);
+		$this->updateAddrAndCard($Params, 1);
 
 		return $test;
 	}
 
-	public function updateAddrAndCard($Params){
+	public function updateAddrAndCard($Params, $type_user){
 		if (is_array($Params ['credit_card'])) {
-			$sql = 'DELETE FROM users_cards WHERE user_id = '.$Params ['user_id'].';';
+			$sql = 'DELETE FROM users_cards WHERE user_id = '.$Params ['user_id'].' and type_user = '.$type_user.';';
 			$this->query ( $sql );
             $values = '';
 			foreach ($Params ['credit_card'] as $key => $item) {
                 $values .= ($key > 0)?',':'';
-                $values .= ' (\''.$item.'\',\''.$Params ['card_comment'][$key].'\','.$Params ['user_id'].')';
+                $values .= ' (\''.$item.'\',\''.$Params ['card_comment'][$key].'\','.$Params ['user_id'].','.$type_user.')';
 			}
-            $sql = 'INSERT INTO users_cards (card_num,comment,user_id) VALUES '.$values;
+            $sql = 'INSERT INTO users_cards (card_num,comment,user_id,type_user) VALUES '.$values;
 			$this->query ( $sql );
 		}
 		if (is_array($Params ['address'])) {
@@ -233,8 +233,8 @@ class adminModel extends module_model {
         }
         return $items;
     }
-    public function getCards($user_id) {
-        $sql = 'SELECT card_num, comment, main  FROM users_cards  WHERE user_id=' . $user_id;
+    public function getCards($user_id, $type_user) {
+        $sql = "SELECT card_num, comment, main  FROM users_cards  WHERE user_id=$user_id and type_user = $type_user";
         $this->query ( $sql );
         $items = array ();
         while ( ($row = $this->fetchRowA ()) !== false ) {
@@ -421,7 +421,9 @@ class adminModel extends module_model {
 			WHERE
 			  id = ".$param['car_id']." -- id - INT(11) NOT NULL
   		";
-		return $this->query ( $sql );
+		$result = $this->query ( $sql );
+        $this->updateAddrAndCard($param, 2);
+		return $result;
 	}
 	public function carInsert($param) {
 		$sql = "
@@ -450,7 +452,9 @@ class adminModel extends module_model {
 			 ,'".$param['car_value']."' -- car_value - VARCHAR(255)
 			);
   		";
-		return $this->query ( $sql );
+        $result = $this->query ( $sql );
+        $this->updateAddrAndCard($param, 2);
+        return $result;
 	}
 	public function getLogins($page, $limCount) {
 		
@@ -856,7 +860,7 @@ class adminProcess extends module_process {
 
 			$user = ($user_id > 0)?$this->nModel->userGet ( $user_id ):array();
 			$address = ($user_id > 0)?$this->nModel->getAddress ($user_id):array();
-			$cards = ($user_id > 0)?$this->nModel->getCards ($user_id):array();
+			$cards = ($user_id > 0)?$this->nModel->getCards ($user_id, 1):array();
 			$groups = $this->nModel->getGroups ();
 
 			$this->nView->viewUserEdit ( $user, $groups, $address, $cards, $group_id, $add_data );
@@ -899,7 +903,8 @@ class adminProcess extends module_process {
 			$car_id = $this->Vals->getVal ( 'carEdit', 'GET', 'integer' );
 			$car = $this->nModel->getCar ( $car_id );
 			$types = $this->nModel->getCarTypes ();
-			$this->nView->viewCarEdit ( $car, $types);
+            $cards = ($car_id > 0)?$this->nModel->getCards ($car_id, 2):array();
+			$this->nView->viewCarEdit ( $car, $types, $cards);
 			$this->updated = true;
 		}
 		if ($action == 'carUpdate') {
@@ -913,6 +918,10 @@ class adminProcess extends module_process {
 			$param['car_year'] = $this->Vals->getVal ( 'car_year', 'POST', 'integer' );
 			$param['car_value'] = $this->Vals->getVal ( 'car_value', 'POST', 'integer' );
 			$param['car_type'] = $this->Vals->getVal ( 'car_type', 'POST', 'integer' );
+            $param['credit_card'] = $this->Vals->getVal ( 'credit_card', 'POST', 'array' );
+            $param['card_comment'] = $this->Vals->getVal ( 'card_comment', 'POST', 'array' );
+            $param['user_id'] = $param['car_id']; // Для сохранения карт оплаты
+            $param['address'] = array();
 			if ($param['car_id'] > 0) {
 				$result = $this->nModel->carUpdate($param);
 			}else{
@@ -1201,7 +1210,7 @@ class adminView extends module_view {
 		return true;
 	}
 
-	public function viewCarEdit($car, $car_types) {
+	public function viewCarEdit($car, $car_types, $cards) {
 		$this->pXSL [] = RIVC_ROOT . 'layout/users/car.edit.xsl';
 		$Container = $this->newContainer ( 'caredit' );
 		$this->arrToXML ( $car, $Container, 'car' );
@@ -1209,6 +1218,10 @@ class adminView extends module_view {
 		foreach ( $car_types as $item ) {
 			$this->arrToXML ( $item, $ContainerCarTypes, 'item' );
 		}
+        $ContainerCards = $this->addToNode ( $Container, 'cards', '' );
+        foreach ( $cards as $item ) {
+            $this->arrToXML ( $item, $ContainerCards, 'item' );
+        }
 		return true;
 	}
 

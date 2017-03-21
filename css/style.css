@@ -18,6 +18,8 @@ span.address { display: block;  text-align: right;}
 .footerText { float: right;   margin-top: -10px;}
 .callme_viewform {color: maroon !important;font-weight: bold;}
 
+#orders_table td, #orders_table th { text-align: center; }
+
 .cameraContent  {
     font-family: 'Lobster', cursive;
 }

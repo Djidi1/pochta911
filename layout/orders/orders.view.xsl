@@ -31,14 +31,15 @@
                         </xsl:for-each>
                     </div>
                     <div class="col-sm-3">
-                        <div class="input-group input-group-sm" style="float:right">
-                            <input type="text" class="form-control" id="end_date" name="date_to" value="{@date_to}" style="text-align:center" onchange="$('#form_orders').submit()"/>
+                        <div class="input-group input-group-sm" style="float:right;width: inherit;">
+                            <span class="input-group-addon" id="basic-addon1">Дата</span>
+                            <input type="text" class="form-control" id="end_date" name="date_to" value="{@date_to}" style="text-align:center; width: 90px;" onchange="$('#form_orders').submit()"/>
                             <!--<span class="input-group-btn">-->
                                 <!--<button class="btn btn-info">Обновить</button>-->
                             <!--</span>-->
-                            <span class="input-group-btn">
+                            <span class="input-group-btn" style="width: auto;">
                                 <span class="btn btn-success" onclick="popup_excel('orders/excel-1')" title="Выгрузить в Excel">
-                                    <i class="fa fa-file-excel-o" aria-hidden="true"> </i></span>
+                                    <i class="fa fa-file-excel-o" aria-hidden="true"> </i> Выгрузить в Excel</span>
                             </span>
                         </div>
                         <script>

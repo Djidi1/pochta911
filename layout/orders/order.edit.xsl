@@ -176,6 +176,7 @@
                         </xsl:if>
                         <br/>
                     </div>
+                    <a href="/" class="btn btn-warning"><span class="glyphicon glyphicon-circle-arrow-left"/> Выйти без сохранения</a>
                 </div>
                 <div class="col-sm-4 map-form">
                     <div class="map-container">

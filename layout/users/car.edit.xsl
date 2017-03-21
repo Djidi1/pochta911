@@ -104,17 +104,31 @@
                 <div class="col-md-5">
                     <div class="panel panel-info">
                         <div class="panel-heading">
-                            <strong>История заказов</strong>
+                            <strong>Оплата</strong>
                         </div>
                         <div class="panel-body">
-                            <xsl:for-each select="orders/item">
-
+                            <xsl:for-each select="cards/item">
+                                <xsl:call-template name="pay_row"/>
                             </xsl:for-each>
-                            <xsl:if test="count(orders/item) = 0">
-                                Заказов у данного курьера не обнаружено.
+                            <xsl:if test="count(cards/item) = 0">
+                                <xsl:call-template name="pay_row"/>
                             </xsl:if>
                         </div>
-                    </div>
+                </div>
+
+                    <!--<div class="panel panel-info">-->
+                        <!--<div class="panel-heading">-->
+                            <!--<strong>История заказов</strong>-->
+                        <!--</div>-->
+                        <!--<div class="panel-body">-->
+                            <!--<xsl:for-each select="orders/item">-->
+
+                            <!--</xsl:for-each>-->
+                            <!--<xsl:if test="count(orders/item) = 0">-->
+                                <!--Заказов у данного курьера не обнаружено.-->
+                            <!--</xsl:if>-->
+                        <!--</div>-->
+                    <!--</div>-->
 
                 </div>
             </div>
@@ -123,5 +137,31 @@
             </div>
         </form>
 
+    </xsl:template>
+    <xsl:template name="pay_row">
+        <div class="input-group" rel="{position()}">
+            <span class="input-group-addon">
+                <xsl:value-of select="position()"/>
+            </span>
+            <input type="text" class="form-control" name="credit_card[]" placeholder="Номер карты Сбербанка" size="20" value="{card_num}"/>
+            <br/>
+            <textarea name="card_comment[]" class="form-control">
+                <xsl:value-of select="comment"/>
+            </textarea>
+            <div class="input-group-btn" style="vertical-align: top;">
+                <button type="button" class="btn-clone btn btn-success" title="Добавить" onclick="clone_div_row($(this).parent().parent())">
+                    <xsl:if test="count(../../cards/item) = 0 or position() != count(../../cards/item)">
+                        <xsl:attribute name="disabled"> </xsl:attribute>
+                    </xsl:if>
+                    +
+                </button>
+                <button type="button" class="btn-delete btn btn-danger" title="Удалить" onclick="delete_div_row(this)">
+                    <xsl:if test="position() = 1">
+                        <xsl:attribute name="disabled"> </xsl:attribute>
+                    </xsl:if>
+                    -
+                </button>
+            </div>
+        </div>
     </xsl:template>
 </xsl:stylesheet>
