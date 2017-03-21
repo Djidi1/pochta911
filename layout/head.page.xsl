@@ -7,13 +7,14 @@
 			<base href="."/>
 			<title>Доставка цветов</title>
 			<link href="/images/favicon.png" rel="shortcut icon" type="image/vnd.microsoft.icon"/>
-			<link rel="stylesheet" href="/css/camera.css"/>
-			<link rel="stylesheet" href="/css/style.css?v2.4"/>
+			<link rel="stylesheet" href="/css/camera.css?v1.0"/>
+			<link rel="stylesheet" href="/css/style.css?v2.5"/>
 			<link rel="stylesheet" href="/css/font-awesome.min.css"/>
 			<link rel="stylesheet" href="/css/print.css" media="Print"/>
 			<link rel="stylesheet" href="/css/bootstrap.min.css"/>
 			<link rel="stylesheet" href="/css/bootstrap-datetimepicker.min.css"/>
 			<link rel="stylesheet" href="//cdn.datatables.net/plug-ins/3cfcc339e89/integration/bootstrap/3/dataTables.bootstrap.css"/>
+			<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Lobster"/>
 			<script src="/js/jquery.min.js"/>
 			<script src="/js/jquery-ui.min.js"/>
 			<script src="/js/bootstrap.min.js"/>
@@ -25,7 +26,7 @@
 			<script src="/js/bootstrap-datetimepicker.js"/>
 			<script src="/js/bootstrap-typeahead.min.js"/>
 			<script src="/js/camera.min.js"/>
-			<script src="/js/ready.js?v2"/>
+			<script src="/js/ready.js?v2.1"/>
             <script src="/js/common.js?v2.9"/>
 			<script src="/js/script.js?v2"/>
             <script src="//cdn.ckeditor.com/4.6.1/full/ckeditor.js"/>
@@ -60,9 +61,6 @@
 							<img src="./images/logo.png?v2" alt="Logo"/>
 							<span class="header1" style="display:none;">Доставка цветов</span>
 						</a>
-						<div class="phone-in-header phone">
-							<span class="city-code">(812)</span> 407-24-52
-						</div>
 					</div>
 
 					<!-- Collect the nav links, forms, and other content for toggling -->
@@ -101,6 +99,9 @@
 
 						<div class="moduletable_LoginForm navbar-right">
 							<xsl:apply-templates select="//page/body/module[@name = 'CurentUser']/container[@module = 'login']"/>
+						</div>
+						<div class="phone-in-header phone">
+							<span class="city-code">(812)</span> 407-24-52
 						</div>
 						<!--<div class="phoneheader navbar-form navbar-right">-->
 							<!--<span class="phone" style="">-->

@@ -84,7 +84,7 @@ jQuery(function ($) {
 
     if ($('.camera_wrap').length)
         $('.camera_wrap').camera({
-            height: '300px'
+            height: '200px'
         });
 
 
