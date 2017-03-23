@@ -102,8 +102,8 @@
     <xsl:template name="calcOnMain">
         <div class="col-xs-4">
             <div class="alert alert-warning">
-                <span class="glyphicon glyphicon-info-sign"></span>
-                <i> Введите адреса отправления и доставки для моментального расчета стоимости доставки:</i>
+                <span class="glyphicon glyphicon-info-sign"/>
+                <i> Введите адреса для моментального расчёта стоимости доставки:</i>
             </div>
             <hr/>
             <div class="row">
@@ -148,8 +148,9 @@
             <div class="delivery_sum"/>
             <hr/>
             <div class="alert alert-info">
-                <span class="glyphicon glyphicon-ok-sign"></span>
-                <i> Пройдите, пожалуйста регистрацию, чтобы мы могли осуществить доставку для вас.</i>
+                <span class="glyphicon glyphicon-ok-sign"/>
+                <xsl:text> </xsl:text>
+                <i><a class="callme_viewform" href="#">Зарегистрируйтесь</a>, пожалуйста, чтобы мы могли осуществлять для вас доставки.</i>
             </div>
         </div>
         <div class="col-xs-8">
