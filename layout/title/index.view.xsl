@@ -104,7 +104,6 @@
             <div class="alert alert-warning">
                 <span class="glyphicon glyphicon-info-sign"></span>
                 <i> Введите адреса отправления и доставки для моментального расчета стоимости доставки:</i>
-                <div class="delivery_sum"/>
             </div>
             <hr/>
             <div class="row">
@@ -146,11 +145,11 @@
             </div>
             <hr/>
             <span class="btn btn-info calc_route" onclick="calc_route()">Рассчитать доставку</span>
+            <div class="delivery_sum"/>
             <hr/>
             <div class="alert alert-info">
                 <span class="glyphicon glyphicon-ok-sign"></span>
                 <i> Пройдите, пожалуйста регистрацию, чтобы мы могли осуществить доставку для вас.</i>
-                <div class="delivery_sum"/>
             </div>
         </div>
         <div class="col-xs-8">
