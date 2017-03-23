@@ -490,8 +490,10 @@ class ordersModel extends module_model {
 			$sql = 'DELETE FROM orders_routes WHERE id_order = '.$order_id.';';
 			$this->query ( $sql );
             $sql_values = '';
+
 			foreach ($params ['to'] as $key => $item) {
                 $params ['status'][$key] = $params ['status'][$key] == 0 ? 1 : $params ['status'][$key];
+                $params ['status'][$key] = $params['car_courier'] == 0 ? 1 : $params ['status'][$key];
 				$sql_values .= ($key > 0)?',':'';
                 $sql_values .= ' (\''.$order_id.'\',\''.$params ['to'][$key].'\',\''.$params ['to_house'][$key].'\',\''.$params ['to_corpus'][$key].'\',
 							\''.$params ['to_appart'][$key].'\',\''.$params ['to_fio'][$key].'\',\''.$params ['to_phone'][$key].'\',
@@ -773,6 +775,8 @@ class ordersProcess extends module_process {
                 $chat_id = $this->nModel->getChatIdByOrder($order_id);
                 if (isset($chat_id) and $chat_id != '') {
                     $this->telegram($message, $chat_id);
+//                    $this->telegram($message, '243045100'); // Отправка нового заказа Админу
+                    $this->telegram($message, '196962258');
                 }
             }
 

@@ -20,15 +20,14 @@ span.address { display: block;  text-align: right;}
 
 #orders_table td, #orders_table th { text-align: center; }
 
-.cameraContent  {
-    font-family: 'Lobster', cursive;
-}
+.cameraContent  { font-family: 'Lobster', cursive;  }
+.navbar-nav>li>a.lobster  { font-family: 'Lobster', cursive; font-size: 120%; }
 .cameraContent  h1, .cameraContent  h3 {
     text-align: center;
     text-shadow: 1px 1px 0 rgba(0,0,0,.75);
 }
 .cameraContent  h1 { font-size: 4em; }
-.cameraContent  h3 { font-size: 2em; }
+.cameraContent  h3 { font-size: 3em; }
 
 .main { width: 90%;  margin: 0 auto;  }
 .clear {clear: both}
