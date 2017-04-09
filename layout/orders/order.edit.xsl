@@ -12,7 +12,7 @@
         <!--$no_edit<xsl:value-of select="$no_edit"/>-->
         <div class="row">
             <input class="today-date" type="hidden" value="{@today}"/>
-            <form class="order_edit" action="/orders/orderUpdate-{order/id}/without_menu-1/" method="post" name="main_form">
+            <form id="order_edit" class="order_edit" action="/orders/orderUpdate-{order/id}/without_menu-1/" method="post" name="main_form">
                 <div class="col-sm-8">
                     <div class="panel panel-success">
                         <div class="panel-heading">
@@ -29,7 +29,7 @@
                                         <input class="form-control" type="text" name="title" onkeyup="check_user(this)" value="{client/item/title}" size="30" readonly=""/>
                                     </xsl:if>
                                     <xsl:if test="(/page/body/module[@name='CurentUser']/container/group_id != 2)">
-                                        <select class="form-control" name="new_user_id" onchange="updUserStores(this)">
+                                        <select class="form-control select2" name="new_user_id" onchange="updUserStores(this)">
                                             <xsl:for-each select="users/item">
                                                 <option value="{id}">
                                                     <xsl:if test="../../order/id_user = id">
@@ -169,7 +169,7 @@
                                 </div>
                                 <div class="col-sm-6">
                                     <div style="text-align: center">
-                                        <input class="btn btn-success btn-submit" type="submit" value="сохранить" name="submit" onclick="return test_time_all_routes()"/>
+                                        <input class="btn btn-success btn-submit" type="button" value="сохранить" onclick="return test_time_all_routes()"/>
                                     </div>
                                 </div>
                             </div>

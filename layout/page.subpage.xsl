@@ -13,6 +13,15 @@
                 <xsl:attribute name="id">
                     <xsl:value-of select="//page/@name"/>
                 </xsl:attribute>
+                <xsl:attribute name="user_name">
+                    <xsl:value-of select="//page/body/module[@name='CurentUser']/container/user_name"/>
+                </xsl:attribute>
+                <xsl:attribute name="group_id">
+                    <xsl:value-of select="//page/body/module[@name='CurentUser']/container/group_id"/>
+                </xsl:attribute>
+                <xsl:attribute name="user_id">
+                    <xsl:value-of select="//page/body/module[@name='CurentUser']/container/user_id"/>
+                </xsl:attribute>
                 <div class="body-top">
                     <div class="main" style="width:90%;">
                         <xsl:if test="/page/@without_menu != 1">

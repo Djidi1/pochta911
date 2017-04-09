@@ -7,6 +7,7 @@
             <title>Доставка цветов</title>
             <link href="/images/favicon.png" rel="shortcut icon" type="image/vnd.microsoft.icon"/>
             <link rel="stylesheet" href="/css/camera.css"/>
+            <link rel="stylesheet" href="/css/select2.css"/>
             <link rel="stylesheet" href="/css/style.css?v2.7"/>
             <link rel="stylesheet" href="/css/font-awesome.min.css"/>
             <link rel="stylesheet" href="/css/print.css" media="Print"/>
@@ -25,7 +26,7 @@
             <script src="/js/bootstrap-typeahead.min.js"/>
             <script src="/js/camera.min.js"/>
             <script src="/js/ready.js?v2.2"/>
-            <script src="/js/common.js?v2.9"/>
+            <script src="/js/common.js?v3.0"/>
             <script src="/js/script.js?v2.3"/>
             <script src="//cdn.ckeditor.com/4.6.1/full/ckeditor.js"/>
             <script src="//cdn.datatables.net/1.10.13/js/jquery.dataTables.min.js"/>
@@ -35,7 +36,7 @@
             <script src="//maps.googleapis.com/maps/api/js?key=AIzaSyAnDrB-qO4i5uCua-4krGQsloWYJBRtgNU&libraries=places"></script>
                 ]]>
             </xsl:text>
-            <script src="/js/gmap.js?v2.0"/>
+            <script src="/js/gmap.js?v2.1"/>
             <!--<script src="https://api-maps.yandex.ru/2.1/?lang=ru_RU&amp;coordorder=longlat"/>-->
             <!--<script src="/js/ymap.js?v1"/>-->
             <script>

@@ -97,31 +97,32 @@ function calc_route() {
         var route_address = $(this).val();
         var route_to_house = $(this).parent().parent().find('.to_house').val();
         var route_to_corpus = $(this).parent().parent().find('.to_corpus').val();
-        if (route_address != '') {
+        if (route_address !== '') {
+            route_address = (route_address.indexOf(',') > -1) ? 'Ленинградская обл., Санкт-Петербург, ' + route_address : 'Ленинградская обл., ' + route_address;
             way_points.push({
-                location: ('Ленинградская обл., Санкт-Петербург, ' + route_address + ((route_to_house != '') ? (', ' + route_to_house) : '') + ((route_to_corpus != '') ? (', ' + route_to_corpus) : '')) + '',
+                location: (route_address + ((route_to_house !== '') ? (', ' + route_to_house) : '') + ((route_to_corpus !== '') ? (', ' + route_to_corpus) : '')) + '',
                 stopover: true
             });
             i++;
         }
     });
 
-    if (i == 0) {
+    if (i === 0) {
         bootbox.alert('Необходимо ввести хотя бы один адрес доставки.');
         return false;
     }
     // Начальная точка маршрута
-    var origin_point = ($("SELECT.store_address").val() != 0)?$("SELECT.store_address option:selected").text():$('INPUT.store_address_new').val();
+    var origin_point = ($("SELECT.store_address").val() !== 0)?$("SELECT.store_address option:selected").text():$('INPUT.store_address_new').val();
     // Конечная точка маршрута
     // var destination_point = route[route.length-1].location;
     // Исклюаем конечную точку маршрута из промежуточных
     var destination_point = way_points.pop();
 
-    if (origin_point == ''){
+    if (origin_point === ''){
         origin_point = way_points.pop();
         origin_point = origin_point.location;
     }else{
-        origin_point = 'Санкт-Петербург, ' + origin_point;
+        origin_point = (origin_point.indexOf(',') > -1) ? 'Ленинградская обл., Санкт-Петербург, ' + origin_point : 'Ленинградская обл., ' + origin_point;
     }
 
     directionsService.route({

@@ -118,6 +118,8 @@ jQuery(function ($) {
 
     });
 
+    $('select.select2').select2();
+
     $('.date-picker').datetimepicker({format: 'L', locale: 'ru'});
 
     var start_time = $('.time-picker.start').get();

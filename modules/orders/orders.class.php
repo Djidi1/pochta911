@@ -138,8 +138,11 @@ class ordersModel extends module_model {
 				WHERE id_order = '.$order_id;
 		return $this->get_assoc_array($sql);
 	}
-    public function getUsers() {
-        $sql = 'SELECT id, name, title FROM users u';
+    public function getUsers($uid) {
+        $sql = "SELECT id, name, title 
+                FROM users u
+                 LEFT JOIN groups_user g ON u.id = g.user_id
+                 WHERE u.isban < 1 and (g.group_id = 2 or u.id = $uid)";
         return $this->get_assoc_array($sql);
     }
     public function getPrices() {
@@ -690,6 +693,7 @@ class ordersProcess extends module_process {
         }
 		
 		if ($action == 'order') {
+            $uid = isset($order['id_user'])?$order['id_user']:$user_id;
 			$order_id = $this->Vals->getVal ( 'order', 'GET', 'integer' );
 			$is_single = $this->Vals->getVal ( 'single', 'GET', 'integer' );
 			$without_menu = $this->Vals->getVal ( 'without_menu', 'GET', 'integer' );
@@ -698,12 +702,12 @@ class ordersProcess extends module_process {
 			$pay_types = $this->nModel->getPayTypes();
             $statuses = $this->nModel->getStatuses();
             $car_couriers = $this->nModel->getCarCouriers();
-			$users = $this->nModel->getUsers();
+			$users = $this->nModel->getUsers($uid);
 			$prices = $this->nModel->getPrices();
 			$timer = $this->getTimeForSelect();
             $add_prices = $this->nModel->getAddPrices();
-			$stores = $this->nModel->getStores(isset($order['id_user'])?$order['id_user']:$user_id);
-			$client_title = $this->nModel->getClientTitle(isset($order['id_user'])?$order['id_user']:$user_id);
+			$stores = $this->nModel->getStores($uid);
+			$client_title = $this->nModel->getClientTitle($uid);
 			$this->nView->viewOrderEdit ( $order, $users, $stores, $routes, $pay_types, $statuses,$car_couriers, $timer, $prices, $add_prices, $client_title, $without_menu, $is_single );
 		}
 

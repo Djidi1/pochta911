@@ -346,13 +346,48 @@ function test_time_routes_each(route_row){
     });
 */
 
+    // Группа пользователя
+    var group_id = $('BODY').attr('group_id');
 
-    // Блокировка при ошибках во времени
-    if (!no_error){
-        $('input.btn-submit').prop('disabled', true);
-        bootbox.alert(errors+'</ul><br/>Откорректируйте, пожалуйста, временные рамки.', function(){ $('input.btn-submit').prop('disabled', false); });
+    // Если клиент, то пусть исправляет
+    if (group_id == 2) {
+        // Блокировка при ошибках во времени
+        if (!no_error) {
+            $('input.btn-submit').prop('disabled', true);
+            bootbox.alert(errors + '</ul><br/>Откорректируйте, пожалуйста, временные рамки.', function () {
+                $('input.btn-submit').prop('disabled', false);
+            });
+        } else {
+            $('input.btn-submit').prop('disabled', false);
+        }
     }else{
-        $('input.btn-submit').prop('disabled', false);
+        // Запрос при ошибках во времени
+        if (!no_error) {
+            $('input.btn-submit').prop('disabled', true);
+            var dialog = bootbox.confirm({
+                message: errors + '</ul><br/>Продолжить с указанными параметрами?',
+                buttons: {
+                    confirm: {
+                        label: 'Сохранить заказ',
+                        className: 'btn-success'
+                    },
+                    cancel: {
+                        label: 'Отмена',
+                        className: 'btn-danger'
+                    }
+                },
+                callback: function (result) {
+                    $('input.btn-submit').prop('disabled', false);
+                    dialog.modal('hide');
+                    if (result) {
+                        document.getElementById("order_edit").submit()
+                    }
+                    return result;
+                }
+            });
+        } else {
+            $('input.btn-submit').prop('disabled', false);
+        }
     }
 /*
     // Блокировка по обязательным полям
@@ -363,7 +398,12 @@ function test_time_routes_each(route_row){
         no_error = (no_error)?false:fail;
     }
 */
-    return no_error;
+
+    if (no_error) {
+        document.getElementById("order_edit").submit()
+    }else{
+        return no_error;
+    }
 }
 
 /**
