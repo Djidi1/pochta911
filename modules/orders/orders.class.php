@@ -781,6 +781,7 @@ class ordersProcess extends module_process {
                     $this->telegram($message, $chat_id);
 //                    $this->telegram($message, '243045100'); // Отправка нового заказа Админу
                     $this->telegram($message, '196962258');
+                    $this->telegram($message, '379575863');
                 }
             }
 
