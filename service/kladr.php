@@ -20,7 +20,7 @@ if ($search_type == 'street' and strlen($search_str) > 3) {
     $i = 0;
     $sql = "SELECT 780 region, k.NAME, k.SOCR
             FROM kladr_kladr_78 k
-            WHERE k.NAME = '$search_str'
+            WHERE k.NAME = '$search_str' OR k.NAME LIKE '$search_str%'
             ORDER BY NAME;";
     $result = mysqli_query($connect, $sql);
     while ($row = mysqli_fetch_assoc($result) and $i < 100) {

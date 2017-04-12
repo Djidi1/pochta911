@@ -118,12 +118,10 @@
                                                 <xsl:for-each select="groups/item">
                                                     <option value="{id}">
                                                         <xsl:if test="id = //user/group_id">
-                                                            <xsl:attribute name="selected">selected
-                                                            </xsl:attribute>
+                                                            <xsl:attribute name="selected">selected</xsl:attribute>
                                                         </xsl:if>
                                                         <xsl:if test="id = //@group_id and not(//user/group_id)">
-                                                            <xsl:attribute name="selected">selected
-                                                            </xsl:attribute>
+                                                            <xsl:attribute name="selected">selected</xsl:attribute>
                                                         </xsl:if>
                                                         <xsl:value-of select="name"/>
                                                     </option>
@@ -132,6 +130,23 @@
                                         </td>
                                     </tr>
                                     <xsl:if test="/page/body/module[@name='CurentUser']/container/group_id = 1">
+
+                                        <tr>
+                                            <td>Условия оплаты:</td>
+                                            <td>
+                                                <select class="form-control" name="pay_type">
+                                                    <option value="0">cвободный выбор</option>
+                                                    <xsl:for-each select="pay_types/item">
+                                                        <option value="{id}">
+                                                            <xsl:if test="id = //user/pay_type">
+                                                                <xsl:attribute name="selected">selected</xsl:attribute>
+                                                            </xsl:if>
+                                                            <xsl:value-of select="pay_type"/>
+                                                        </option>
+                                                    </xsl:for-each>
+                                                </select>
+                                            </td>
+                                        </tr>
                                         <tr>
                                             <td>Процент инкассации:</td>
                                             <td>

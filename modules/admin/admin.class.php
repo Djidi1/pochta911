@@ -86,7 +86,7 @@ class adminModel extends module_model {
 
 	public function userInsert($Params) {
 		$passi = md5 ( $Params ['pass'] );
-		$sql = 'INSERT INTO `users` (name,email,login,phone,phone_mess,title,isBan,inkass_proc,pass,date_reg)
+		$sql = 'INSERT INTO `users` (name,email,login,phone,phone_mess,title,isBan,inkass_proc,pay_type,pass,date_reg)
 				VALUES (
 				    \'%1$s\',
 				    \'%2$s\',
@@ -96,12 +96,13 @@ class adminModel extends module_model {
 				    \'%6$s\',
 				    \'%7$u\',
 				    \'%8$s\',
+				    \'%9$u\',
 				    \'' . $passi . '\',
 				    NOW()
 				    )';
 
 		$test = $this->query ( $sql, $Params ['username'], $Params ['email'], $Params ['login'], $Params ['phone'],
-			$Params ['phone_mess'], $Params ['title'], $Params ['isBan'], $Params ['inkass_proc'] );
+			$Params ['phone_mess'], $Params ['title'], $Params ['isBan'], $Params ['inkass_proc'], $Params ['pay_type'] );
 
 //        stop($this->sql);
 		$user_id = $this->insertID();
@@ -125,17 +126,18 @@ class adminModel extends module_model {
 				    phone_mess = \'%5$s\',
 				    title = \'%6$s\',
 				    isBan = \'%7$u\',
-				    inkass_proc = \'%8$s\'
+				    inkass_proc = \'%8$s\',
+				    pay_type = \'%9$u\'
 				    ';
 
 		if ($Params ['pass'] != '') {
 			$passi = md5 ( $Params ['pass'] );
 			$sql .= ' ,pass = \''.$passi.'\' ';
 		}
-//		$this->Log->addToLog ( array ($pass, $passi ), __LINE__, __METHOD__ );
-		$sql .= ' WHERE `id` = %9$u';
+
+		$sql .= ' WHERE `id` = %10$u';
 		$test = $this->query ( $sql, $Params ['username'], $Params ['email'], $Params ['login'], $Params ['phone'],
-            $Params ['phone_mess'], $Params ['title'], $Params ['isBan'], $Params ['inkass_proc'], $Params ['user_id'] );
+            $Params ['phone_mess'], $Params ['title'], $Params ['isBan'], $Params ['inkass_proc'],$Params ['pay_type'], $Params ['user_id'] );
 
 //        stop($this->sql);
 
@@ -233,6 +235,16 @@ class adminModel extends module_model {
         }
         return $items;
     }
+
+    public function getPayTypes() {
+        $sql = 'SELECT id, pay_type FROM orders_pay_types';
+        $this->query ( $sql );
+        $items = array ();
+        while ( ($row = $this->fetchRowA ()) !== false ) {
+            $items [] = $row;
+        }
+        return $items;
+    }
     public function getCards($user_id, $type_user) {
         $sql = "SELECT card_num, comment, main  FROM users_cards  WHERE user_id=$user_id and type_user = $type_user";
         $this->query ( $sql );
@@ -252,9 +264,9 @@ class adminModel extends module_model {
 	}
 	
 	public function userGet($user_id) {
-		
-		if (! $user_id)
-			return false;
+		if (! $user_id){
+            return false;
+        }
 		$sql = "SELECT u.id as user_id, u.*,g.id as group_id, g.name as group_name
 				FROM `users` u
 				LEFT JOIN `groups_user` gu ON u.id = gu.user_id
@@ -814,6 +826,7 @@ class adminProcess extends module_process {
 			$Params ['phone_mess'] = $this->Vals->getVal ( 'phone_mess', 'POST', 'string' );
 			$Params ['pass'] = $this->Vals->getVal ( 'pass', 'POST', 'string' );
 			$Params ['group_id'] = $this->Vals->getVal ( 'group_id', 'POST', 'integer' );
+			$Params ['pay_type'] = $this->Vals->getVal ( 'pay_type', 'POST', 'integer' );
 			$Params ['address'] = $this->Vals->getVal ( 'address', 'POST', 'array' );
 			$Params ['addr_comment'] = $this->Vals->getVal ( 'addr_comment', 'POST', 'array' );
 			$Params ['credit_card'] = $this->Vals->getVal ( 'credit_card', 'POST', 'array' );
@@ -839,7 +852,7 @@ class adminProcess extends module_process {
 				$message2 = ' Профиль клиента успешно '.$msg.'<br />' . rn . rn;
 				$usInfo = '';
 				foreach ( $Params as $key => $val ) {
-					$usInfo .= $key . ' : ' . (is_array($val)?json_encode($val):$val) . '<br />' . rn;
+					$usInfo .= $key . ' : ' . (is_array($val)?json_encode($val, JSON_UNESCAPED_UNICODE):$val) . '<br />' . rn;
 				}
 				$message1 .= $usInfo;
 				$message2 .= $usInfo;
@@ -859,11 +872,12 @@ class adminProcess extends module_process {
 			$add_data = $this->Vals->getVal ( 'add_data', 'GET', 'integer' );
 
 			$user = ($user_id > 0)?$this->nModel->userGet ( $user_id ):array();
+			$paytypes = $this->nModel->getPayTypes ();
 			$address = ($user_id > 0)?$this->nModel->getAddress ($user_id):array();
 			$cards = ($user_id > 0)?$this->nModel->getCards ($user_id, 1):array();
 			$groups = $this->nModel->getGroups ();
 
-			$this->nView->viewUserEdit ( $user, $groups, $address, $cards, $group_id, $add_data );
+			$this->nView->viewUserEdit ( $user, $paytypes, $groups, $address, $cards, $group_id, $add_data );
 
 			$this->updated = true;
 		}
@@ -1231,12 +1245,16 @@ class adminView extends module_view {
 		return true;
 	}
 	
-	public function viewUserEdit($user, $groups, $address, $cards, $group_id, $add_data) {
+	public function viewUserEdit($user, $paytypes, $groups, $address, $cards, $group_id, $add_data) {
 		$this->pXSL [] = RIVC_ROOT . 'layout/users/user.edit.xsl';
 		$Container = $this->newContainer ( 'useredit' );;
         $this->addAttr ( 'group_id', $group_id, $Container );
         $this->addAttr ( 'add_data', $add_data, $Container );
 		$this->arrToXML ( $user, $Container, 'user' );
+		$ContainerPayTypes = $this->addToNode ( $Container, 'pay_types', '' );
+		foreach ( $paytypes as $item ) {
+			$this->arrToXML ( $item, $ContainerPayTypes, 'item' );
+		}
 		$ContainerGroups = $this->addToNode ( $Container, 'groups', '' );
 		foreach ( $groups as $item ) {
 			$this->arrToXML ( $item, $ContainerGroups, 'item' );

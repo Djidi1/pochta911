@@ -174,6 +174,11 @@
                                 </div>
                             </div>
                         </xsl:if>
+                        <xsl:if test="$no_edit = 1">
+                            <div class="alert alert-warning" style="margin: 0 15px">
+                                Если вы хотетите отредактировать или отменить заказ свяжитесь, пожалуйста, с оператором по телефону: <b>407-24-52</b>
+                            </div>
+                        </xsl:if>
                         <br/>
                     </div>
                     <a href="/" class="btn btn-warning"><span class="glyphicon glyphicon-circle-arrow-left"/> Выйти без сохранения</a>
@@ -292,7 +297,7 @@
 
             <div class="form-control" style="width: 20%;">
                 <span class="order-add-title text-success">
-                    Цена букета
+                    Инкассация
                 </span>
                 <input type="text" class="order-route-data number cost_tovar" name="cost_tovar[]" title="Стоимость товара" value="{cost_tovar}" onkeyup="re_calc(this)" required=""/>
             </div>
@@ -320,9 +325,10 @@
                 </span>
                 <select class="order-route-data pay_type" name="pay_type[]" title="Тип оплаты курьеру" onchange="re_calc(this)">
                     <xsl:variable name="pay_type" select="pay_type"/>
+                    <xsl:variable name="user_pay_type" select="//@user_pay_type"/>
                     <xsl:for-each select="../../pay_types/item">
                         <option value="{id}">
-                            <xsl:if test="id = $pay_type">
+                            <xsl:if test="id = $pay_type or (not($pay_type) and $user_pay_type = id)">
                                 <xsl:attribute name="selected">selected</xsl:attribute>
                             </xsl:if>
                             <xsl:value-of select="pay_type"/>
@@ -332,7 +338,7 @@
             </div>
             <div class="form-control" style="width: 20%;">
                 <span class="order-add-title text-success">
-                    Инкассация
+                    Общая сумма
                 </span>
                 <input type="text" class="order-route-data number cost_all" title="Инкассация" disabled="">
                 <xsl:if test="string(number(cost_route)+number(cost_tovar)) != 'NaN'">
@@ -353,18 +359,35 @@
                     </span>
 
                         <select class="order-route-data" name="status[]" title="Статус заказа">
-                            <xsl:if test="/page/body/module[@name='CurentUser']/container/group_id = 2">
+                            <xsl:if test="/page/body/module[@name='CurentUser']/container/group_id = 2 and status_id != 1">
                                 <xsl:attribute name="disabled">disabled</xsl:attribute>
                             </xsl:if>
                             <xsl:variable name="status_id" select="status_id"/>
-                            <xsl:for-each select="../../statuses/item">
-                                <option value="{id}">
-                                    <xsl:if test="id = $status_id">
-                                        <xsl:attribute name="selected">selected</xsl:attribute>
-                                    </xsl:if>
-                                    <xsl:value-of select="status"/>
-                                </option>
-                            </xsl:for-each>
+                            <xsl:choose>
+                                <xsl:when test="/page/body/module[@name='CurentUser']/container/group_id = 2 and status_id = 1">
+                                    <xsl:for-each select="../../statuses/item">
+                                        <!-- Либо Новый либо отмена -->
+                                        <xsl:if test="id = 1 or id = 5">
+                                            <option value="{id}">
+                                                <xsl:if test="id = $status_id">
+                                                    <xsl:attribute name="selected">selected</xsl:attribute>
+                                                </xsl:if>
+                                                <xsl:value-of select="status"/>
+                                            </option>
+                                        </xsl:if>
+                                    </xsl:for-each>
+                                </xsl:when>
+                                <xsl:otherwise>
+                                    <xsl:for-each select="../../statuses/item">
+                                        <option value="{id}">
+                                            <xsl:if test="id = $status_id">
+                                                <xsl:attribute name="selected">selected</xsl:attribute>
+                                            </xsl:if>
+                                            <xsl:value-of select="status"/>
+                                        </option>
+                                    </xsl:for-each>
+                                </xsl:otherwise>
+                            </xsl:choose>
                         </select>
                 </div>
             </xsl:if>
