@@ -324,6 +324,9 @@
                     Оплата доставки
                 </span>
                 <select class="order-route-data pay_type" name="pay_type[]" title="Тип оплаты курьеру" onchange="re_calc(this)">
+                    <xsl:if test="//@user_pay_type > 0">
+                        <xsl:attribute name="disabled">disabled</xsl:attribute>
+                    </xsl:if>
                     <xsl:variable name="pay_type" select="pay_type"/>
                     <xsl:variable name="user_pay_type" select="//@user_pay_type"/>
                     <xsl:for-each select="../../pay_types/item">
