@@ -99,7 +99,7 @@ function calc_route() {
         // var route_to_corpus = $(this).parent().parent().find('.to_corpus').val();
         var route_to_corpus = '';
         if (route_address !== '') {
-            route_address = (route_address.indexOf(',') > -1) ? 'Ленинградская обл., Санкт-Петербург, ' + route_address : 'Ленинградская обл., ' + route_address;
+            route_address = (route_address.indexOf(',') > -1) ? 'Ленинградская обл., ' + route_address : 'Ленинградская обл., Санкт-Петербург, ' + route_address;
             way_points.push({
                 location: (route_address + ((route_to_house !== '') ? (', ' + route_to_house) : '') + ((route_to_corpus !== '') ? (', ' + route_to_corpus) : '')) + '',
                 stopover: true
@@ -121,133 +121,138 @@ function calc_route() {
 
     if (origin_point === ''){
         origin_point = way_points.pop();
-        origin_point = origin_point.location;
+        origin_point = (typeof origin_point !== 'undefined') ? origin_point.location : '';
     }else{
-        origin_point = (origin_point.indexOf(',') > -1) ? 'Ленинградская обл., Санкт-Петербург, ' + origin_point : 'Ленинградская обл., ' + origin_point;
+        origin_point = (origin_point.indexOf(',') > -1) ? 'Ленинградская обл., ' + origin_point : 'Ленинградская обл., Санкт-Петербург, ' + origin_point;
     }
-
-    directionsService.route({
-        origin: origin_point,
-        destination: destination_point.location,
-        waypoints: way_points,
-        region: 'ru',
-        provideRouteAlternatives: true,
-        optimizeWaypoints: true,
-        avoidHighways: true,
-        avoidTolls: true,
-        travelMode: google.maps.TravelMode.DRIVING
-    }, function(response, status) {
-        if (status === google.maps.DirectionsStatus.OK) {
-            var routeIndex = getShortestRoute(response);
-            directionsDisplay.setDirections(response);
-            // Set route index
-            directionsDisplay.setOptions({
-                routeIndex: routeIndex
-            });
-            var route = response.routes[routeIndex];
-            var summaryPanel = document.getElementById('viewContainer');
-            summaryPanel.innerHTML = '';
-            var shortInfo = '';
-            var delivery_sum = 0;
-            // For each route, display summary information.
-            for (var i = 0; i < route.legs.length; i++) {
-                var distanceInSPb = 0;
-                var distanceOutSideSPb = 0;
-                var neva_cross = false;
-                var neva_path = [];
-                for (var k = 0; k < route.legs[i].steps.length; k++) {
-                    var outside_path = [];
-                    var inside_path = [];
-                    for (var z = 0; z < route.legs[i].steps[k].lat_lngs.length; z++){
-                        var way_latlangs = route.legs[i].steps[k].lat_lngs[z];
-                        if (google.maps.geometry.poly.containsLocation(way_latlangs, poly_spb_kad)){
-                            inside_path.push(way_latlangs);
-                        }else{
-                            outside_path.push(way_latlangs);
+    if ( origin_point !== '' ) {
+        directionsService.route({
+            origin: origin_point,
+            destination: destination_point.location,
+            waypoints: way_points,
+            region: 'ru',
+            provideRouteAlternatives: true,
+            optimizeWaypoints: true,
+            avoidHighways: true,
+            avoidTolls: true,
+            travelMode: google.maps.TravelMode.DRIVING
+        }, function (response, status) {
+            if (status === google.maps.DirectionsStatus.OK) {
+                var routeIndex = getShortestRoute(response);
+                directionsDisplay.setDirections(response);
+                // Set route index
+                directionsDisplay.setOptions({
+                    routeIndex: routeIndex
+                });
+                var route = response.routes[routeIndex];
+                var summaryPanel = document.getElementById('viewContainer');
+                summaryPanel.innerHTML = '';
+                var shortInfo = '';
+                var delivery_sum = 0;
+                // For each route, display summary information.
+                for (var i = 0; i < route.legs.length; i++) {
+                    var distanceInSPb = 0;
+                    var distanceOutSideSPb = 0;
+                    var neva_cross = false;
+                    var neva_path = [];
+                    for (var k = 0; k < route.legs[i].steps.length; k++) {
+                        var outside_path = [];
+                        var inside_path = [];
+                        for (var z = 0; z < route.legs[i].steps[k].lat_lngs.length; z++) {
+                            var way_latlangs = route.legs[i].steps[k].lat_lngs[z];
+                            if (google.maps.geometry.poly.containsLocation(way_latlangs, poly_spb_kad)) {
+                                inside_path.push(way_latlangs);
+                            } else {
+                                outside_path.push(way_latlangs);
+                            }
+                            if (google.maps.geometry.poly.containsLocation(way_latlangs, poly_VO)) {
+                                neva_path.push('VO');
+                            }
+                            if (google.maps.geometry.poly.containsLocation(way_latlangs, poly_Petro)) {
+                                neva_path.push('Petro');
+                            }
+                            if (google.maps.geometry.poly.containsLocation(way_latlangs, poly_Left)) {
+                                neva_path.push('Left');
+                            }
+                            if (google.maps.geometry.poly.containsLocation(way_latlangs, poly_Right)) {
+                                neva_path.push('Right');
+                            }
                         }
-                        if (google.maps.geometry.poly.containsLocation(way_latlangs, poly_VO)){
-                            neva_path.push('VO');
+                        if (outside_path.length > 0) {
+                            var polyline_out = new google.maps.Polyline({
+                                map: map, path: outside_path,
+                                strokeColor: "#d60005", strokeOpacity: 0.8, strokeWeight: 3
+                            });
+                            distanceOutSideSPb += google.maps.geometry.spherical.computeLength(polyline_out.getPath());
+                            // Записываем маршрут в массив для очистки
+                            order_route.push(polyline_out);
                         }
-                        if (google.maps.geometry.poly.containsLocation(way_latlangs, poly_Petro)){
-                            neva_path.push('Petro');
-                        }
-                        if (google.maps.geometry.poly.containsLocation(way_latlangs, poly_Left)){
-                            neva_path.push('Left');
-                        }
-                        if (google.maps.geometry.poly.containsLocation(way_latlangs, poly_Right)){
-                            neva_path.push('Right');
+                        if (inside_path.length > 0) {
+                            var polyline_in = new google.maps.Polyline({
+                                map: map, path: inside_path,
+                                strokeColor: "#04d622", strokeOpacity: 0.8, strokeWeight: 2
+                            });
+                            distanceInSPb += google.maps.geometry.spherical.computeLength(polyline_in.getPath());
+                            // Записываем маршрут в массив для очистки
+                            order_route.push(polyline_in);
                         }
                     }
-                    if (outside_path.length > 0) {
-                        var polyline_out = new google.maps.Polyline({ map: map, path: outside_path,
-                            strokeColor: "#d60005",strokeOpacity: 0.8, strokeWeight: 3 });
-                        distanceOutSideSPb += google.maps.geometry.spherical.computeLength(polyline_out.getPath());
-                        // Записываем маршрут в массив для очистки
-                        order_route.push(polyline_out);
+                    // iLog(neva_path.getUnique());
+                    // iLog(neva_path.getUnique().length);
+                    // Если мы сменили за путь несколько районов, то мы пересекали Неву
+                    if (neva_path.getUnique().length > 1) {
+                        neva_cross = true;
                     }
-                    if (inside_path.length > 0) {
-                        var polyline_in = new google.maps.Polyline({ map: map, path: inside_path,
-                            strokeColor: "#04d622",strokeOpacity: 0.8, strokeWeight: 2 });
-                        distanceInSPb += google.maps.geometry.spherical.computeLength(polyline_in.getPath());
-                        // Записываем маршрут в массив для очистки
-                        order_route.push(polyline_in);
+                    var moveList = '';
+                    var cost_km = 0;
+                    var cost_km_out = 0;
+                    var cost_Neva = 0;
+                    var routeSegment = i + 1;
+
+                    if (route.legs.length > 1) {
+                        if (routeSegment > 1) {
+                            summaryPanel.innerHTML += '<hr/>';
+                            shortInfo += '<hr/>';
+                        }
+                        summaryPanel.innerHTML += '<b>' + routeSegment + ': </b>';
+                        shortInfo += '<b>' + routeSegment + ': </b>'
                     }
-                }
-                // iLog(neva_path.getUnique());
-                // iLog(neva_path.getUnique().length);
-                // Если мы сменили за путь несколько районов, то мы пересекали Неву
-                if (neva_path.getUnique().length > 1){
-                    neva_cross = true;
-                }
-                var moveList = '';
-                var cost_km = 0;
-                var cost_km_out = 0;
-                var cost_Neva = 0;
-                var routeSegment = i + 1;
 
-                if (route.legs.length > 1) {
-                    if (routeSegment > 1){
-                        summaryPanel.innerHTML += '<hr/>';
-                        shortInfo += '<hr/>';
+                    if (distanceInSPb > 0) {
+                        cost_km = getRoutePrice(MetersToKilo(distanceInSPb));
+                        moveList += ' город: ' + MetersToKilo(distanceInSPb) + ' км (' + cost_km + ' р)' + '<br/>';
+                        shortInfo += '<b>' + MetersToKilo(distanceInSPb) + ' км</b><br/>'
                     }
-                    summaryPanel.innerHTML += '<b>' + routeSegment + ': </b>';
-                    shortInfo += '<b>' + routeSegment + ': </b>'
-                }
+                    if (neva_cross) {
+                        cost_Neva = $('input#km_neva').val();
+                        moveList += ' Нева: ' + cost_Neva + ' р<br/>';
+                        // shortInfo += '<i>+ ' + cost_Neva + ' р</i><br/>'
+                    }
+                    if (distanceOutSideSPb > 0) {
+                        cost_km_out = getOutKADprice(MetersToKilo(distanceOutSideSPb));
+                        moveList += ' за городом: ' + MetersToKilo(distanceOutSideSPb) + ' км (' + cost_km_out + ' р) ' + '<br/>';
+                        shortInfo += '<i>' + MetersToKilo(distanceOutSideSPb) + ' км</i><br/>'
+                    }
 
-                if (distanceInSPb > 0) {
-                    cost_km = getRoutePrice(MetersToKilo(distanceInSPb));
-                    moveList += ' город: ' + MetersToKilo(distanceInSPb) + ' км (' + cost_km + ' р)' + '<br/>';
-                    shortInfo += '<b>' + MetersToKilo(distanceInSPb) + ' км</b><br/>'
-                }
-                 if (neva_cross) {
-                     cost_Neva = $('input#km_neva').val();
-                     moveList += ' Нева: ' + cost_Neva + ' р<br/>';
-                     // shortInfo += '<i>+ ' + cost_Neva + ' р</i><br/>'
-                }
-                if (distanceOutSideSPb > 0) {
-                    cost_km_out = getOutKADprice(MetersToKilo(distanceOutSideSPb));
-                    moveList += ' за городом: ' + MetersToKilo(distanceOutSideSPb) + ' км (' + cost_km_out + ' р) ' + '<br/>';
-                    shortInfo += '<i>' + MetersToKilo(distanceOutSideSPb) + ' км</i><br/>'
-                }
+                    // Устанавливаем стоимость по маршруту и выполняем перерасчет
+                    var cost_route = $('.cost_route').eq(i).get();
+                    $(cost_route).val(parseFloat(cost_km) + parseFloat(cost_km_out) + parseFloat(cost_Neva));
+                    re_calc(cost_route);
 
-                // Устанавливаем стоимость по маршруту и выполняем перерасчет
-                var cost_route = $('.cost_route').eq(i).get();
-                $(cost_route).val(parseFloat(cost_km)+parseFloat(cost_km_out)+parseFloat(cost_Neva));
-                re_calc(cost_route);
+                    // summaryPanel.innerHTML += 'От: ' + route.legs[i].start_address + ',<br>';
+                    // summaryPanel.innerHTML += 'До: ' + route.legs[i].end_address + '<br>';
+                    summaryPanel.innerHTML += moveList + '<br>';
 
-                // summaryPanel.innerHTML += 'От: ' + route.legs[i].start_address + ',<br>';
-                // summaryPanel.innerHTML += 'До: ' + route.legs[i].end_address + '<br>';
-                summaryPanel.innerHTML += moveList + '<br>';
+                    delivery_sum += parseFloat(cost_km) + parseFloat(cost_km_out) + parseFloat(cost_Neva);
+                }
+                $('#ShortInfo').html(shortInfo);
 
-                delivery_sum += parseFloat(cost_km)+parseFloat(cost_km_out)+parseFloat(cost_Neva);
+                $('.delivery_sum').html('<b>Итоговая сумма доставки заказа: ' + delivery_sum + '.00 руб</b>');
+            } else {
+                bootbox.alert('Ошибка построения маршрута: ' + status);
             }
-            $('#ShortInfo').html(shortInfo);
-
-            $('.delivery_sum').html('<b>Итоговая сумма доставки заказа: ' + delivery_sum + '.00 руб</b>');
-        } else {
-            bootbox.alert('Ошибка построения маршрута: ' + status);
-        }
-    });
+        });
+    }
 }
 
 function MetersToKilo(number){
