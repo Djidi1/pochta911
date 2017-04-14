@@ -96,7 +96,8 @@ function calc_route() {
         // Адреса доставки
         var route_address = $(this).val();
         var route_to_house = $(this).parent().parent().find('.to_house').val();
-        var route_to_corpus = $(this).parent().parent().find('.to_corpus').val();
+        // var route_to_corpus = $(this).parent().parent().find('.to_corpus').val();
+        var route_to_corpus = '';
         if (route_address !== '') {
             route_address = (route_address.indexOf(',') > -1) ? 'Ленинградская обл., Санкт-Петербург, ' + route_address : 'Ленинградская обл., ' + route_address;
             way_points.push({

@@ -7,46 +7,91 @@ $connect = mysqli_connect(DB_HOST, DB_USER, DB_PASS);
 mysqli_select_db($connect, DB_DATABASE);
 mysqli_query ($connect,"SET NAMES UTF8");
 
-
 $search_type = $_POST['type'];
-$search_city = $_POST['city'];
-$search_str = $_POST['street'];
 
 $items = array();
-//$search_str = iconv('utf-8','windows-1251',$search_str);
-if ($search_type == 'street' and strlen($search_str) > 3) {
-
+if ($search_type == 'street') {
+    $search_city = $_POST['city'];
+    $search_str = $_POST['street'];
     $items = array();
     $i = 0;
-    $sql = "SELECT 780 region, k.NAME, k.SOCR
-            FROM kladr_kladr_78 k
-            WHERE k.NAME = '$search_str' OR k.NAME LIKE '$search_str%'
-            ORDER BY NAME;";
+    // 0. Ищем города
+    $sql = "SELECT 781 region, ct.SHORTNAME, ct.OFFNAME city 
+            FROM  addrob47 ct
+            WHERE (ct.OFFNAME = '$search_str' OR ct.OFFNAME LIKE '$search_str%') 
+                AND  ct.LIVESTATUS = 1 AND ct.AOLEVEL IN (4,6)
+            ORDER BY ct.OFFNAME;";
     $result = mysqli_query($connect, $sql);
+    $res = array();
     while ($row = mysqli_fetch_assoc($result) and $i < 100) {
-        $res = ''.$row['SOCR'].'. '.$row['NAME'];
+        $res['id'] = '';
+        $res['name'] = ''.$row['SHORTNAME'].'. '.$row['city'];
         $items[] = $res;
         $i++;
     }
-    $sql = "SELECT 780 region, ks.NAME, ks.SOCR, k.NAME c_name, k.SOCR c_sokr FROM kladr_street_78 ks 
-            LEFT JOIN kladr_kladr_78 k ON LEFT(ks.CODE,11) = LEFT(k.CODE, 11) AND RIGHT(k.CODE,2)='00'
-            WHERE k.NAME = 'Санкт-Петербург' AND ks.NAME LIKE '%$search_str%'
-            UNION ALL 
-            SELECT 472 region, ks.NAME, ks.SOCR, k.NAME c_name, k.SOCR c_sokr FROM kladr_street_78 ks 
-            LEFT JOIN kladr_kladr_78 k ON LEFT(ks.CODE,11) = LEFT(k.CODE, 11) AND RIGHT(k.CODE,2)='00'
-            WHERE LEFT(k.CODE, 2) = '78' AND k.NAME <> 'Санкт-Петербург' AND ks.NAME LIKE '%$search_str%'
-            UNION ALL 
-            SELECT 471 region, ks.NAME, ks.SOCR, k.NAME c_name, k.SOCR c_sokr FROM kladr_street_78 ks 
-            LEFT JOIN kladr_kladr_78 k ON LEFT(ks.CODE,11) = LEFT(k.CODE, 11) AND RIGHT(k.CODE,2)='00'
-            WHERE LEFT(k.CODE, 2) = '47' AND k.NAME <> 'Санкт-Петербург' AND ks.NAME LIKE '%$search_str%'
-			ORDER BY region DESC, c_name, NAME;";
+    // 1. Ищем улицу в Санкт-Петербурге
+    // 2. Ищем улицу в регионе Петербурга
+    // 3. Ищем улицу в Ленинградской области
+    // -- 7 - улицы // 4,6 - города и нас.пункты
+    $sql = "
+            SELECT 780 region, st.SHORTNAME, st.OFFNAME street, ct.SHORTNAME shtn, ct.OFFNAME city, st.AOGUID 
+            FROM addrob78 st
+              LEFT JOIN addrob78 ct ON ct.AOGUID = st.PARENTGUID AND ct.LIVESTATUS = 1 AND ct.AOLEVEL IN (4,6)
+            WHERE st.LIVESTATUS = 1 AND st.OFFNAME LIKE '%$search_str%' AND st.AOLEVEL IN (7) 
+                AND ct.OFFNAME IS null
+          UNION ALL 
+            SELECT 472 region, st.SHORTNAME, st.OFFNAME street, ct.SHORTNAME shtn, ct.OFFNAME city, st.AOGUID 
+            FROM addrob78 st
+              LEFT JOIN addrob78 ct ON ct.AOGUID = st.PARENTGUID AND ct.LIVESTATUS = 1 AND ct.AOLEVEL IN (4,6)
+            WHERE st.LIVESTATUS = 1 AND st.OFFNAME LIKE '%$search_str%' AND st.AOLEVEL IN (7)
+                AND ct.OFFNAME IS NOT NULL
+          UNION ALL 
+            SELECT 471 region, st.SHORTNAME, st.OFFNAME street, ct.SHORTNAME shtn, ct.OFFNAME city, st.AOGUID 
+            FROM addrob47 st
+              LEFT JOIN addrob47 ct ON ct.AOGUID = st.PARENTGUID AND ct.LIVESTATUS = 1 AND ct.AOLEVEL IN (4,6)
+            WHERE st.LIVESTATUS = 1 AND st.OFFNAME LIKE '%$search_str%' AND st.AOLEVEL IN (7) 
+";
     $result = mysqli_query($connect, $sql);
+    $res = array();
     while ($row = mysqli_fetch_assoc($result) and $i < 100) {
-        $res = ''.$row['c_sokr'].'. '.$row['c_name'].', '.$row['SOCR'].'. '.$row['NAME'];
+        $res['id'] = $row['AOGUID'];
+        $res['name'] = ($row['city'] != ''?''.$row['shtn'].'. '.$row['city'].', ':'').$row['SHORTNAME'].'. '.$row['street'];
         $items[] = $res;
         $i++;
     }
 //    echo print_r($items);
+    echo json_encode($items);
+    exit();
+}
+if ($search_type == 'house') {
+    $house = $_POST['house'];
+    $AOGUID = $_POST['AOGUID'];
+    $items = array();
+    $i = 0;
+    // 1. Ищем дома на улице в городе
+    $sql = "SELECT DISTINCT HOUSENUM, BUILDNUM
+              FROM house78 h 
+              WHERE h.AOGUID = '$AOGUID' AND HOUSENUM LIKE '$house%' AND h.ENDDATE > NOW()
+              ORDER BY HOUSENUM, BUILDNUM";
+    $result = mysqli_query($connect, $sql);
+    $res = array();
+    while ($row = mysqli_fetch_assoc($result) and $i < 100) {
+        $res['name'] = ''.$row['HOUSENUM'].($row['BUILDNUM'] != ''?'к'.$row['BUILDNUM']:'');
+        $items[] = $res;
+        $i++;
+    }
+    // 2. Ищем дома на улице в загородом
+    $sql = "SELECT DISTINCT HOUSENUM, BUILDNUM
+              FROM house47 h 
+              WHERE h.AOGUID = '$AOGUID' AND HOUSENUM LIKE '$house%' AND h.ENDDATE > NOW()
+              ORDER BY HOUSENUM, BUILDNUM";
+    $result = mysqli_query($connect, $sql);
+    $res = array();
+    while ($row = mysqli_fetch_assoc($result) and $i < 100) {
+        $res['name'] = ''.$row['HOUSENUM'].($row['BUILDNUM'] != ''?'к'.$row['BUILDNUM']:'');
+        $items[] = $res;
+        $i++;
+    }
     echo json_encode($items);
     exit();
 }

@@ -108,18 +108,14 @@
             <hr/>
             <div class="row">
                 <div class="col-xs-12">
-                    <div class="input-group routes-block" rel="{position()}">
+                    <div class="input-group routes-block" rel="{position()}" style="width: 100%;">
                         <div class="form-control" style="width: 70%;">
                             <span class="order-add-title text-info">Адрес отправления</span>
                             <input type="search" class="order-route-data spb-streets js-street_upper" name="to[]" title="Улица, проспект и т.д." onchange="" autocomplete="off" required=""/>
                         </div>
-                        <div class="form-control" style="width: 15%;">
-                            <span class="order-add-title text-info">дом</span>
-                            <input type="text" class="order-route-data to_house number" name="to_house[]" title="Дом" onchange="calc_route()" required=""/>
-                        </div>
-                        <div class="form-control" style="width: 15%;">
-                            <span class="order-add-title text-info">корп.</span>
-                            <input type="text" class="order-route-data to_corpus number" name="to_corpus[]" title="Корпус" onchange="calc_route()" required=""/>
+                        <div class="form-control" style="width: 30%;">
+                            <span class="order-add-title text-info">дом/корп.</span>
+                            <input type="text" class="order-route-data to_house number" name="to_house[]" title="Дом/Корпус" onchange="calc_route()" autocomplete="off" required=""/>
                         </div>
                     </div>
                 </div>
@@ -127,18 +123,14 @@
             <br/>
             <div class="row">
                 <div class="col-xs-12">
-                    <div class="input-group routes-block" rel="{position()}">
+                    <div class="input-group routes-block" rel="{position()}" style="width: 100%;">
                         <div class="form-control" style="width: 70%;">
                             <span class="order-add-title text-info">Адрес доставки</span>
                             <input type="search" class="order-route-data spb-streets js-street_upper" name="to[]" title="Улица, проспект и т.д." onchange="" autocomplete="off" required=""/>
                         </div>
-                        <div class="form-control" style="width: 15%;">
-                            <span class="order-add-title text-info">дом</span>
-                            <input type="text" class="order-route-data to_house number" name="to_house[]" title="Дом" onchange="calc_route()" required=""/>
-                        </div>
-                        <div class="form-control" style="width: 15%;">
-                            <span class="order-add-title text-info">корп.</span>
-                            <input type="text" class="order-route-data to_corpus number" name="to_corpus[]" title="Корпус" onchange="calc_route()" required=""/>
+                        <div class="form-control" style="width: 30%;">
+                            <span class="order-add-title text-info">дом/корп.</span>
+                            <input type="text" class="order-route-data to_house number" name="to_house[]" title="Дом/Корпус" onchange="calc_route()" autocomplete="off" required=""/>
                         </div>
                     </div>
                 </div>

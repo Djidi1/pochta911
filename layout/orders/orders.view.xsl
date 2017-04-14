@@ -125,7 +125,7 @@
                             </i>
                         </td>
                         <td><xsl:value-of select="../../title"/></td>
-                        <td><nobr><b><xsl:value-of select="to"/>, <xsl:value-of select="to_house"/>, <xsl:value-of select="to_corpus"/>, <xsl:value-of select="to_appart"/></b></nobr></td>
+                        <td><nobr><b><xsl:value-of select="to"/>, <xsl:value-of select="to_house"/>, <xsl:value-of select="to_appart"/></b></nobr></td>
                         <td><nobr>
                             <b>
                                 <xsl:value-of select="to_phone"/>

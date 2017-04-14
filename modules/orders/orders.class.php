@@ -220,7 +220,7 @@ class ordersModel extends module_model {
                        r.to_time,
                        r.to_time_end,
                        r.to_time_ready,
-                       CONCAT(r.`to`,\', д.\',r.`to_house`,\', корп.\',r.`to_corpus`,\', кв.\',r.`to_appart`) to_addr,
+                       CONCAT(r.`to`,\', д.\',r.`to_house`,/*\', корп.\',r.`to_corpus`,*/\', кв.\',r.`to_appart`) to_addr,
                        r.to_fio,
                        r.to_phone,
                        r.pay_type,
@@ -325,7 +325,7 @@ class ordersModel extends module_model {
 					        ELSE a.address
 					    END) AS `from`,
                        u.title,
-                       concat(r.`to`, \', \', r.to_house, \'-\', r.to_corpus, \'-\', r.to_appart) `to`,
+                       concat(r.`to`, \', \', r.to_house, \'-\',/* r.to_corpus, \'-\',*/ r.to_appart) `to`,
                        r.to_phone,
                        r.to_fio,
                        s.status,

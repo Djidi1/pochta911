@@ -164,25 +164,54 @@ function send_new_status(){
 }
 
 function autoc_spb_streets(){
-    // $(".spb-streets").typeahead({ ajax: '', hint: true });
-    $(".spb-streets").typeahead({ source: function(query, process) {
-        // var textVal=$("#field1").val();
-        $.ajax({
-            url: '/service/kladr.php',
-            type: 'POST',
-            data: 'type=street&street=' + query + '&city=',
-            dataType: 'JSON',
-            async: true,
-            timeout: 5000,
-            success: function(data) {
-                process(data);
-                // console.log(textVal);
-            }
-        });
-    },
-        minLength: 4,
+    // Применяем для подбора улиц
+    $(".spb-streets").each(function() {
+        var $this = $(this);
+        $this.typeahead({
+            source: function (query, process) {
+                // var textVal=$("#field1").val();
+                $.ajax({
+                    url: '/service/kladr.php',
+                    type: 'POST',
+                    data: 'type=street&street=' + query + '&city=',
+                    dataType: 'JSON',
+                    async: true,
+                    timeout: 5000,
+                    success: function (data) {
+                        process(data);
+                    }
+                });
+            },
+            updater: function (item) {
+                $($this).parent().parent().find('.to_house').attr('AOGUID', item.id);
+                return item;
+            },
+            minLength: 4,
 //		scrollHeight: 200,
-		items: 'all'
+            items: 'all'
+        });
+    });
+    // Применяем для подбора домов
+    $(".to_house").each(function() {
+        var $this = $(this);
+        $this.typeahead({
+            source: function (query, process) {
+                var AOGUID=$($this).attr('AOGUID');
+                $.ajax({
+                    url: '/service/kladr.php',
+                    type: 'POST',
+                    data: 'type=house&house=' + query + '&AOGUID=' + AOGUID,
+                    dataType: 'JSON',
+                    async: true,
+                    timeout: 5000,
+                    success: function (data) {
+                        process(data);
+                    }
+                });
+            },
+            minLength: 0,
+            items: 'all'
+        });
     });
     /*
     var saved_data = localStorage.getItem('spb_street_data');

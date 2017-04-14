@@ -144,7 +144,7 @@
                             <hr/>
                             <label>Адреса доставки:</label>
                             <xsl:if test="@is_single != 1 and $no_edit != 1">
-                                <button type="button" class="btn-clone btn btn-xs btn-success" title="Добавить адрес" onclick="clone_div_row($('.routes-block').last())" style="float:right;">
+                                <button type="button" class="btn-clone btn btn-xs btn-success" title="Добавить адрес" onclick="clone_div_row($('.routes-block').last())" style="float:right; display:none">
                                     <xsl:if test="position() != count(../../routes/item) and count(../../routes/item) != 0">
                                         <xsl:attribute name="disabled"/>
                                     </xsl:if>
@@ -227,19 +227,19 @@
             <span class="input-group-addon">
                 <xsl:value-of select="position()"/>
             </span>
-            <div class="form-control" style="width: 55%;">
+            <div class="form-control" style="width: 60%;">
                 <span class="order-add-title text-info">Адрес доставки</span>
                 <input type="search" class="order-route-data spb-streets js-street_upper" name="to[]" title="Улица, проспект и т.д." value="{to}" onchange="" autocomplete="off" required=""/>
             </div>
-            <div class="form-control" style="width: 15%;">
-                <span class="order-add-title text-info">дом</span>
-                <input type="text" class="order-route-data to_house number" name="to_house[]" title="Дом" value="{to_house}" onchange="calc_route()" required=""/>
+            <div class="form-control" style="width: 20%;">
+                <span class="order-add-title text-info">дом/корп/строение</span>
+                <input type="text" class="order-route-data to_house number" name="to_house[]" title="Дом" value="{to_house}" onchange="calc_route()" autocomplete="off" required=""/>
             </div>
-            <div class="form-control" style="width: 15%;">
+            <div class="form-control" style="width: 15%; display:none">
                 <span class="order-add-title text-info">корп/строение</span>
                 <input type="text" class="order-route-data to_corpus number" name="to_corpus[]" title="Корпус" value="{to_corpus}" onchange="calc_route()" required=""/>
             </div>
-            <div class="form-control" style="width: 15%;">
+            <div class="form-control" style="width: 20%;">
                 <span class="order-add-title text-info">кв/офис/помещ</span>
                 <input type="text" class="order-route-data number" name="to_appart[]" title="Квартира" value="{to_appart}" required=""/>
             </div>
@@ -396,7 +396,7 @@
             </xsl:if>
 
             <xsl:if test="../../@is_single != 1 and $no_edit != 1">
-                <div class="add_buttons" style="vertical-align: top;">
+                <div class="add_buttons" style="vertical-align: top; display:none">
                     <button type="button" class="btn-delete btn btn-sm btn-danger" title="Удалить" onclick="delete_div_row(this)">
                         <xsl:if test="position() = 1">
                             <xsl:attribute name="disabled"/>
