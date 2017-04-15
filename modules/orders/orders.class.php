@@ -501,7 +501,8 @@ class ordersModel extends module_model {
 
 			foreach ($params ['to'] as $key => $item) {
                 $params ['status'][$key] = $params ['status'][$key] == 0 ? 1 : $params ['status'][$key];
-                $params ['status'][$key] = $params['car_courier'] == 0 ? 1 : $params ['status'][$key];
+                // Если сбросили курьера, но не отмена
+                $params ['status'][$key] = ($params['car_courier'] == 0 and $params ['status'][$key] != 5) ? 1 : $params ['status'][$key];
 				$sql_values .= ($key > 0)?',':'';
                 $sql_values .= ' (\''.$order_id.'\',\''.$params ['to'][$key].'\',\''.$params ['to_house'][$key].'\',\''.$params ['to_corpus'][$key].'\',
 							\''.$params ['to_appart'][$key].'\',\''.$params ['to_fio'][$key].'\',\''.$params ['to_phone'][$key].'\',

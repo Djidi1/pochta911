@@ -4,13 +4,13 @@
     font-family: 'Alegreya';
     font-style: normal;
     font-weight: 400;
-    src: local('Alegreya'), local('Alegreya-Regular'), url(http://themes.googleusercontent.com/static/fonts/alegreya/v4/MYFQxfgoxFvFirdbdLj3M_esZW2xOQ-xsNqO47m55DA.woff) format('woff');
+    src: local('Alegreya'), local('Alegreya-Regular'), url(//themes.googleusercontent.com/static/fonts/alegreya/v4/MYFQxfgoxFvFirdbdLj3M_esZW2xOQ-xsNqO47m55DA.woff) format('woff');
 }
 @font-face {
     font-family: 'Anton';
     font-style: normal;
     font-weight: 400;
-    src: local('Anton'), url(http://themes.googleusercontent.com/static/fonts/anton/v3/tilmJBBU81h1G7ZsdY3Hmw.woff) format('woff');
+    src: local('Anton'), url(//themes.googleusercontent.com/static/fonts/anton/v3/tilmJBBU81h1G7ZsdY3Hmw.woff) format('woff');
 }
 
 .form-control .select2-choice {

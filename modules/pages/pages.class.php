@@ -64,16 +64,7 @@ class pageItem extends module_item {
 	}
 }
 
-class pageColl extends module_collection {
-	public function __construct () {
-		parent::__construct();
-	}
 
-	public function addItem($params) {
-		$item = new pageItem($params);
-		$this->add($item);
-	}
-}
 
 class pageModel extends module_model {
 	public function __construct ($modName) {
@@ -128,23 +119,23 @@ class pageModel extends module_model {
 	}
 
 	public function get($id) {
-		$sql = 'SELECT * FROM pages WHERE id = %1$u AND (module=%2$u OR `parent_module` = 0)';
-		$this->query($sql, $id,$this->mod_id);
+		$sql = 'SELECT * FROM pages WHERE id = '.$id.' AND (module='.$this->mod_id.' OR `parent_module` = 0)';
+		$this->query($sql);
 		$row = $this->fetchOneRowA();
 		$page = new pageItem($row);
 		return $page;
 	}
 
 	public function del($id) {
-		$sql = 'DELETE FROM pages WHERE id = %1$u';
-		$query = $this->query($sql, $id);
+		$sql = "DELETE FROM pages WHERE id = $id";
+		$query = $this->query($sql);
 		return $query;
 	}
 	public function copy($id) {
 		$sql = 'insert into pages (name,module,parent_module,title,content,access,date,date_change,description,keywords,page_title,user_id)
 				select CONCAT(name,\'_\',id),module,parent_module,CONCAT(title,\' copy\'),content,access,date,date_change,description,keywords,page_title,user_id
-				FROM pages where id = %1$u';
-		$query = $this->query($sql, $id);
+				FROM pages where id = '.$id;
+		$query = $this->query($sql);
 		return $query;
 	}
 /*
@@ -325,8 +316,9 @@ class pageProcess extends module_process {
 
 		if ($action == 'del') {
 			/* удалить */
-			$page_id = $this->vals->getVal('del', 'GET');
-			$res = $this->nModel->del($page_id);
+//			$page_id = $this->vals->getVal('del', 'GET');
+//			$res = $this->nModel->del($page_id);
+			$res = false;
 			if ($res !== false) $this->nView->viewMessage('Страница удалена', 'Сообщение');
 			if ($res === false) $this->nView->viewError('Не возможно удалить страницу');
 			$action = 'line';
