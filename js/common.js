@@ -289,6 +289,18 @@ function test_time_all_routes(){
             prev_time = this_time;
         }
     });
+
+    var invalid = false;
+    $('div.routes-block').find("select:required, input:required",this).each(function() {
+        if($(this).val().trim() == "") {
+            invalid = true;
+            $(this).focus();
+        }
+    });
+    if (invalid){
+        bootbox.alert('Заполните, пожалуйста, все обязательные поля формы заказа.');
+        return false;
+    }
     if (need_sync){
         bootbox.alert('Время готовности всех заказов должно быть единым.<br/>Мы установили равным времени готовности первого заказа по маршруту');
         $('div.routes-block').find('.to_time_ready').val(first_time);

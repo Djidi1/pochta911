@@ -237,7 +237,7 @@
             </div>
             <div class="form-control" style="width: 15%; display:none">
                 <span class="order-add-title text-info">корп/строение</span>
-                <input type="text" class="order-route-data to_corpus number" name="to_corpus[]" title="Корпус" value="{to_corpus}" onchange="calc_route()" required=""/>
+                <input type="text" class="order-route-data to_corpus number" name="to_corpus[]" title="Корпус" value="{to_corpus}" onchange="calc_route()"/>
             </div>
             <div class="form-control" style="width: 20%;">
                 <span class="order-add-title text-info">кв/офис/помещ</span>
