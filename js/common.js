@@ -150,6 +150,21 @@ function chg_status(order_id){
     });
 }
 
+function cancel_order(order_id){
+    bootbox.confirm({
+        title: "Отмена заказа № "+order_id,
+        message: "Вы уверены, что хотите отменить заказ № "+order_id+"?",
+        callback: function(result){ if(result){
+            $.post("/orders/chg_status-1/",
+                {order_id:order_id,order_route_id:'',new_status:5,stat_comment:'отмена заказа',order_info_message:' '},
+                function(data) {
+                bootbox.alert(data,location.reload());
+            });
+        } }
+    });
+
+}
+
 function send_new_status(){
     var order_route_id = $('.bootbox-body').find('input[name=order_route_id]').val();
     var new_status = $('.bootbox-body').find('select[name=new_status]').val();

@@ -63,7 +63,6 @@
     <xsl:template name="orders_table">
         <table class="table table-striped table-hover table-bordered new-logist-data-table">
             <thead>
-                <!--<th>#</th>-->
                 <th>Заказ</th>
                 <th>Готов</th>
                 <th>Время доставки</th>
@@ -76,33 +75,10 @@
                 <th>Курьер и телефон</th>
                 <th>Стоимость доставки</th>
                 <th>Инкассация</th>
-                <xsl:if test="/page/body/module[@name='CurentUser']/container/group_id = 1">
-                    <!---->
-                    <!--<th>% инкассации</th>-->
-                    <!--<th>Заработок курьера</th>-->
-                    <!--<th>Заработок компании</th>-->
-                </xsl:if>
                 <th>Прим. заказ</th>
-                <!--<th>Прим. адрес</th>-->
-                <!--<th/>-->
+                <th/>
             </thead>
-            <!--<tfoot>-->
-            <!--<tr>-->
-            <!--&lt;!&ndash;<th/>&ndash;&gt;-->
-            <!--<th/>-->
-            <!--<th/>-->
-            <!--<th/>-->
-            <!--<th/>-->
-            <!--<th/>-->
-            <!--<th/>-->
-            <!--<th/>-->
-            <!--<th/>-->
-            <!--<th/>-->
-            <!--<th/>-->
-            <!--<th/>-->
-            <!--<th/>-->
-            <!--</tr>-->
-            <!--</tfoot>-->
+
             <tbody>
                 <xsl:for-each select="orders/item/route/array">
                     <tr onclick="open_bootbox_dialog('/orders/order-{../../id}/');">
@@ -110,7 +86,6 @@
                             status_<xsl:value-of select="status_id"/> order_route_<xsl:value-of select="id_route"/> order_<xsl:value-of select="../../id"/>
                             <xsl:if test="../../car_accept != ''"> info</xsl:if>
                         </xsl:attribute>
-                        <!--<td class="text text-muted"><xsl:value-of select="position()"/></td>-->
                         <td>
                             <xsl:value-of select="../../id"/>
                         </td>
@@ -145,10 +120,7 @@
                         <td>
                             <xsl:value-of select="../../fio_car"/> (<xsl:value-of select="../../car_number"/>)
                         </td>
-
-
                         <td><xsl:value-of select="cost_route"/></td>
-
                         <td>
                             <xsl:if test="pay_type = 2">
                                 <xsl:attribute name="title">
@@ -169,40 +141,18 @@
                                 <xsl:value-of select="cost_route"/>
                             </xsl:if>
                         </td>
-
-
-
-                        <xsl:if test="/page/body/module[@name='CurentUser']/container/group_id = 1">
-                            <!--<td><xsl:value-of select="number(cost_route)+number(cost_tovar)"/></td>-->
-                            <!--<td>-->
-                            <!--<xsl:value-of select="((number(cost_route)+number(cost_tovar)) * number(../../inkass_proc)) div 100"/>-->
-                            <!--(<xsl:value-of select="../../inkass_proc"/>%)-->
-                            <!--</td>-->
-                            <!--<td><xsl:value-of select="number(cost_route) * 0.75"/></td>-->
-                            <!--<td><xsl:value-of select="number(cost_route) * 0.25"/></td>-->
-                        </xsl:if>
                         <td>
                             <xsl:value-of select="comment"/>
                         </td>
-                        <!--<td>-->
-                        <!--<xsl:value-of select="comment"/>-->
-                        <!--</td>-->
-                        <!--<td style="width:90px">-->
-                        <!--<div class="btn-group">-->
-                        <!--&lt;!&ndash;<div onclick="open_dialog('/orders/order-{../../id}/')" class="btn btn-success btn-xs chg-status" title="редактировать">&ndash;&gt;-->
-                        <!--&lt;!&ndash;<span class="glyphicon glyphicon-pencil" aria-hidden="true"> </span>&ndash;&gt;-->
-                        <!--&lt;!&ndash;</div>&ndash;&gt;-->
-                        <!--&lt;!&ndash;<a href="/orders/order-{../../id}/" class="btn btn-success btn-xs chg-status" title="редактировать" target="_blank">&ndash;&gt;-->
-                        <!--&lt;!&ndash;<span class="glyphicon glyphicon-pencil" aria-hidden="true"> </span>&ndash;&gt;-->
-                        <!--&lt;!&ndash;</a>&ndash;&gt;-->
-                        <!--<div title="Назначить курьера" class="btn btn-info btn-xs chg-status" onclick="chg_courier({../../id})">-->
-                        <!--<i class="fa fa-car" aria-hidden="true"> </i>-->
-                        <!--</div>-->
-                        <!--<div title="Изменить статус" class="btn btn-warning btn-xs chg-status" onclick="chg_status({id_route},{../../id})">-->
-                        <!--<span class="glyphicon glyphicon-flag" aria-hidden="true"> </span>-->
-                        <!--</div>-->
-                        <!--</div>-->
-                        <!--</td>-->
+                        <td style="width:90px">
+                            <xsl:if test="status_id = 1">
+                                <div class="btn-group">
+                                    <div title="Изменить статус" class="btn btn-danger btn-xs chg-status" onclick="event.stopPropagation(); cancel_order({../../id})">
+                                        <span class="glyphicon glyphicon-flag" aria-hidden="true"> </span> отменить
+                                    </div>
+                                </div>
+                            </xsl:if>
+                        </td>
                     </tr>
                 </xsl:for-each>
             </tbody>

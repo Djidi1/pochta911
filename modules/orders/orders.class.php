@@ -817,7 +817,10 @@ class ordersProcess extends module_process {
                 $order_routes = $this->nModel->getOrderRoutesInfo($order_id);
                 $order_route_id = $order_routes[0]['id'];
             }
-			if ($new_status > 0){
+            /*if ($new_status == 5){
+                $this->nModel->updOrderStatus($user_id, $order_route_id, $new_status, $stat_comment);
+            }else*/
+            if ($new_status > 0){
 				$this->nModel->updOrderStatus($user_id, $order_route_id, $new_status, $stat_comment);
 				$result = 'Статус успешно изменен. ';
 				$chat_id = $this->nModel->getChatIdByOrderRoute($order_route_id);

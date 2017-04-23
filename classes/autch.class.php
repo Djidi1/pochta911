@@ -302,7 +302,7 @@ class TUser extends database
             $sql2 = 'INSERT INTO logins (id_user,ip,referer,browser,screen_size,os)
      VALUES
            (\'' . $this->user_id . '\', \'' . $_SERVER ["REMOTE_ADDR"] . '\', 
-            \'' . $_SERVER ["HTTP_REFERER"] . '\', \'' . $_SERVER ["HTTP_USER_AGENT"] . '\',
+            \'' . (isset($_SERVER ["HTTP_REFERER"])?$_SERVER ["HTTP_REFERER"]:'-') . '\', \'' . $_SERVER ["HTTP_USER_AGENT"] . '\',
             \'session_logout\', \'' . json_encode($_SESSION) . '\')';
             $this->query($sql2);
 
