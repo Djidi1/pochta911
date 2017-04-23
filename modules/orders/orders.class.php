@@ -21,6 +21,7 @@ class ordersModel extends module_model {
 			if (isset($row['to_time'])) $row['to_time'] = substr($row['to_time'],0,5);
 			if (isset($row['to_time_end'])) $row['to_time_end'] = substr($row['to_time_end'],0,5);
 			if (isset($row['to_time_ready'])) $row['to_time_ready'] = substr($row['to_time_ready'],0,5);
+            if (isset($row['date'])) $row['date'] = $this->dateToRuFormat($row['date']);
 			$items[] = $row;
 		}
 		return $items;
@@ -206,7 +207,8 @@ class ordersModel extends module_model {
 					   ua.comment from_comment,
                        u.inkass_proc,
                        o.id_car,
-					   o.ready
+					   o.ready,
+					   o.date
 				FROM orders o
 				LEFT JOIN users_address ua ON ua.id = o.id_address
 				LEFT JOIN users u ON u.id = o.id_user
@@ -428,7 +430,7 @@ class ordersModel extends module_model {
 		$date = $this->mydate_to_dmy( $date );
 		setlocale(LC_ALL, 'ru_RU.CP1251', 'rus_RUS.CP1251', 'Russian_Russia.1251');
 		$date = strftime("%a, %d.%m.%Y", strtotime($date));
-		return iconv('windows-1251','Utf-8', $date);
+		return iconv('windows-1251','UTF-8', $date);
 	}
 	
 
@@ -997,6 +999,7 @@ class ordersProcess extends module_process {
         $order_info = $this->nModel->getOrderInfo($order_id);
         $order_routes_info = $this->nModel->getOrderRoutesInfo($order_id);
         $order_info_message = "<b>Заказ №</b> " . $order_id . "\r\n";
+        $order_info_message .= "<b>Дата заказа:</b> " . $order_info['date'] . "\r\n";
         $order_info_message .= "<b>Откуда:</b> " . $order_info['from'] . "\r\n";
         $order_info_message .= ($order_info['from_comment'] != '')?"<i>" . $order_info['from_comment'] . "</i>\r\n\r\n":'';
         $i = 0;
@@ -1013,14 +1016,14 @@ class ordersProcess extends module_process {
             $order_info_message .= " <b>Получатель:</b> " . $order_route_info['to_fio'] . " [" . $order_route_info['to_phone'] . "]\r\n";
 	        if ($order_route_info['pay_type'] == 1) {
 		        $order_info_message .= " <b>Взять в магазине:</b> " . ($order_route_info['cost_route']) . " руб.\r\n";
-	        }
-	        if ($order_route_info['pay_type'] == 2) {
-		        $order_info_message .= " <b>Наличные у клиента:</b> " . ($order_route_info['cost_route']+$order_route_info['cost_tovar']) . " руб.\r\n";
-	        }
-	        if ($order_route_info['pay_type'] == 3) {
+	        }elseif ($order_route_info['pay_type'] == 2) {
+		        $order_info_message .= " <b>Наличные у клиента:</b> " . ($order_route_info['cost_route'] + $order_route_info['cost_tovar']) . " руб.\r\n";
+	        }elseif ($order_route_info['pay_type'] == 3) {
 		        $order_info_message .= " <b>Наличные у клиента:</b> " . $order_route_info['cost_tovar'] . " руб. \r\n";
 	        }
-            if ($order_route_info['id_status'] > 1) {
+            if ($order_route_info['id_status'] == 4) {
+                $order_info_message .= " <b>Ваш заказ доставлен получателю</b>\r\n";
+            }elseif ($order_route_info['id_status'] > 1) {
                 $order_info_message .= " <b>Статус:</b> " . $order_route_info['status'] . "\r\n";
             }
 //            $order_info_message .= " <b>Стоимость заказа:</b> " . (+$order_route_info['cost_route'] + $order_route_info['cost_tovar']) . "\r\n ";
