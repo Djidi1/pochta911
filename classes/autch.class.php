@@ -144,9 +144,7 @@ class TUser extends database
             $this->user_id = $row['id'];
             $this->user_name = $row['name'];
 
-            $sql2 = '
-      INSERT INTO logins
-           (id_user,ip,referer,browser,screen_size,os)
+            $sql2 = 'INSERT INTO logins (id_user,ip,referer,browser,screen_size,os)
      VALUES
            (\'' . $row ["id"] . '\', \'' . $_SERVER ["REMOTE_ADDR"] . '\', 
             \'' . $_SERVER ["HTTP_REFERER"] . '\', \'' . $_SERVER ["HTTP_USER_AGENT"] . '\',
@@ -301,9 +299,15 @@ class TUser extends database
             $this->Log->addToLog($this->user_right, __LINE__, __METHOD__);
             return true;
         } else {
+            $sql2 = 'INSERT INTO logins (id_user,ip,referer,browser,screen_size,os)
+     VALUES
+           (\'' . $this->user_id . '\', \'' . $_SERVER ["REMOTE_ADDR"] . '\', 
+            \'' . $_SERVER ["HTTP_REFERER"] . '\', \'' . $_SERVER ["HTTP_USER_AGENT"] . '\',
+            \'session_logout\', \'' . json_encode($_SESSION) . '\')';
+            $this->query($sql2);
+
             $this->login_error = 0;
             $this->Log->addToLog(array('Пользователь не авторизован (Гость)', $this->user_id), __LINE__, __METHOD__);
-
             $this->logout();
             $this->Log->addToLog($this->user_right, __LINE__, __METHOD__);
             return false;
