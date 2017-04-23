@@ -113,7 +113,7 @@ function calc_route() {
         return false;
     }
     // Начальная точка маршрута
-    var origin_point = ($("SELECT.store_address").val() !== 0)?$("SELECT.store_address option:selected").text():$('INPUT.store_address_new').val();
+    var origin_point = ($("SELECT.store_address").val() !== '0')?$("SELECT.store_address option:selected").text():$('INPUT.store_address_new').val();
     // Конечная точка маршрута
     // var destination_point = route[route.length-1].location;
     // Исклюаем конечную точку маршрута из промежуточных

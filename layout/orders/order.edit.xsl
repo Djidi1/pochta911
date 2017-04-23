@@ -305,7 +305,11 @@
                 <span class="order-add-title text-success">
                     Цена доставки
                 </span>
-                <input type="text" class="order-route-data number cost_route" name="cost_route[]" title="Стоимость доставки" value="{cost_route}" onkeyup="re_calc(this)" required=""/>
+                <input type="text" class="order-route-data number cost_route" name="cost_route[]" title="Стоимость доставки" value="{cost_route}" onkeyup="re_calc(this)" required="">
+                    <xsl:if test="/page/body/module[@name='CurentUser']/container/group_id = 2">
+                        <xsl:attribute name="readonly">readonly</xsl:attribute>
+                    </xsl:if>
+                </input>
             </div>
             <xsl:if test="/page/body/module[@name='CurentUser']/container/group_id != 2">
                 <div class="form-control" style="width: 20%;">
