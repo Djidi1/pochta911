@@ -242,6 +242,8 @@ class TUser extends database
      */
     public function logout($redirect = false)
     {
+        $sql = "DELETE FROM session WHERE session_id = '".session_id()."'";
+        $this->query($sql);
         if ($redirect) session_start();
         session_unset();
         session_destroy();
@@ -266,7 +268,13 @@ class TUser extends database
          */
         if ($this->Vals->isVal('username', 'POST') && $this->Vals->isVal('userpass', 'POST')) {
             $login = $this->authentication($this->Vals->getVal('username', 'POST', 'string'), $this->Vals->getVal('userpass', 'POST', 'string'));
-            if (!$login) $this->login_error = -2;
+            if (!$login) {
+                $this->login_error = -2;
+            }else{
+                // Записываем сессию в БД
+                $sql = "INSERT INTO session (session_id, user_id, dk) VALUES ('".session_id()."','".$this->user_id."',NOW())";
+                $this->query($sql);
+            }
         }
 
         /**
@@ -282,6 +290,19 @@ class TUser extends database
 //                $login = false;
 //                $this->login_error = -3;
 //            }
+        }else{
+            // Если пошло что-то не так, пытаемся прочитать сессию из БД
+            $sql = "SELECT user_id FROM session WHERE session_id ='".session_id()."'";
+            $this->query($sql);
+            $this->user_id = $this->getOne();
+            $sql2 = 'INSERT INTO logins (id_user,ip,referer,browser,screen_size,os)  VALUES
+           (\'' . $this->user_id . '\', \'' . $_SERVER ["REMOTE_ADDR"] . '\', \'' . (isset($_SERVER ["HTTP_REFERER"])?$_SERVER ["HTTP_REFERER"]:'-') . '\', 
+            \'' . $_SERVER ["HTTP_USER_AGENT"] . '\', \'' . $this->user_id . '\', \'' . addslashes($sql) . '\')';
+            $this->query($sql2);
+            if ($this->user_id > 0){
+                $login = true;
+                $this->login_error = 1;
+            }
         }
 
         $this->get_user_data($this->user_id);
@@ -299,13 +320,12 @@ class TUser extends database
             $this->Log->addToLog($this->user_right, __LINE__, __METHOD__);
             return true;
         } else {
-            $sql2 = 'INSERT INTO logins (id_user,ip,referer,browser,screen_size,os)
-     VALUES
-           (\'' . $this->user_id . '\', \'' . $_SERVER ["REMOTE_ADDR"] . '\', 
-            \'' . (isset($_SERVER ["HTTP_REFERER"])?$_SERVER ["HTTP_REFERER"]:'-') . '\', \'' . $_SERVER ["HTTP_USER_AGENT"] . '\',
-            \'session_logout\', \'' . json_encode($_SESSION) . '\')';
+            /*
+            $sql2 = 'INSERT INTO logins (id_user,ip,referer,browser,screen_size,os)  VALUES
+           (\'' . $this->user_id . '\', \'' . $_SERVER ["REMOTE_ADDR"] . '\', \'' . (isset($_SERVER ["HTTP_REFERER"])?$_SERVER ["HTTP_REFERER"]:'-') . '\', 
+            \'' . $_SERVER ["HTTP_USER_AGENT"] . '\', \'session_logout\', \'' . json_encode($_SESSION) . '\')';
             $this->query($sql2);
-
+*/
             $this->login_error = 0;
             $this->Log->addToLog(array('Пользователь не авторизован (Гость)', $this->user_id), __LINE__, __METHOD__);
             $this->logout();

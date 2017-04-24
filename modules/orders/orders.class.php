@@ -701,11 +701,11 @@ class ordersProcess extends module_process {
         }
 		
 		if ($action == 'order') {
-            $uid = isset($order['id_user'])?$order['id_user']:$user_id;
 			$order_id = $this->Vals->getVal ( 'order', 'GET', 'integer' );
 			$is_single = $this->Vals->getVal ( 'single', 'GET', 'integer' );
 			$without_menu = $this->Vals->getVal ( 'without_menu', 'GET', 'integer' );
 			$order = $this->nModel->getOrder($order_id);
+            $uid = isset($order['id_user'])?$order['id_user']:$user_id;
 			$routes = $this->nModel->getRoutes($order_id);
 			$pay_types = $this->nModel->getPayTypes();
             $statuses = $this->nModel->getStatuses();
