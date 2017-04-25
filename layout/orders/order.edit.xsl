@@ -145,6 +145,9 @@
                             <label>Адреса доставки:</label>
                             <xsl:if test="@is_single != 1 and $no_edit != 1">
                                 <button type="button" class="btn-clone btn btn-xs btn-success" title="Добавить адрес" onclick="clone_div_row($('.routes-block').last())" style="float:right; display:none">
+                                    <xsl:if test="/page/body/module[@name='CurentUser']/container/group_id = 1">
+                                        <xsl:attribute name="style">float:right;</xsl:attribute>
+                                    </xsl:if>
                                     <xsl:if test="position() != count(../../routes/item) and count(../../routes/item) != 0">
                                         <xsl:attribute name="disabled"/>
                                     </xsl:if>
@@ -266,6 +269,7 @@
                     <xsl:with-param name="select_name">to_time_ready[]</xsl:with-param>
                     <xsl:with-param name="select_title">Время готовности</xsl:with-param>
                     <xsl:with-param name="select_value" select="to_time_ready"/>
+                    <xsl:with-param name="select_onchange">update_time_ready(this)</xsl:with-param>
                 </xsl:call-template>
                 <!--<input type="text" class="order-route-data number time-picker to_time_ready" name="to_time_ready[]" title="Время готовности" value="{to_time_ready}" required=""/>-->
             </div>
@@ -278,6 +282,7 @@
                     <xsl:with-param name="select_name">to_time[]</xsl:with-param>
                     <xsl:with-param name="select_title">Время доставки с</xsl:with-param>
                     <xsl:with-param name="select_value" select="to_time"/>
+                    <xsl:with-param name="select_onchange">test_time_routes_add()</xsl:with-param>
                 </xsl:call-template>
                 <!--<input type="text" class="order-route-data number time-picker to_time start" name="to_time[]" title="Время доставки с" value="{to_time}" required=""/>-->
             </div>
@@ -290,6 +295,7 @@
                     <xsl:with-param name="select_name">to_time_end[]</xsl:with-param>
                     <xsl:with-param name="select_title">Время доставки по</xsl:with-param>
                     <xsl:with-param name="select_value" select="to_time_end"/>
+                    <xsl:with-param name="select_onchange">test_time_routes_add()</xsl:with-param>
                 </xsl:call-template>
                 <!--<input type="text" class="order-route-data number time-picker to_time_end end" name="to_time_end[]" title="Время доставки по" value="{to_time_end}" required=""/>-->
             </div>
@@ -417,7 +423,13 @@
         <xsl:param name="select_name"/>
         <xsl:param name="select_title"/>
         <xsl:param name="select_value"/>
+        <xsl:param name="select_onchange"/>
         <select name="{$select_name}" class="{$select_class}" title="{$select_title}" required="">
+            <xsl:if test="$select_onchange != ''">
+                <xsl:attribute name="onchange">
+                    <xsl:value-of select="$select_onchange"/>
+                </xsl:attribute>
+            </xsl:if>
             <xsl:for-each select="../../timer/element">
                 <option value="{.}">
                     <xsl:if test=". = $select_value">

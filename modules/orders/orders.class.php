@@ -762,7 +762,8 @@ class ordersProcess extends module_process {
                 }
                 $order_info = $this->nModel->getOrderInfo($params['order_id']);
 				$order_id = $this->nModel->orderUpdate($params);
-                $message_add_text = "Заказ обновлен";
+//                $message_add_text = "Заказ обновлен";
+                $message_add_text = "";
                 $send_message_to_client = false;
 			}else{
 			    if ($group_id != 2){

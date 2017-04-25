@@ -78,7 +78,7 @@
                 </xsl:if>
                 <th>Прим. заказ</th>
                 <!--<th>Прим. адрес</th>-->
-                <!--<th/>-->
+                <th/>
             </thead>
             <!--<tfoot>-->
             <!--<tr>-->
@@ -171,6 +171,15 @@
                         </xsl:if>
                         <td>
                             <xsl:value-of select="comment"/>
+                        </td>
+                        <td style="width:90px">
+                            <xsl:if test="status_id = 1">
+                                <div class="btn-group">
+                                    <div title="Изменить статус" class="btn btn-danger btn-xs chg-status" onclick="event.stopPropagation(); cancel_order({../../id})">
+                                        <span class="glyphicon glyphicon-flag" aria-hidden="true"> </span> отменить
+                                    </div>
+                                </div>
+                            </xsl:if>
                         </td>
                         <!--<td>-->
                         <!--<xsl:value-of select="comment"/>-->

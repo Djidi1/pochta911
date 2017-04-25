@@ -26,13 +26,18 @@ function clone_div_row(row) {
     // автозаполение адреса
     $(new_el).remove('.typeahead');
     // чистим окна ввода
-    $(new_el).find('input, select, textarea').val('');
+    $(new_el).find('input, select, textarea').not('.to_time_ready, .to_time, .to_time_end').val('');
     var start_time = $(new_el).find('.time-picker.start').get();
     var end_time = $(new_el).find('.time-picker.end').get();
     set_time_period(start_time,end_time);
     autoc_spb_streets();
     google_autocomlete();
+    test_time_routes_add();
     //$(new_el).find("input").attr('id', '');
+}
+function update_time_ready(obj){
+    var time_ready = $(obj).val();
+    $('.to_time_ready').val(time_ready);
 }
 
 function set_time_period (start, end) {
@@ -283,6 +288,48 @@ function re_calc(obj){
     $(route_row).find('.cost_all').val(inkass);
 }
 
+//Блокировка времени после значения
+function disable_next(obj, value){
+    var disable_next = false;
+    $(obj).find('option').each(function () {
+        if (disable_next){
+            $(this).attr('disabled','');
+        }
+        if ($(this).text() == value){
+            disable_next = true;
+        }
+    });
+}
+
+// адская проверка времени
+function test_time_routes_add() {
+    $('.to_time').removeAttr('disabled');
+    $('div.routes-block').each(function (index) {
+        var next_route = $('div.routes-block').eq(index+1);
+        var this_to_time = $(this).find('.to_time').val();
+        var next_to_time = $(next_route).find('.to_time').val();
+        var this_to_time_end = $(this).find('.to_time_end').val();
+        var next_to_time_end = $(next_route).find('.to_time_end').val();
+        if (typeof next_to_time != 'undefined') {
+            // а. времня начало доставки следующего адреса, меньше или равно времени окончания доставки предыдущего.
+            if (TimeToFloat(next_to_time) > TimeToFloat(this_to_time_end)){
+                $(next_route).find('.to_time').val(this_to_time_end);
+                // блокируем возможность выбор другого времени
+                // disable_next($(next_route).find('.to_time'), this_to_time_end);
+            }
+            // б. Если от начала доставки первого адреса до конца доставки первого адреса более 60 минут , то программа внутри у себя подставляет что там промежуток в 60 минут, например (с 14,00 до 18,00 , программа в уме держит что там с 14,00 до 15,00)
+
+            // в. время начала следующего заказа , больше или равно времени начало предыдущего адреса но если больше то не более чем на 30 минут.
+            if ((TimeToFloat(next_to_time) < TimeToFloat(this_to_time)) || (TimeToFloat(next_to_time) - TimeToFloat(this_to_time) > 0.5)){
+                $(next_route).find('.to_time').val(this_to_time);
+            }
+            // console.log('this_to_time:' + this_to_time);
+            // console.log('this_to_time_end:' + this_to_time_end);
+            // console.log('next_to_time:' + next_to_time);
+            // console.log('next_to_time_end:' + next_to_time_end);
+        }
+    });
+}
 
 function test_time_routes(obj){
     var route_row = $(obj).parent().parent();

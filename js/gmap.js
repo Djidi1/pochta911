@@ -213,6 +213,14 @@ function calc_route() {
                         if (routeSegment > 1) {
                             summaryPanel.innerHTML += '<hr/>';
                             shortInfo += '<hr/>';
+                            var beetween_point = Math.ceil(MetersToKilo(distanceInSPb) + MetersToKilo(distanceOutSideSPb));
+                            if (beetween_point > 8){
+                                bootbox.alert('Расстояние между пунктами доставки не может превышать 8 км. Ваше расстояние ' +
+                                    beetween_point + ' км. Вам необходимо создать отдельный заказ на данный маршрут.');
+                                $('.btn-submit').attr('disabled','disabled');
+                            }else{
+                                $('.btn-submit').removeAttr('disabled');
+                            }
                         }
                         summaryPanel.innerHTML += '<b>' + routeSegment + ': </b>';
                         shortInfo += '<b>' + routeSegment + ': </b>'
