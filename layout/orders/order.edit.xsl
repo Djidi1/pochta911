@@ -206,6 +206,7 @@
                 <xsl:for-each select="add_prices/item">
                     <input id="km_{type}" type="hidden" value="{cost_route}"/>
                 </xsl:for-each>
+                <input id="user_fix_price" type="hidden" value="{//@user_fix_price}"/>
             </div>
         </div>
         <script>
@@ -339,7 +340,7 @@
                     </xsl:if>
                     <xsl:variable name="pay_type" select="pay_type"/>
                     <xsl:variable name="user_pay_type" select="//@user_pay_type"/>
-                    <option value="">Выберите</option>
+                    <option value=""> </option>
                     <xsl:for-each select="../../pay_types/item">
                         <option value="{id}">
                             <xsl:if test="id = $pay_type or (not($pay_type) and $user_pay_type = id)">

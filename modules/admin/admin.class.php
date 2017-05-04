@@ -86,7 +86,7 @@ class adminModel extends module_model {
 
 	public function userInsert($Params) {
 		$passi = md5 ( $Params ['pass'] );
-		$sql = 'INSERT INTO `users` (name,email,login,phone,phone_mess,title,isBan,inkass_proc,pay_type,pass,date_reg)
+		$sql = 'INSERT INTO `users` (name,email,login,phone,phone_mess,title,isBan,inkass_proc,fixprice_inside,pay_type,pass,date_reg)
 				VALUES (
 				    \'%1$s\',
 				    \'%2$s\',
@@ -96,13 +96,15 @@ class adminModel extends module_model {
 				    \'%6$s\',
 				    \'%7$u\',
 				    \'%8$s\',
-				    \'%9$u\',
+				    \'%9$s\',
+				    \'%10$u\',
 				    \'' . $passi . '\',
 				    NOW()
 				    )';
 
 		$test = $this->query ( $sql, $Params ['username'], $Params ['email'], $Params ['login'], $Params ['phone'],
-			$Params ['phone_mess'], $Params ['title'], $Params ['isBan'], $Params ['inkass_proc'], $Params ['pay_type'] );
+			$Params ['phone_mess'], $Params ['title'], $Params ['isBan'], $Params ['inkass_proc'],
+            $Params ['fixprice_inside'], $Params ['pay_type'] );
 
 //        stop($this->sql);
 		$user_id = $this->insertID();
@@ -127,7 +129,8 @@ class adminModel extends module_model {
 				    title = \'%6$s\',
 				    isBan = \'%7$u\',
 				    inkass_proc = \'%8$s\',
-				    pay_type = \'%9$u\'
+				    fixprice_inside = \'%9$s\',
+				    pay_type = \'%10$u\'
 				    ';
 
 		if ($Params ['pass'] != '') {
@@ -135,9 +138,10 @@ class adminModel extends module_model {
 			$sql .= ' ,pass = \''.$passi.'\' ';
 		}
 
-		$sql .= ' WHERE `id` = %10$u';
+		$sql .= ' WHERE `id` = %11$u';
 		$test = $this->query ( $sql, $Params ['username'], $Params ['email'], $Params ['login'], $Params ['phone'],
-            $Params ['phone_mess'], $Params ['title'], $Params ['isBan'], $Params ['inkass_proc'],$Params ['pay_type'], $Params ['user_id'] );
+            $Params ['phone_mess'], $Params ['title'], $Params ['isBan'], $Params ['inkass_proc'],
+            $Params ['fixprice_inside'],$Params ['pay_type'], $Params ['user_id'] );
 
 //        stop($this->sql);
 
@@ -372,6 +376,9 @@ class adminModel extends module_model {
             if ($row['type'] == 'neva') {
                 $items ['km_neva'] = $row['cost_route'];
             }
+            if ($row['type'] == 'geozone') {
+                $items ['km_geozone'] = $row['cost_route'];
+            }
         }
         return $items;
     }
@@ -397,7 +404,7 @@ class adminModel extends module_model {
 		return $items;
 	}
 
-    public function saveRoutesPrices($km_from,$km_to,$km_cost,$km_neva,$km_kad,$user_id){
+    public function saveRoutesPrices($km_from,$km_to,$km_cost,$km_neva,$km_kad,$km_geozone,$user_id){
         if (is_array($km_from)) {
             $sql = 'TRUNCATE TABLE routes_price';
             $this->query ( $sql );
@@ -414,6 +421,8 @@ class adminModel extends module_model {
         $sql = " UPDATE routes_add_price SET cost_route = '$km_neva' WHERE type = 'neva';";
         $this->query ( $sql );
         $sql = " UPDATE routes_add_price SET cost_route = '$km_kad' WHERE type = 'kad';";
+        $this->query ( $sql );
+        $sql = " UPDATE routes_add_price SET cost_route = '$km_geozone' WHERE type = 'geozone';";
         $this->query ( $sql );
     }
 
@@ -834,6 +843,7 @@ class adminProcess extends module_process {
 			$Params ['isAutoPass'] = $this->Vals->getVal ( 'isAutoPass', 'POST', 'integer' );
 			$Params ['isBan'] = $this->Vals->getVal ( 'isBan', 'POST', 'integer' );
 			$Params ['inkass_proc'] = $this->Vals->getVal ( 'inkass_proc', 'POST', 'string' );
+			$Params ['fixprice_inside'] = $this->Vals->getVal ( 'fixprice_inside', 'POST', 'string' );
 
 			if ($Params ['isAutoPass'] > 0) {
 				$pass = $this->generatePass ( 6 );
@@ -961,7 +971,8 @@ class adminProcess extends module_process {
                 $km_cost = $this->Vals->getVal ( 'km_cost', 'POST', 'array' );
                 $km_neva = $this->Vals->getVal ( 'km_neva', 'POST', 'string' );
                 $km_kad = $this->Vals->getVal ( 'km_kad', 'POST', 'string' );
-                $this->nModel->saveRoutesPrices($km_from,$km_to,$km_cost,$km_neva,$km_kad,$user_id);
+                $km_geozone = $this->Vals->getVal ( 'km_geozone', 'POST', 'string' );
+                $this->nModel->saveRoutesPrices($km_from,$km_to,$km_cost,$km_neva,$km_kad,$km_geozone,$user_id);
             }
 		    $prices = $this->nModel->getRoutesPrices();
 		    $add_prices = $this->nModel->getRoutesAddPrices();

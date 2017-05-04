@@ -183,6 +183,6 @@ div.map-container {
 select.store_address option[value="0"] { /* value not val */
     color: darkblue !important;
 }
-input:invalid {
+input:invalid, select:invalid {
     background-color: #ffeded;
 }

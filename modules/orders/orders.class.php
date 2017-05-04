@@ -146,10 +146,11 @@ class ordersModel extends module_model {
                  WHERE u.isban < 1 and (g.group_id = 2 or u.id = $uid)";
         return $this->get_assoc_array($sql);
     }
-    public function getUserPayType($uid) {
-        $sql = "SELECT pay_type FROM users u WHERE u.id = $uid";
+    public function getUserParams($uid) {
+        $sql = "SELECT pay_type,fixprice_inside FROM users u WHERE u.id = $uid";
         $this->query($sql);
-        return $this->getOne();
+        $result = $this->fetchRowA ();
+        return array($result['pay_type'],$result['fixprice_inside']);
     }
     public function getPrices() {
         $sql = 'SELECT id, km_from, km_to, km_cost FROM routes_price r';
@@ -711,14 +712,15 @@ class ordersProcess extends module_process {
             $statuses = $this->nModel->getStatuses();
             $car_couriers = $this->nModel->getCarCouriers();
 			$users = $this->nModel->getUsers($uid);
-			$user_pay_type = $this->nModel->getUserPayType($user_id);
+			list($user_pay_type,$user_fix_price) = $this->nModel->getUserParams($user_id);
 			$prices = $this->nModel->getPrices();
 			$timer = $this->getTimeForSelect();
             $add_prices = $this->nModel->getAddPrices();
 			$stores = $this->nModel->getStores($uid);
 			$client_title = $this->nModel->getClientTitle($uid);
 			$this->nView->viewOrderEdit ( $order, $users, $stores, $routes, $pay_types, $statuses,
-                $car_couriers, $timer, $prices, $add_prices, $client_title, $without_menu, $is_single,$user_pay_type );
+                $car_couriers, $timer, $prices, $add_prices, $client_title, $without_menu, $is_single,
+                $user_pay_type,$user_fix_price );
 		}
 
 		if ($action == 'orderBan') {
@@ -1194,12 +1196,13 @@ class ordersView extends module_View {
 	
 	public function viewOrderEdit($order, $users, $stores, $routes, $pay_types,
                                   $statuses, $car_couriers, $timer, $prices, $add_prices,
-                                  $client_title, $without_menu, $is_single, $user_pay_type) {
+                                  $client_title, $without_menu, $is_single, $user_pay_type,$user_fix_price) {
 		$this->pXSL [] = RIVC_ROOT . 'layout/orders/order.edit.xsl';
         $Container = $this->newContainer('order');
         $this->addAttr('today', date('d.m.Y'), $Container);
         $this->addAttr('time_now', time(), $Container);
         $this->addAttr('user_pay_type', $user_pay_type, $Container);
+        $this->addAttr('user_fix_price', $user_fix_price, $Container);
 //        $this->addAttr('time_now_five', $time_now_five_h . ":" . $this->roundUpToAny(date('i')), $Container);
         $time_now_five_min = substr('0'.($this->roundUpToAny(date('i'))),-2);
         $time_now_five_h = date('H');

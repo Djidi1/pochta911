@@ -9,7 +9,7 @@
 			<link href="/images/favicon.png" rel="shortcut icon" type="image/vnd.microsoft.icon"/>
 			<link rel="stylesheet" href="/css/camera.css?v1.0"/>
 			<link rel="stylesheet" href="/css/select2.css?v1.1"/>
-			<link rel="stylesheet" href="/css/style.css?v2.7"/>
+			<link rel="stylesheet" href="/css/style.css?v2.8"/>
 			<link rel="stylesheet" href="/css/font-awesome.min.css"/>
 			<link rel="stylesheet" href="/css/print.css" media="Print"/>
 			<link rel="stylesheet" href="/css/bootstrap.min.css"/>
@@ -38,7 +38,7 @@
             <script src="//maps.googleapis.com/maps/api/js?key=AIzaSyAnDrB-qO4i5uCua-4krGQsloWYJBRtgNU&libraries=places"></script>
                 ]]>
             </xsl:text>
-			<script src="/js/gmap.js?v2.5"/>
+			<script src="/js/gmap.js?v2.7"/>
 			<script type="text/javascript" src="/callme/js/callme.js"/>
 		</head>
 	</xsl:template>

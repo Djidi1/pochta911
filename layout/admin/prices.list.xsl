@@ -15,6 +15,10 @@
 						<th>Стоимость за пределами Санкт-Петербурга</th>
 						<td><input name="km_kad" class="form-control" type="number" value="{prices/add_item/km_kad}"/></td>
 					</tr>
+					<tr>
+						<th>Стоимость за попадание в Геозону за КАДом</th>
+						<td><input name="km_geozone" class="form-control" type="number" value="{prices/add_item/km_geozone}"/></td>
+					</tr>
 				</tbody>
 				</table>
 				<table class="table table-hover">

@@ -148,6 +148,12 @@
                                             </td>
                                         </tr>
                                         <tr>
+                                            <td>Фиксированная стоимость по городу:</td>
+                                            <td>
+                                                <input class="form-control" type="text" name="fixprice_inside" id="fixprice_inside" value="{user/fixprice_inside}"/>
+                                            </td>
+                                        </tr>
+                                        <tr>
                                             <td>Процент инкассации:</td>
                                             <td>
                                                 <input class="form-control" type="text" name="inkass_proc" id="inkass_proc" value="{user/inkass_proc}"/>
