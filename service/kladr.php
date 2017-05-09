@@ -16,7 +16,7 @@ if ($search_type == 'street') {
     $items = array();
     $i = 0;
     // 0. Ищем города
-    $sql = "SELECT 781 region, ct.SHORTNAME, ct.OFFNAME city 
+    $sql = "SELECT 47 region, ct.SHORTNAME, ct.OFFNAME city 
             FROM  addrob47 ct
             WHERE (ct.OFFNAME = '$search_str' OR ct.OFFNAME LIKE '$search_str%') 
                 AND  ct.LIVESTATUS = 1 AND ct.AOLEVEL IN (4,6)
@@ -25,6 +25,7 @@ if ($search_type == 'street') {
     $res = array();
     while ($row = mysqli_fetch_assoc($result) and $i < 100) {
         $res['id'] = '';
+        $res['region'] = $row['region'];
         $res['name'] = ''.$row['SHORTNAME'].'. '.$row['city'];
         $items[] = $res;
         $i++;
@@ -34,19 +35,19 @@ if ($search_type == 'street') {
     // 3. Ищем улицу в Ленинградской области
     // -- 7 - улицы // 4,6 - города и нас.пункты
     $sql = "
-            SELECT 780 region, st.SHORTNAME, st.OFFNAME street, ct.SHORTNAME shtn, ct.OFFNAME city, st.AOGUID 
+            SELECT 78 region, st.SHORTNAME, st.OFFNAME street, ct.SHORTNAME shtn, ct.OFFNAME city, st.AOGUID 
             FROM addrob78 st
               LEFT JOIN addrob78 ct ON ct.AOGUID = st.PARENTGUID AND ct.LIVESTATUS = 1 AND ct.AOLEVEL IN (4,6)
             WHERE st.LIVESTATUS = 1 AND st.OFFNAME LIKE '%$search_str%' AND st.AOLEVEL IN (7) 
                 AND ct.OFFNAME IS null
           UNION ALL 
-            SELECT 472 region, st.SHORTNAME, st.OFFNAME street, ct.SHORTNAME shtn, ct.OFFNAME city, st.AOGUID 
+            SELECT 78 region, st.SHORTNAME, st.OFFNAME street, ct.SHORTNAME shtn, ct.OFFNAME city, st.AOGUID 
             FROM addrob78 st
               LEFT JOIN addrob78 ct ON ct.AOGUID = st.PARENTGUID AND ct.LIVESTATUS = 1 AND ct.AOLEVEL IN (4,6)
             WHERE st.LIVESTATUS = 1 AND st.OFFNAME LIKE '%$search_str%' AND st.AOLEVEL IN (7)
                 AND ct.OFFNAME IS NOT NULL
           UNION ALL 
-            SELECT 471 region, st.SHORTNAME, st.OFFNAME street, ct.SHORTNAME shtn, ct.OFFNAME city, st.AOGUID 
+            SELECT 47 region, st.SHORTNAME, st.OFFNAME street, ct.SHORTNAME shtn, ct.OFFNAME city, st.AOGUID 
             FROM addrob47 st
               LEFT JOIN addrob47 ct ON ct.AOGUID = st.PARENTGUID AND ct.LIVESTATUS = 1 AND ct.AOLEVEL IN (4,6)
             WHERE st.LIVESTATUS = 1 AND st.OFFNAME LIKE '%$search_str%' AND st.AOLEVEL IN (7) 
@@ -55,6 +56,7 @@ if ($search_type == 'street') {
     $res = array();
     while ($row = mysqli_fetch_assoc($result) and $i < 100) {
         $res['id'] = $row['AOGUID'];
+        $res['region'] = $row['region'];
         $res['name'] = ($row['city'] != ''?''.$row['shtn'].'. '.$row['city'].', ':'').$row['SHORTNAME'].'. '.$row['street'];
         $items[] = $res;
         $i++;
