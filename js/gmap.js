@@ -6,7 +6,7 @@ jQuery(function ($) {
 });
 
 var map, directionsService, directionsDisplay;
-var poly_spb_kad, poly_VO, poly_Petro, poly_Left, poly_Right;
+var poly_spb_kad, poly_VO, poly_Petro, poly_Left, poly_Right, poly_vsevol;
 var order_route = [];
 var poly_vars = [];
 var polys = [];
@@ -63,6 +63,7 @@ function initMap() { //30.328228,59.939784
 
 
     poly_spb_kad = CratePoly(poly_spb_kad_var, map, '#00FF00');
+    poly_vsevol = CratePoly(poly_vsevolozhsk_var, map, '#d60005');
     poly_VO = CratePoly(poly_VO_var, map, '#ffe708');
     poly_Petro = CratePoly(poly_Petro_var, map, '#d300d6');
     poly_Left = CratePoly(poly_Left_var, map, '#622c09');
@@ -178,6 +179,7 @@ function calc_route() {
                     var distanceOutSideSPb = 0;
                     var neva_cross = false;
                     var end_in_geozone = false;
+                    var end_in_vsevol = false;
                     var neva_path = [];
                     for (var k = 0; k < route.legs[i].steps.length; k++) {
                         var outside_path = [];
@@ -204,8 +206,6 @@ function calc_route() {
                             }
                             points_count = z;
                         }
-
-
 
                         if (outside_path.length > 0) {
                             var polyline_out = new google.maps.Polyline({
@@ -234,6 +234,11 @@ function calc_route() {
                         }
                     });
 
+                    // Проверка попадания последней точки маршрута в геозону за Всеволожск
+                    if (google.maps.geometry.poly.containsLocation(end_way_latlang, poly_vsevol)) {
+                        end_in_vsevol = true;
+                    }
+
                     // iLog(neva_path.getUnique());
                     // iLog(neva_path.getUnique().length);
                     // Если мы сменили за путь несколько районов, то мы пересекали Неву
@@ -245,6 +250,7 @@ function calc_route() {
                     var cost_km_out = 0;
                     var cost_Neva = 0;
                     var cost_Geozone = 0; // Геозоны за пределами КАД по единому тарифу
+                    var cost_Vsevol = 0; // Всеволожск по единому тарифу
                     var routeSegment = i + 1;
 
                     if (route.legs.length > 1) {
@@ -278,27 +284,33 @@ function calc_route() {
                         cost_Geozone = $('input#km_geozone').val();
                         moveList += ' За КАД: ' + cost_Geozone + ' р<br/>';
                     }
+                    if (end_in_vsevol) {
+                        cost_Vsevol = $('input#km_vsevol').val();
+                        moveList += ' За КАД: ' + cost_Vsevol + ' р<br/>';
+                    }
                     if (distanceOutSideSPb > 0) {
-                        // Если конечная точка попадает в Геозону, то обнуляем стоимсоть за КАДом
-                        cost_km_out = !end_in_geozone?getOutKADprice(MetersToKilo(distanceOutSideSPb)):0;
+                        // Если конечная точка попадает в Геозоны, то обнуляем стоимсоть за КАДом
+                        cost_km_out = (!end_in_geozone && !end_in_vsevol)?getOutKADprice(MetersToKilo(distanceOutSideSPb)):0;
                         moveList += ' за городом: ' + MetersToKilo(distanceOutSideSPb) + ' км (' + cost_km_out + ' р) ' + '<br/>';
                         shortInfo += '<i>' + MetersToKilo(distanceOutSideSPb) + ' км</i><br/>'
                     }
 
                     // Если установлена фиксированная стоимость по городу, то ставим ее вместо расчетной
                     var fixprice_inside = $('#user_fix_price').val();
-                    var cost_in_spb = (fixprice_inside == 0)?(parseFloat(cost_km) + parseFloat(cost_Neva)):fixprice_inside;
+                    var cost_in_spb = (fixprice_inside == 0 || typeof fixprice_inside == 'undefined')
+                        ? (parseFloat(cost_km) + parseFloat(cost_Neva))
+                        : fixprice_inside;
 
                     // Устанавливаем стоимость по маршруту и выполняем перерасчет
                     var cost_route = $('.cost_route').eq(i).get();
-                    $(cost_route).val(parseFloat(cost_in_spb) + parseFloat(cost_km_out) + parseFloat(cost_Geozone));
+                    $(cost_route).val(parseFloat(cost_in_spb) + parseFloat(cost_km_out) + parseFloat(cost_Geozone) + parseFloat(cost_Vsevol));
                     re_calc(cost_route);
 
                     // summaryPanel.innerHTML += 'От: ' + route.legs[i].start_address + ',<br>';
                     // summaryPanel.innerHTML += 'До: ' + route.legs[i].end_address + '<br>';
                     summaryPanel.innerHTML += moveList + '<br>';
 
-                    delivery_sum += parseFloat(cost_in_spb) + parseFloat(cost_km_out) + parseFloat(cost_Geozone);
+                    delivery_sum += parseFloat(cost_in_spb) + parseFloat(cost_km_out) + parseFloat(cost_Geozone) + parseFloat(cost_Vsevol);
                 }
                 $('#ShortInfo').html(shortInfo);
 

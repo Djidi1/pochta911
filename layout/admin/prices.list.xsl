@@ -19,6 +19,10 @@
 						<th>Стоимость за попадание в Геозону за КАДом</th>
 						<td><input name="km_geozone" class="form-control" type="number" value="{prices/add_item/km_geozone}"/></td>
 					</tr>
+					<tr>
+						<th>Стоимость в Всеволожск</th>
+						<td><input name="km_vsevol" class="form-control" type="number" value="{prices/add_item/km_vsevol}"/></td>
+					</tr>
 				</tbody>
 				</table>
 				<table class="table table-hover">
