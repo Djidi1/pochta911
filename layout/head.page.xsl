@@ -29,7 +29,7 @@
 			<script src="/js/camera.min.js"/>
 			<script src="/js/ready.js?v2.1"/>
             <script src="/js/common.js?v3.6"/>
-			<script src="/js/script.js?v2"/>
+			<script src="/js/script.js?v2.4"/>
             <script src="//cdn.ckeditor.com/4.6.1/full/ckeditor.js"/>
 			<script src="//cdn.datatables.net/1.10.4/js/jquery.dataTables.min.js"/>
 			<script src="//cdn.datatables.net/plug-ins/3cfcc339e89/integration/bootstrap/3/dataTables.bootstrap.js"/>

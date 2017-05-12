@@ -141,24 +141,24 @@
                         </td>
 
                         <td><xsl:value-of select="cost_route"/></td>
-
-                        <xsl:if test="pay_type = 2">
-                            <td title="({cost_route} + {cost_tovar})">
-                                <xsl:value-of select="(number(cost_route)+number(cost_tovar))"/>
-                            </td>
-                        </xsl:if>
-                        <xsl:if test="pay_type = 3 or (pay_type = 1 and cost_tovar > 0)">
-                            <td title="{cost_tovar}">
-                                <xsl:value-of select="cost_tovar"/>
-                            </td>
-                        </xsl:if>
-                        <xsl:if test="(pay_type = 1 and cost_tovar = 0)">
-                            <td title="{cost_route}">
-                                <xsl:value-of select="cost_route"/>
-                            </td>
-                        </xsl:if>
-
-
+                        <xsl:choose>
+                            <xsl:when test="pay_type = 2">
+                                <td title="({cost_route} + {cost_tovar})">
+                                    <xsl:value-of select="(number(cost_route)+number(cost_tovar))"/>
+                                </td>
+                            </xsl:when>
+                            <xsl:when test="pay_type = 3 or (pay_type = 1 and cost_tovar > 0)">
+                                <td title="{cost_tovar}">
+                                    <xsl:value-of select="cost_tovar"/>
+                                </td>
+                            </xsl:when>
+                            <xsl:when test="(pay_type = 1 and cost_tovar = 0)">
+                                <td title="{cost_route}">
+                                    <xsl:value-of select="cost_route"/>
+                                </td>
+                            </xsl:when>
+                            <xsl:otherwise><td/></xsl:otherwise>
+                        </xsl:choose>
 
                         <xsl:if test="/page/body/module[@name='CurentUser']/container/group_id = 1">
                             <!--<td><xsl:value-of select="number(cost_route)+number(cost_tovar)"/></td>-->
