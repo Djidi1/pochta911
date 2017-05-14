@@ -78,7 +78,8 @@ function initMap() { //30.328228,59.939784
     // poly_neva_3 = CratePoly(poly_neva_3_var, map, '#0000FF');
     var order_id = $('#order_id').val();
     if (order_id > 0) {
-        calc_route();
+        // не пересчитываем, для созданных заказов
+        calc_route(0);
     }
 }
 
@@ -107,7 +108,7 @@ function ArrayToCoords(arr){
     return points;
 }
 
-function calc_route() {
+function calc_route(recalc_cost) {
     // Удаляем старые маршруты
     $.each(order_route, function () {
         this.setMap(null);
@@ -295,26 +296,29 @@ function calc_route() {
                         shortInfo += '<i>' + MetersToKilo(distanceOutSideSPb) + ' км</i><br/>'
                     }
 
-                    // Если установлена фиксированная стоимость по городу, то ставим ее вместо расчетной
-                    var fixprice_inside = $('#user_fix_price').val();
-                    var cost_in_spb = (fixprice_inside == 0 || typeof fixprice_inside == 'undefined')
-                        ? (parseFloat(cost_km) + parseFloat(cost_Neva))
-                        : fixprice_inside;
+                    if (recalc_cost > 0) {
+                        // Если установлена фиксированная стоимость по городу, то ставим ее вместо расчетной
+                        var fixprice_inside = $('#user_fix_price').val();
+                        var cost_in_spb = (fixprice_inside == 0 || typeof fixprice_inside == 'undefined')
+                            ? (parseFloat(cost_km) + parseFloat(cost_Neva))
+                            : fixprice_inside;
 
-                    // Устанавливаем стоимость по маршруту и выполняем перерасчет
-                    var cost_route = $('.cost_route').eq(i).get();
-                    $(cost_route).val(parseFloat(cost_in_spb) + parseFloat(cost_km_out) + parseFloat(cost_Geozone) + parseFloat(cost_Vsevol));
-                    re_calc(cost_route);
+                        // Устанавливаем стоимость по маршруту и выполняем перерасчет
+                        var cost_route = $('.cost_route').eq(i).get();
+                        $(cost_route).val(parseFloat(cost_in_spb) + parseFloat(cost_km_out) + parseFloat(cost_Geozone) + parseFloat(cost_Vsevol));
+                        re_calc(cost_route);
 
-                    // summaryPanel.innerHTML += 'От: ' + route.legs[i].start_address + ',<br>';
-                    // summaryPanel.innerHTML += 'До: ' + route.legs[i].end_address + '<br>';
-                    summaryPanel.innerHTML += moveList + '<br>';
+                        // summaryPanel.innerHTML += 'От: ' + route.legs[i].start_address + ',<br>';
+                        // summaryPanel.innerHTML += 'До: ' + route.legs[i].end_address + '<br>';
+                        summaryPanel.innerHTML += moveList + '<br>';
 
-                    delivery_sum += parseFloat(cost_in_spb) + parseFloat(cost_km_out) + parseFloat(cost_Geozone) + parseFloat(cost_Vsevol);
+                        delivery_sum += parseFloat(cost_in_spb) + parseFloat(cost_km_out) + parseFloat(cost_Geozone) + parseFloat(cost_Vsevol);
+                    }
                 }
                 $('#ShortInfo').html(shortInfo);
-
-                $('.delivery_sum').html('<b>Итоговая сумма доставки заказа: ' + delivery_sum + '.00 руб</b>');
+                if (delivery_sum > 0) {
+                    $('.delivery_sum').html('<b>Итоговая сумма доставки заказа: ' + delivery_sum + '.00 руб</b>');
+                }
             } else {
                 bootbox.alert('Ошибка построения маршрута: ' + status);
             }

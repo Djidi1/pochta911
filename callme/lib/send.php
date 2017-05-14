@@ -5,12 +5,13 @@
 header ("Content-Type: text/html; charset=utf-8"); //кодировка
 
 //адрес почты для отправки уведомления
-$to = "admin@fd.pochta911.ru"; //получатель
+$to = "admin@fd.pochta911.ru,manager_pochta911@mail.ru"; //получатель
 
 // не трогать
 $HTTP_HOST = parse_url ("http://".$_SERVER["HTTP_HOST"]); 
 $HTTP_HOST = str_replace (array ("https://","http://","www."), "", $HTTP_HOST["host"]);
 $from = "noreply@".$HTTP_HOST; // отправитель. Если настраиваете smtp, не забудьте указать в $from ваше мыло
+//$from = "noreply@fd.pochta911.ru"; // отправитель. Если настраиваете smtp, не забудьте указать в $from ваше мыло
 
 // данные для отправки смс
 
@@ -31,7 +32,10 @@ function uc ($s)
 function gf ($s) // no shit
 { 
 	$s = substr( (htmlspecialchars($_GET[$s])), 0, 500);
-	if (strlen($s) > 1) return $s;
+	if (strlen($s) > 1){
+        return $s;
+    }
+    return '';
 }
 
 function sendSMS ($to, $msg)
@@ -133,7 +137,7 @@ if ($interval < 1) // интервал отправки (сек)
 	$sms["msg"] = translit("CallMe ".(getOptions(0)));
 	$sms["msg"] = substr($sms["msg"], 0, 160);
 
-@mail($to, $title, $mess, $headers);	
+@mail($to, $title, $mess, $headers);
 	if ( ($sms["id"] != "") || ($sms["key"] != "") || ($sms["log"] != "") ) 
 	{
 		@sendSMS($num, $sms["msg"]); 

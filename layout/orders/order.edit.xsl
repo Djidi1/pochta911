@@ -167,7 +167,7 @@
                             <div class="row">
                                 <div class="col-sm-6">
                                     <div style="text-align: center">
-                                        <span class="btn btn-info calc_route" onclick="calc_route()">Рассчитать маршрут</span>
+                                        <span class="btn btn-info calc_route" onclick="calc_route(1)">Рассчитать маршрут</span>
                                     </div>
                                 </div>
                                 <div class="col-sm-6">
@@ -237,11 +237,11 @@
             </div>
             <div class="form-control" style="width: 20%;">
                 <span class="order-add-title text-info">дом/корп/строение</span>
-                <input type="text" class="order-route-data to_house number" name="to_house[]" title="Дом" value="{to_house}" onchange="calc_route()" autocomplete="off" required=""/>
+                <input type="text" class="order-route-data to_house number" name="to_house[]" title="Дом" value="{to_house}" onchange="calc_route(1)" autocomplete="off" required=""/>
             </div>
             <div class="form-control" style="width: 15%; display:none">
                 <span class="order-add-title text-info">корп/строение</span>
-                <input type="text" class="order-route-data to_corpus number" name="to_corpus[]" title="Корпус" value="{to_corpus}" onchange="calc_route()"/>
+                <input type="text" class="order-route-data to_corpus number" name="to_corpus[]" title="Корпус" value="{to_corpus}" onchange="calc_route(1)"/>
             </div>
             <div class="form-control" style="width: 20%;">
                 <span class="order-add-title text-info">кв/офис/помещ</span>
