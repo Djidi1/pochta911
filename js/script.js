@@ -351,6 +351,7 @@ function FilterSend() {
 			jQuery('#'+backID).html(data);
 			jQuery(".datepicker").datepicker(jQuery.extend({showOn: 'button', buttonImage: '/images/calendar.gif', buttonImageOnly: true},jQuery.datepicker.regional['ru']));
             add_data_table($('.new-logist-data-table'));
+            filter_table();
 		},
 		error: function() {
 		}

@@ -394,8 +394,7 @@ function test_time_routes_each(route_row){
     var tomarrow = moment(today, 'DD.MM.YYYY').add(1, 'days').format('L');
     var set_date = $('input[name=date]').val();
 
-    // Если время доставки меньше готовности, то заказ на следующий день
-    tt_end = (tt_end - tt_ready) < 0 ? tt_end + 24 : tt_end;
+
 
     // Если время доставки меньше текущего, то заказ на следующий день (проверяю по второму времени)
     var tt_end_2 = (tt_end - t_now) < 0 ? tt_end + 24 : tt_end;
@@ -403,6 +402,8 @@ function test_time_routes_each(route_row){
 
     var no_error = true;
     var errors = '<ul>';
+    // Если время доставки меньше готовности, то заказ на следующий день
+    tt_end = (tt_end - tt_ready) < 0 ? tt_end + 24 : tt_end;
     // проверка от готовности (2,5 часа)
     if ((tt_end - tt_ready) <= 2.4){
         errors += '<li>Крайнее время доставки не может быть меньше 2,5 часов от времени готовности.</li><br/>';
