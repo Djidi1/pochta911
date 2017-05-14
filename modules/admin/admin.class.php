@@ -154,6 +154,45 @@ class adminModel extends module_model {
 	}
 
 	public function updateAddrAndCard($Params, $type_user){
+        $sql_arr = array();
+        $upd_ids = array();
+        $now_adress = $this->getAddress($Params ['user_id']);
+        foreach ($Params['addr_id'] as $key => $a_id) {
+            if (array_key_exists($a_id, $now_adress)) {
+                $upd_ids[] = $a_id;
+                // Обновляем, адреса которые были
+                $sql_arr[] = "UPDATE users_address SET comment='".$Params['addr_comment'][$key]."', address='".$Params['address'][$key]."' WHERE id = $a_id";
+            }
+            if ($a_id == ''){
+                // Добавляем новые адреса
+                $sql_arr[] = 'INSERT INTO users_address (address,comment,user_id) VALUES (\''.$Params['address'][$key].'\',\''.$Params ['addr_comment'][$key].'\','.$Params ['user_id'].')';
+            }
+        }
+        foreach ($now_adress as $key => $val){
+            if (!in_array($key, $upd_ids)) {
+                // Удаляем адреса, которых нет в обновлении
+                $sql_arr[] = "DELETE FROM users_address WHERE id = $key";
+            }
+        }
+
+        foreach ($sql_arr as $sql){
+            $this->query ( $sql );
+        }
+
+
+/*
+        if (is_array($Params ['address'])) {
+            $sql = 'DELETE FROM users_address WHERE user_id = '.$Params ['user_id'].';';
+            $this->query ( $sql );
+            $values = '';
+            foreach ($Params ['address'] as $key => $address) {
+                $values .= ($key > 0)?', ':'';
+                $values .= ' (\''.$address.'\',\''.$Params ['addr_comment'][$key].'\','.$Params ['user_id'].')';
+            }
+            $sql = 'INSERT INTO users_address (address,comment,user_id) VALUES '.$values;
+            $this->query ( $sql );
+        }
+*/
 		if (is_array($Params ['credit_card'])) {
 			$sql = 'DELETE FROM users_cards WHERE user_id = '.$Params ['user_id'].' and type_user = '.$type_user.';';
 			$this->query ( $sql );
@@ -163,17 +202,6 @@ class adminModel extends module_model {
                 $values .= ' (\''.$item.'\',\''.$Params ['card_comment'][$key].'\','.$Params ['user_id'].','.$type_user.')';
 			}
             $sql = 'INSERT INTO users_cards (card_num,comment,user_id,type_user) VALUES '.$values;
-			$this->query ( $sql );
-		}
-		if (is_array($Params ['address'])) {
-			$sql = 'DELETE FROM users_address WHERE user_id = '.$Params ['user_id'].';';
-			$this->query ( $sql );
-			$values = '';
-			foreach ($Params ['address'] as $key => $address) {
-                $values .= ($key > 0)?', ':'';
-                $values .= ' (\''.$address.'\',\''.$Params ['addr_comment'][$key].'\','.$Params ['user_id'].')';
-			}
-            $sql = 'INSERT INTO users_address (address,comment,user_id) VALUES '.$values;
 			$this->query ( $sql );
 		}
 	}
@@ -231,11 +259,11 @@ class adminModel extends module_model {
 //	}
 
     public function getAddress($user_id) {
-        $sql = 'SELECT address, comment, main FROM users_address  WHERE user_id=' . $user_id;
+        $sql = 'SELECT id, address, comment, main FROM users_address  WHERE user_id=' . $user_id;
         $this->query ( $sql );
         $items = array ();
         while ( ($row = $this->fetchRowA ()) !== false ) {
-            $items [] = $row;
+            $items [$row['id']] = $row;
         }
         return $items;
     }
@@ -842,6 +870,7 @@ class adminProcess extends module_process {
 			$Params ['group_id'] = $this->Vals->getVal ( 'group_id', 'POST', 'integer' );
 			$Params ['pay_type'] = $this->Vals->getVal ( 'pay_type', 'POST', 'integer' );
 			$Params ['address'] = $this->Vals->getVal ( 'address', 'POST', 'array' );
+			$Params ['addr_id'] = $this->Vals->getVal ( 'addr_id', 'POST', 'array' );
 			$Params ['addr_comment'] = $this->Vals->getVal ( 'addr_comment', 'POST', 'array' );
 			$Params ['credit_card'] = $this->Vals->getVal ( 'credit_card', 'POST', 'array' );
 			$Params ['card_comment'] = $this->Vals->getVal ( 'card_comment', 'POST', 'array' );

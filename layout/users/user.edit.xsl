@@ -215,6 +215,7 @@
             <span class="input-group-addon">
                 <xsl:value-of select="position()"/>
             </span>
+            <input type="hidden" class="form-control" name="addr_id[]" value="{id}"/>
             <input id="address" type="text" class="form-control address" name="address[]" placeholder="Адрес" value="{address}"/>
             <br/>
             <textarea name="addr_comment[]" class="form-control">
