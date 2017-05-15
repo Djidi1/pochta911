@@ -130,7 +130,6 @@
                                         </td>
                                     </tr>
                                     <xsl:if test="/page/body/module[@name='CurentUser']/container/group_id = 1">
-
                                         <tr>
                                             <td>Условия оплаты:</td>
                                             <td>
@@ -169,6 +168,12 @@
                                     </xsl:if>
                                 </tbody>
                             </table>
+                            <xsl:if test="/page/body/module[@name='CurentUser']/container/group_id != 1">
+                                <input class="form-control" type="hidden" name="pay_type" value="{user/pay_type}"/>
+                                <input class="form-control" type="hidden" name="phone_mess" value="{user/phone_mess}"/>
+                                <input class="form-control" type="hidden" name="fixprice_inside" value="{user/fixprice_inside}"/>
+                                <input class="form-control" type="hidden" name="inkass_proc" value="{user/inkass_proc}"/>
+                            </xsl:if>
                             <!--<font color="red">* Поля обязательны для заполнения.</font>-->
                         </div>
                     </div>
@@ -218,7 +223,7 @@
             <input type="hidden" class="form-control" name="addr_id[]" value="{id}"/>
             <input id="address" type="text" class="form-control address" name="address[]" placeholder="Адрес" value="{address}"/>
             <br/>
-            <textarea name="addr_comment[]" class="form-control">
+            <textarea name="addr_comment[]" class="form-control" placeholder="Комментарий к адресу">
                 <xsl:value-of select="comment"/>
             </textarea>
             <div class="input-group-btn" style="vertical-align: top;">
@@ -242,9 +247,9 @@
             <span class="input-group-addon">
                 <xsl:value-of select="position()"/>
             </span>
-            <input type="text" class="form-control" name="credit_card[]" placeholder="Номер карты Сбербанка" size="20" value="{card_num}"/>
+            <input type="text" class="form-control" name="credit_card[]" placeholder="Номер банковской карты" size="20" value="{card_num}"/>
             <br/>
-            <textarea name="card_comment[]" class="form-control">
+            <textarea name="card_comment[]" class="form-control" placeholder="Комментарий к номеру карты">
                 <xsl:value-of select="comment"/>
             </textarea>
             <div class="input-group-btn" style="vertical-align: top;">
