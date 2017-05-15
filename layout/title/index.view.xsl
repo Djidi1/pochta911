@@ -115,7 +115,7 @@
                         </div>
                         <div class="form-control" style="width: 30%;">
                             <span class="order-add-title text-info">дом/корп.</span>
-                            <input type="text" class="order-route-data to_house number" name="to_house[]" title="Дом/Корпус" onchange="calc_route()" autocomplete="off" required=""/>
+                            <input type="text" class="order-route-data to_house number" name="to_house[]" title="Дом/Корпус" onchange="calc_route(1)" autocomplete="off" required=""/>
                         </div>
                     </div>
                 </div>
@@ -130,13 +130,13 @@
                         </div>
                         <div class="form-control" style="width: 30%;">
                             <span class="order-add-title text-info">дом/корп.</span>
-                            <input type="text" class="order-route-data to_house number" name="to_house[]" title="Дом/Корпус" onchange="calc_route()" autocomplete="off" required=""/>
+                            <input type="text" class="order-route-data to_house number" name="to_house[]" title="Дом/Корпус" onchange="calc_route(1)" autocomplete="off" required=""/>
                         </div>
                     </div>
                 </div>
             </div>
             <hr/>
-            <span class="btn btn-info calc_route" onclick="calc_route()">Рассчитать доставку</span>
+            <span class="btn btn-info calc_route" onclick="calc_route(1)">Рассчитать доставку</span>
             <div class="delivery_sum"/>
             <hr/>
             <div class="alert alert-info">
