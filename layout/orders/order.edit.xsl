@@ -334,6 +334,9 @@
                 <span class="order-add-title text-success">
                     Оплата доставки
                 </span>
+                <xsl:if test="//@user_pay_type > 0">
+                    <input type="hidden" name="pay_type[]" value="{//@user_pay_type}" />
+                </xsl:if>
                 <select class="order-route-data pay_type" name="pay_type[]" title="Тип оплаты курьеру" onchange="re_calc(this)" required="">
                     <xsl:if test="//@user_pay_type > 0">
                         <xsl:attribute name="disabled">disabled</xsl:attribute>

@@ -157,7 +157,7 @@
                                     <xsl:value-of select="cost_route"/>
                                 </td>
                             </xsl:when>
-                            <xsl:otherwise><td/></xsl:otherwise>
+                            <xsl:otherwise><td><xsl:value-of select="cost_tovar"/></td></xsl:otherwise>
                         </xsl:choose>
 
                         <xsl:if test="/page/body/module[@name='CurentUser']/container/group_id = 1">
