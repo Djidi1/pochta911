@@ -20,7 +20,12 @@ if ($search_type == 'street') {
             FROM  addrob47 ct
             WHERE (ct.OFFNAME = '$search_str' OR ct.OFFNAME LIKE '$search_str%') 
                 AND  ct.LIVESTATUS = 1 AND ct.AOLEVEL IN (4,6)
-            ORDER BY ct.OFFNAME;";
+          UNION ALL 
+            SELECT 78 region, ct.SHORTNAME, ct.OFFNAME city 
+            FROM  addrob78 ct
+            WHERE (ct.OFFNAME = '$search_str' OR ct.OFFNAME LIKE '$search_str%') 
+                AND  ct.LIVESTATUS = 1 AND ct.AOLEVEL IN (4,6)
+            ";
     $result = mysqli_query($connect, $sql);
     $res = array();
     while ($row = mysqli_fetch_assoc($result) and $i < 100) {
