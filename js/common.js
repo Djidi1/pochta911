@@ -38,6 +38,7 @@ function clone_div_row(row) {
 function update_time_ready(obj){
     var time_ready = $(obj).val();
     $('.to_time_ready').val(time_ready);
+    test_time_routes_add();
 }
 
 function set_time_period (start, end) {
@@ -307,10 +308,15 @@ function test_time_routes_add() {
     $('.to_time').removeAttr('disabled');
     $('div.routes-block').each(function (index) {
         var next_route = $('div.routes-block').eq(index+1);
+        var this_ready = $(this).find('.to_time_ready').val();
         var this_to_time = $(this).find('.to_time').val();
         var next_to_time = $(next_route).find('.to_time').val();
         var this_to_time_end = $(this).find('.to_time_end').val();
         var next_to_time_end = $(next_route).find('.to_time_end').val();
+
+
+
+
         if (typeof next_to_time != 'undefined') {
             // а. времня начало доставки следующего адреса, меньше или равно времени окончания доставки предыдущего.
             if (TimeToFloat(next_to_time) > TimeToFloat(this_to_time_end)){
@@ -371,8 +377,28 @@ function test_time_all_routes(){
     }
 
     $('div.routes-block').each(function () {
+        var this_ready = $(this).find('.to_time_ready').val();
+        var this_to_time = $(this).find('.to_time').val();
+        var this_to_time_end = $(this).find('.to_time_end').val();
+
+        // Время начала доставки не может быть позже времени окончания доставки
+        if (this_to_time > this_to_time_end) {
+            $(this).find('.to_time').val(this_to_time_end);
+            this_to_time = this_to_time_end;
+            bootbox.alert('Время начала доставки не может быть позже времени окончания доставки.');
+            return false;
+        }
+        // Время готовности не может быть больше времени доставки
+        if (this_ready > this_to_time) {
+            $(this).find('.to_time_ready').val(this_to_time);
+            bootbox.alert('Время готовности не может быть больше времени начала доставки.');
+            return false;
+        }
+    });
+    $('div.routes-block').each(function () {
         test_time_routes_each(this);
     });
+
 }
 
 function test_time_routes_each(route_row){
@@ -404,15 +430,26 @@ function test_time_routes_each(route_row){
     var errors = '<ul>';
     // Если время доставки меньше готовности, то заказ на следующий день
     tt_end = (tt_end - tt_ready) < 0 ? tt_end + 24 : tt_end;
-    // проверка от готовности (2,5 часа)
-    if ((tt_end - tt_ready) <= 2.4){
-        errors += '<li>Крайнее время доставки не может быть меньше 2,5 часов от времени готовности.</li><br/>';
-        no_error = false;
-    }
-    // Проверка от времени заказа ()
-    if (set_date == today && (tt_end_2 - t_now) <= 2.9 ){
-        errors += '<li>Крайнее время доставки не может быть меньше 3 часов от времени заказа.</li><br/>';
-        no_error = false;
+
+    // если готовность букета с 8 до 10, то мы разрешаем выставлять рамки заказа в пределах 1 часа от времени готовности,
+    // и остальные проверки кроме, 2,5 часов оствляем
+    if (tt_ready >= 8 && tt_ready <= 10){
+        // проверка от готовности до начала доставки - 1 час
+        if ((tt_end - tt_ready) <= 2){
+            errors += '<li>Крайнее время доставки не может быть меньше 2 часов от времени готовности.</li><br/>';
+            no_error = false;
+        }
+    }else {
+        // проверка от готовности (2,5 часа)
+        if ((tt_end - tt_ready) <= 2.4) {
+            errors += '<li>Крайнее время доставки не может быть меньше 2,5 часов от времени готовности.</li><br/>';
+            no_error = false;
+        }
+        // Проверка от времени заказа ()
+        if (set_date == today && (tt_end_2 - t_now) <= 2.9 ){
+            errors += '<li>Крайнее время доставки не может быть меньше 3 часов от времени заказа.</li><br/>';
+            no_error = false;
+        }
     }
     // Проверка от и до не менее 40 мин
     if ((tt_end_2 - tt_2) <= 0.65 ){
@@ -422,8 +459,8 @@ function test_time_routes_each(route_row){
 
 
     // Заказы вечером на завтра и утром на сегодня запрещены на утро (проверка по крайнему времени доставки)
-    if ((set_date == tomarrow && t_now > 21 && tt_end < 12) || (set_date == today && t_now < 12 && tt_end < 12 ) ){
-        errors += '<li>Заказ с доставкой в период с 8:00 до 12:00 можно оставить не позднее 21:00.</li><br/>';
+    if ((set_date == tomarrow && t_now > 21 && tt_end < 11) || (set_date == today && t_now < 11 && tt_end < 11 ) ){
+        errors += '<li>Заказ с доставкой в период с 8:00 до 11:00 можно оставить не позднее 21:00.</li><br/>';
         no_error = false;
     }
     // Только для новых заказов

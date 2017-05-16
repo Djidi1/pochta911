@@ -26,7 +26,7 @@
             <script src="/js/bootstrap-typeahead.min.js"/>
             <script src="/js/camera.min.js"/>
             <script src="/js/ready.js?v2.2"/>
-            <script src="/js/common.js?v3.7"/>
+            <script src="/js/common.js?v3.9"/>
             <script src="/js/script.js?v2.4"/>
             <script src="//cdn.ckeditor.com/4.6.1/full/ckeditor.js"/>
             <script src="//cdn.datatables.net/1.10.13/js/jquery.dataTables.min.js"/>
