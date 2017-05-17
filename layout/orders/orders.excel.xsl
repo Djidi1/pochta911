@@ -20,22 +20,22 @@
         </div>
         <script type="text/javascript">
             $(function () {
-            $('#start_date').datetimepicker({format: 'L', locale: 'ru'});
-            $('#end_date').datetimepicker({format: 'L', locale: 'ru',
-            useCurrent: false //Important! See issue #1075
-            });
-            $("#start_date").on("dp.change", function (e) {
-            $('#end_date').data("DateTimePicker").minDate(e.date);
-            });
-            $("#end_date").on("dp.change", function (e) {
-            $('#start_date').data("DateTimePicker").maxDate(e.date);
-            });
-            $("#start_date").on("dp.show", function (e) {
-            $('#start_date').data("DateTimePicker").maxDate(e.date);
-            });
-            $("#end_date").on("dp.show", function (e) {
-            $('#end_date').data("DateTimePicker").minDate(e.date);
-            });
+                $('#start_date').datetimepicker({format: 'L', locale: 'ru'});
+                $('#end_date').datetimepicker({format: 'L', locale: 'ru', useCurrent: false});
+                /*
+                    $("#start_date_excel").on("dp.change", function (e) {
+                        $('#end_date_excel').data("DateTimePicker").minDate(e.date);
+                    });
+                    $("#end_date_excel").on("dp.change", function (e) {
+                        $('#start_date_excel').data("DateTimePicker").maxDate(e.date);
+                    });
+                    $("#start_date_excel").on("dp.show", function (e) {
+                        $('#start_date_excel').data("DateTimePicker").maxDate(e.date);
+                    });
+                    $("#end_date_excel").on("dp.show", function (e) {
+                        $('#end_date_excel').data("DateTimePicker").minDate(e.date);
+                    });
+                */
             });
         </script>
     </xsl:template>

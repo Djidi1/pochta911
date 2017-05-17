@@ -588,7 +588,7 @@ function add_data_table(obj){
         , "bLengthChange": false
         , "bPaginate": false
         , "bFilter": true
-        , "order": [[ 1, 'asc' ]]
+        , "order": [[ 2, 'asc' ]]
     });
 }
 
