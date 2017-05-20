@@ -28,7 +28,7 @@
 			<script src="/js/bootstrap-typeahead.min.js"/>
 			<script src="/js/camera.min.js"/>
 			<script src="/js/ready.js?v2.1"/>
-            <script src="/js/common.js?v3.10"/>
+            <script src="/js/common.js?v3.13"/>
 			<script src="/js/script.js?v2.4"/>
             <script src="//cdn.ckeditor.com/4.6.1/full/ckeditor.js"/>
 			<script src="//cdn.datatables.net/1.10.4/js/jquery.dataTables.min.js"/>
@@ -38,7 +38,7 @@
             <script src="//maps.googleapis.com/maps/api/js?key=AIzaSyAnDrB-qO4i5uCua-4krGQsloWYJBRtgNU&libraries=places"></script>
                 ]]>
             </xsl:text>
-			<script src="/js/gmap.js?v2.12"/>
+			<script src="/js/gmap.js?v2.13"/>
 			<script type="text/javascript" src="/callme/js/callme.js"/>
 		</head>
 	</xsl:template>

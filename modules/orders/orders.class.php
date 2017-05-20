@@ -248,6 +248,7 @@ class ordersModel extends module_model {
 					   o.id_car,
 					   o.id_courier,
 					   o.ready,
+					   o.target,
 					   o.date,
 					   o.cost,
 					   o.comment,
@@ -438,8 +439,8 @@ class ordersModel extends module_model {
 
 	public function orderInsert($id_user, $params) {
 		$sql = "
-		INSERT INTO orders (id_user, ready, `date`, comment, id_address, address_new, dk)
-		VALUES ($id_user,'".$params['ready']."','".$this->dmy_to_mydate($params['date'])."','".$params['order_comment']."','".$params['store_id']."','".$params['store_new']."',NOW());
+		INSERT INTO orders (id_user, ready, target, `date`, comment, id_address, address_new, dk)
+		VALUES ($id_user,'".$params['ready']."','".$params['target']."','".$this->dmy_to_mydate($params['date'])."','".$params['order_comment']."','".$params['store_id']."','".$params['store_new']."',NOW());
 		";
 		$this->query($sql);
 
@@ -454,6 +455,7 @@ class ordersModel extends module_model {
 		UPDATE orders SET 
 		`id_user` = '".$params['id_user']."',
 		`ready` = '".$params['ready']."',
+		`target` = '".$params['target']."',
 		`date` = '".$this->dmy_to_mydate($params['date'])."',
 		`id_address` = '".$params['store_id']."',
 		`address_new` = '".$params['store_new']."',
@@ -737,6 +739,7 @@ class ordersProcess extends module_process {
 			$params['store_new'] = $this->Vals->getVal ( 'store_new', 'POST', 'integer' );
 			$params['date'] = $this->Vals->getVal ( 'date', 'POST', 'string' );
 			$params['ready'] = $this->Vals->getVal ( 'ready', 'POST', 'string' );
+			$params['target'] = $this->Vals->getVal ( 'target', 'POST', 'string' );
 			$params['order_comment'] = $this->Vals->getVal ( 'order_comment', 'POST', 'string' );
 			$params['to'] = $this->Vals->getVal ( 'to', 'POST', 'array' );
 			$params['to_time_ready'] = $this->Vals->getVal ( 'to_time_ready', 'POST', 'array' );
@@ -755,6 +758,9 @@ class ordersProcess extends module_process {
 			$params['status'] = $this->Vals->getVal ( 'status', 'POST', 'array' );
 			$params['car_courier'] = $this->Vals->getVal ( 'car_courier', 'POST', 'integer' );
 
+            $dontsend_message = false;
+            $send_message_to_client = false;
+            $message_add_text = "";
 			if ($params['order_id'] > 0) {
                 if ($group_id != 2){
                     $user_id = $this->Vals->getVal ( 'new_user_id', 'POST', 'integer' );
@@ -763,19 +769,28 @@ class ordersProcess extends module_process {
                     }
                 }
                 $order_info = $this->nModel->getOrderInfo($params['order_id']);
+                $order_routes_info = $this->nModel->getOrderRoutesInfo($params['order_id']);
+                foreach ($params['status'] as $key => $route_statuses) {
+                    $now_status = $order_routes_info[$key]['id_status'];
+                    // Не отправляем сообщений, если новый статус равен предыдущему
+                    if ($now_status == $route_statuses) {
+                        $dontsend_message = true;
+                    }
+                }
 				$order_id = $this->nModel->orderUpdate($params);
-//                $message_add_text = "Заказ обновлен";
-                $message_add_text = "";
                 $send_message_to_client = false;
 			}else{
 			    if ($group_id != 2){
                     $user_id = $this->Vals->getVal ( 'new_user_id', 'POST', 'integer' );
                 }
-                $order_id = $this->nModel->orderInsert($user_id,$params);
-                $order_info = $this->nModel->getOrderInfo($order_id);
-                $message_add_text = "Заказ принят, ожидайте курьера.";
-                $send_message_to_client = true;
+                if ($user_id > 0) {
+                    $order_id = $this->nModel->orderInsert($user_id, $params);
+                    $order_info = $this->nModel->getOrderInfo($order_id);
+                    $message_add_text = "Заказ принят, ожидайте курьера.";
+                    $send_message_to_client = true;
+                }
 			}
+
 
 			// Если статус больше статуса в исполнении
             if (isset($params['status']) and is_array($params['status'])) {
@@ -786,7 +801,7 @@ class ordersProcess extends module_process {
                 }
             }
 
-            if ($send_message_to_client) {
+            if ($send_message_to_client and !$dontsend_message and isset($order_id)) {
                 $message = $this->getOrderTextInfo($order_id);
                 $message .= $message_add_text;
                 $chat_id = $this->nModel->getChatIdByOrder($order_id);
@@ -799,11 +814,11 @@ class ordersProcess extends module_process {
             }
 
             //отправка сообщения курьеру
-            if ($params['car_courier'] > 0 and $order_info['id_car'] != $params['car_courier']){
+            if (isset($order_info) and isset($order_id) and $params['car_courier'] > 0 and $order_info['id_car'] != $params['car_courier']){
                 $this->saveCourier($user_id,$order_id,$params['car_courier']);
             }
 
-			$this->nView->viewMessage('Заказ успешно сохранен. Номер для отслеживания: '.$order_id, 'Сообщение');
+			$this->nView->viewMessage('Заказ успешно сохранен.'.(isset($order_id)?' Номер для отслеживания: '.$order_id:''), 'Сообщение');
             $this->updated = true;
 		}
 

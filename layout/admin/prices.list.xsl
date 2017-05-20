@@ -12,16 +12,20 @@
 						<td><input name="km_neva" class="form-control" type="number" value="{prices/add_item/km_neva}"/></td>
 					</tr>
 					<tr>
-						<th>Стоимость за пределами Санкт-Петербурга</th>
+						<th>За пределами Санкт-Петербурга</th>
 						<td><input name="km_kad" class="form-control" type="number" value="{prices/add_item/km_kad}"/></td>
 					</tr>
 					<tr>
-						<th>Стоимость за попадание в Геозону за КАДом</th>
+						<th>За попадание в Геозону за КАДом</th>
 						<td><input name="km_geozone" class="form-control" type="number" value="{prices/add_item/km_geozone}"/></td>
 					</tr>
 					<tr>
-						<th>Стоимость в Всеволожск</th>
+						<th>Стоимость во Всеволожск (вместо за КАДом)</th>
 						<td><input name="km_vsevol" class="form-control" type="number" value="{prices/add_item/km_vsevol}"/></td>
+					</tr>
+					<tr>
+						<th>Прибавление к стоимости за "к точному времени"</th>
+						<td><input name="km_target" class="form-control" type="number" value="{prices/add_item/km_target}"/></td>
 					</tr>
 				</tbody>
 				</table>

@@ -1,2 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<module name="CurentUser"><container module="login"><login/><referer>http://pochta911.loc//?logout</referer><user_id/><group_id/><rightsModAdmin/><subject/><title/><error>Введите имя пользователя и пароль</error><user_name/><params/><statusbar><item><subject>Группа</subject><message>false</message></item></statusbar></container></module>

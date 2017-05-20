@@ -18,7 +18,7 @@
                         <div class="panel-heading">
                             <div class="row">
                                 <div class="col-sm-5">
-                                    <strong>Заказ №<xsl:value-of select="order/id"/>
+                                    <strong>Заказ № <xsl:value-of select="order/id"/>
                                     </strong>
                                     <br/>
                                     <span class="his_time_now"/>
@@ -122,6 +122,16 @@
                                 <!--<div class="col-sm-4">-->
                                     <!--<input class="form-control time-picker" type="text" name="ready" onkeyup="check_user(this)" value="{order/ready}" size="30" required=""/>-->
                                 <!--</div>-->
+                                <div class="col-sm-2">
+                                </div>
+                                <div class="col-sm-4">
+                                    <label class="btn btn-default">
+                                        <input type="checkbox" id="target" name="target" value="1" onchange="calc_route(1); target_time_show()">
+                                            <xsl:if test="order/target = 1">
+                                                <xsl:attribute name="checked"/>
+                                            </xsl:if>
+                                        </input> к точному времени</label>
+                                </div>
                             </div>
                             <!--<div class="row">-->
                                 <!--<div class="col-sm-2">-->
@@ -272,9 +282,26 @@
                     <xsl:with-param name="select_value" select="to_time_ready"/>
                     <xsl:with-param name="select_onchange">update_time_ready(this)</xsl:with-param>
                 </xsl:call-template>
-                <!--<input type="text" class="order-route-data number time-picker to_time_ready" name="to_time_ready[]" title="Время готовности" value="{to_time_ready}" required=""/>-->
             </div>
-            <div class="form-control" style="width: 33%;">
+            <div class="form-control target_select" style="width: 66%;">
+                <xsl:if test="../../order/target = 0">
+                    <xsl:attribute name="style">width: 66%; display:none;</xsl:attribute>
+                </xsl:if>
+                <span class="order-add-title text-primary">
+                    Доставить К
+                </span>
+                <xsl:call-template name="time_selector">
+                    <xsl:with-param name="select_class">order-route-data number to_time</xsl:with-param>
+                    <xsl:with-param name="select_name">target_time[]</xsl:with-param>
+                    <xsl:with-param name="select_title">Время доставки</xsl:with-param>
+                    <xsl:with-param name="select_value" select="to_time"/>
+                    <xsl:with-param name="select_onchange">time_routes_set(this)</xsl:with-param>
+                </xsl:call-template>
+            </div>
+            <div class="form-control period_select" style="width: 33%;">
+                <xsl:if test="../../order/target = 1">
+                    <xsl:attribute name="style">width: 33%; display:none;</xsl:attribute>
+                </xsl:if>
                 <span class="order-add-title text-primary">
                     Доставить С
                 </span>
@@ -285,9 +312,11 @@
                     <xsl:with-param name="select_value" select="to_time"/>
                     <xsl:with-param name="select_onchange">test_time_routes_add()</xsl:with-param>
                 </xsl:call-template>
-                <!--<input type="text" class="order-route-data number time-picker to_time start" name="to_time[]" title="Время доставки с" value="{to_time}" required=""/>-->
             </div>
-            <div class="form-control" style="width: 33%;">
+            <div class="form-control period_select" style="width: 33%;">
+                <xsl:if test="../../order/target = 1">
+                    <xsl:attribute name="style">width: 33%; display:none;</xsl:attribute>
+                </xsl:if>
                 <span class="order-add-title text-primary">
                     Доставить По
                 </span>
@@ -298,7 +327,6 @@
                     <xsl:with-param name="select_value" select="to_time_end"/>
                     <xsl:with-param name="select_onchange">test_time_routes_add()</xsl:with-param>
                 </xsl:call-template>
-                <!--<input type="text" class="order-route-data number time-picker to_time_end end" name="to_time_end[]" title="Время доставки по" value="{to_time_end}" required=""/>-->
             </div>
 
 

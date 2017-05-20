@@ -1,2 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<module name="admin"><container module="grouplist"><groups><item><id>1</id><name>Администраторы</name><admin>1</admin><parent>0</parent><hidden>0</hidden></item><item><id>2</id><name>Клиенты</name><admin>1</admin><parent>0</parent><hidden>0</hidden></item><item><id>3</id><name>Логисты</name><admin>1</admin><parent>0</parent><hidden>0</hidden></item><item><id>4</id><name>Операторы</name><admin>1</admin><parent>0</parent><hidden>0</hidden></item></groups></container></module>

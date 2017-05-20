@@ -303,6 +303,24 @@ function disable_next(obj, value){
     });
 }
 
+//
+function time_routes_set(obj){
+    var time_target = $(obj).val();
+    var route_block = $(obj).parent().parent().get();
+    $(route_block).find('.to_time').val(time_target);
+    $(route_block).find('.to_time_end').val(time_target);
+}
+
+function target_time_show(){
+    if ($('#target').prop('checked')){
+        $('.target_select').show();
+        $('.period_select').hide();
+    }else{
+        $('.target_select').hide();
+        $('.period_select').show();
+    }
+}
+
 // адская проверка времени
 function test_time_routes_add() {
     $('.to_time').removeAttr('disabled');
@@ -435,14 +453,14 @@ function test_time_routes_each(route_row){
     // и остальные проверки кроме, 2,5 часов оствляем
     if (tt_ready >= 8 && tt_ready <= 10){
         // проверка от готовности до начала доставки - 1 час
-        if ((tt_end - tt_ready) <= 2){
+        if ((tt_end - tt_ready) < 2){
             errors += '<li>Крайнее время доставки не может быть меньше 2 часов от времени готовности.</li><br/>';
             no_error = false;
         }
     }else {
-        // проверка от готовности (2,5 часа)
-        if ((tt_end - tt_ready) <= 2.4) {
-            errors += '<li>Крайнее время доставки не может быть меньше 2,5 часов от времени готовности.</li><br/>';
+        // проверка от готовности (2,5 часа) - 18.05.2017 - заменил на 3 часа
+        if ((tt_end - tt_ready) <= 3) {
+            errors += '<li>Крайнее время доставки не может быть меньше 3 часов от времени готовности.</li><br/>';
             no_error = false;
         }
         // Проверка от времени заказа ()
@@ -451,8 +469,8 @@ function test_time_routes_each(route_row){
             no_error = false;
         }
     }
-    // Проверка от и до не менее 40 мин
-    if ((tt_end_2 - tt_2) <= 0.65 ){
+    // Проверка от и до не менее 40 мин, если только не к точному времени
+    if ((tt_end_2 - tt_2) <= 0.65 && !$('#target').prop('checked')){
         errors += '<li>Интервал доставки не может быть менее 40 минут.</li><br/>';
         no_error = false;
     }

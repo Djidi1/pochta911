@@ -297,6 +297,8 @@ function calc_route(recalc_cost) {
                     }
 
                     if (recalc_cost > 0) {
+                        // Если к определенному времени, то прибавляем стоимость точного времени.
+                        var cost_target = $('#target').prop('checked') ? $('#km_target').val() : 0;
                         // Если установлена фиксированная стоимость по городу, то ставим ее вместо расчетной
                         var fixprice_inside = $('#user_fix_price').val();
                         var cost_in_spb = (fixprice_inside == 0 || typeof fixprice_inside == 'undefined')
@@ -305,14 +307,21 @@ function calc_route(recalc_cost) {
 
                         // Устанавливаем стоимость по маршруту и выполняем перерасчет
                         var cost_route = $('.cost_route').eq(i).get();
-                        $(cost_route).val(parseFloat(cost_in_spb) + parseFloat(cost_km_out) + parseFloat(cost_Geozone) + parseFloat(cost_Vsevol));
+
+                        var result_cost = parseFloat(cost_in_spb)
+                            + parseFloat(cost_km_out)
+                            + parseFloat(cost_Geozone)
+                            + parseFloat(cost_Vsevol)
+                            + parseFloat(cost_target);
+
+                        $(cost_route).val(result_cost);
                         re_calc(cost_route);
 
                         // summaryPanel.innerHTML += 'От: ' + route.legs[i].start_address + ',<br>';
                         // summaryPanel.innerHTML += 'До: ' + route.legs[i].end_address + '<br>';
                         summaryPanel.innerHTML += moveList + '<br>';
 
-                        delivery_sum += parseFloat(cost_in_spb) + parseFloat(cost_km_out) + parseFloat(cost_Geozone) + parseFloat(cost_Vsevol);
+                        delivery_sum += result_cost;
                     }
                 }
                 $('#ShortInfo').html(shortInfo);

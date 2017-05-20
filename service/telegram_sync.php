@@ -33,6 +33,7 @@ if (isset($data->callback_query)){
     $row['message_id'] = $data->callback_query->message->message_id;
     $row['date'] = date('Y-m-d H:i:s', $date);
     $row['text'] = iconv('utf-8','windows-1251',$text);
+    $row['user_name'] = iconv('utf-8','windows-1251',$row['user_name']);
     $items[] = $row;
 
     $re = '/order_accepted_([0-9]*)/';
@@ -66,6 +67,7 @@ if (isset($data->message)) {
     $row['message_id'] = $data->message->message_id;
     $row['date'] = date('Y-m-d H:i:s', $date);
     $row['text'] = iconv('utf-8','windows-1251',$text);
+    $row['user_name'] = iconv('utf-8','windows-1251',$row['user_name']);
     $items[] = $row;
 }
 
