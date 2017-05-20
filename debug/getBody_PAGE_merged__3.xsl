@@ -2,21 +2,31 @@
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0">
     <xsl:output method="html" encoding="utf-8" indent="yes"/>
     <xsl:include href="head.main.page.xsl"/>
+    <xsl:include href="head.page.xsl"/>
     <xsl:template match="/">
         <xsl:variable name="content">
             <xsl:value-of select="//page/body/@contentContainer"/>
         </xsl:variable>
         <xsl:text disable-output-escaping="yes">&lt;!DOCTYPE html&gt;</xsl:text>
-        <html>
-            <xsl:call-template name="main_head"/>
+        <html xmlns="http://www.w3.org/1999/xhtml">
+            <xsl:call-template name="head"/>
             <body>
                 <xsl:attribute name="id">
                     <xsl:value-of select="//page/@name"/>
                 </xsl:attribute>
+                <div id="loadingDiv">
+                    <div class="dumbBoxOverlay"/>
+                    <div class="vertical-offset">
+                        <div class="dumbBox"/>
+                    </div>
+                </div>
                 <div class="body-top">
                     <div class="main" style="width:90%;">
-                        <xsl:if test="/page/@without_menu != 1">
+                        <xsl:if test="/page/body/module[@name='CurentUser']/container/login = 1">
                             <xsl:call-template name="main_headWrap"/>
+                        </xsl:if>
+                        <xsl:if test="/page/body/module[@name='CurentUser']/container/login != 1">
+                            <xsl:call-template name="headWrap"/>
                         </xsl:if>
                         <div id="content">
                             <div class="wrapper2">
@@ -42,12 +52,10 @@
                             </div>
                         </div>
                         <div class="clear"/>
-                        <xsl:if test="/page/@without_menu != 1">
-                            <xsl:call-template name="bottom_block"/>
-                        </xsl:if>
+                        <xsl:call-template name="bottom_block"/>
                     </div>
                 </div>
             </body>
         </html>
     </xsl:template>
-<xsl:include href="../layout/viewLoginBar.xsl"/><xsl:include href="../layout/orders/orders.excel.xsl"/></xsl:stylesheet>
+<xsl:include href="../layout/viewLoginBar.xsl"/><xsl:include href="../layout/title/index.view.xsl"/></xsl:stylesheet>

@@ -1,267 +1,56 @@
-System Start: 02.01.2017 10:30 1483392627.0264
+System Start: 11.04.2017 10:21 1491938495.5125
 0 => Установка переменной<br />
-module => orders<br />
+module => <br />
 1 => method: get<br />
 
 0 => Установка переменной<br />
-excel => 1<br />
+logout => <br />
 1 => method: get<br />
 
 0 => Установка переменной<br />
-PHPSESSID => 2ijuuriadskrjin1l7bs033ge7<br />
+PHPSESSID => vlib1nao6d74e7hp13o3h73612<br />
+1 => method: cookie<br />
+
+0 => Установка переменной<br />
+_ym_uid => 1481366150768214096<br />
 1 => method: cookie<br />
 
 SQL => SELECT * FROM modules ORDER BY `id`, `parentMod` DESC<br />
 
 Авторизация по БД
-arg => 3<br />
-
-SQL => SELECT u.*, g.id as gid, g.name as gname FROM users u
-            LEFT JOIN (groups_user ug INNER JOIN groups g ON ug.group_id = g.id) ON u.id = ug.user_id
-            WHERE u.id = '3'<br />
-
-arg => 3<br />
+arg => 0<br />
 
 arg => 1<br />
 
-SQL => SELECT 
-	    IF(ma.access IS NOT NULL, ma.access, ma2.access) as access, 
-	    IF(ma.action_name IS NOT NULL, ma.action_name, ma2.action_name) as action_name, 
-	    IF(mc.access IS NOT NULL, mc.access, ma.access) as mcaccess, 
-	    IF(m.name IS NOT NULL, m.codename, m2.codename) as mcodename, 
-	    IF(gu.group_id IS NOT NULL, gu.group_id, 0)  , 
-	    IF(tn.owner IS NOT NULL, tn.owner, 0)  ,
-	    IF(g.name IS NOT NULL, g.name, '') , 
-	    IF(ma.id IS NOT NULL, ma.id, ma2.id) as maid
-		FROM tree_nodes tn
-		INNER join groups_user gu on (tn.child = gu.group_id or tn.owner = gu.group_id) and gu.user_id = '3'
-		INNER join module_access mc on (tn.child = mc.group_id or tn.owner = mc.group_id)
-		INNER join groups g on mc.group_id = g.id
-		INNER join module_actions ma on mc.action_id = ma.id
-		INNER join modules m on ma.mod_id = m.id
+SQL => SELECT ma.*, m.name as mname, m.codename as mcodename, mc.access as mcaccess, mc.group_id
+	            FROM module_actions ma
+	            LEFT JOIN module_access mc ON ma.id = mc.action_id
+	            INNER JOIN modules m ON ma.mod_id = m.id
+	            WHERE ma.access = '1' <br />
 
-		left join module_actions ma2 ON (ma2.access = 2 and '3' > 0) or (ma2.access = 1)
-		left JOIN modules m2 ON ma2.mod_id = m2.id
-		
-		GROUP BY maid<br />
+Установка разрешения news.view установка в Разрешено
+Установка разрешения news.newsline установка в Разрешено
+Установка разрешения news.newsline установка в Разрешено
+Установка разрешения news.view установка в Разрешено
+Установка разрешения news.newsline установка в Разрешено
+Установка разрешения news.view установка в Разрешено
+Установка разрешения news.newsline установка в Разрешено
+Установка разрешения news.view установка в Разрешено
+0 => Пользователь не авторизован (Гость)<br />
+1 => 0<br />
 
-Установка разрешения Auth modset.new установка в Разрешено
-Установка разрешения Auth modset.add установка в Разрешено
-Установка разрешения Auth modset.edit установка в Разрешено
-Установка разрешения Auth modset.update установка в Разрешено
-Установка разрешения Auth modset.view установка в Разрешено
-Установка разрешения Auth modset.del установка в Разрешено
-Установка разрешения Auth modset.newChild установка в Разрешено
-Установка разрешения Auth modset.addChild установка в Разрешено
-Установка разрешения Auth modset.usemodule установка в Разрешено
-Установка разрешения Auth modset.action установка в Разрешено
-Установка разрешения Auth pages.new установка в Разрешено
-Установка разрешения Auth pages.add установка в Разрешено
-Установка разрешения Auth pages.view установка в Разрешено
-Установка разрешения Auth pages.del установка в Разрешено
-Установка разрешения Auth admin.new установка в Разрешено
-Установка разрешения Auth admin.add установка в Разрешено
-Установка разрешения Auth admin.view установка в Разрешено
-Установка разрешения Auth admin.del установка в Разрешено
-Установка разрешения Auth admin.useAdmin установка в Разрешено
-Установка разрешения Auth admin.addUser установка в Разрешено
-Установка разрешения Auth admin.newUser установка в Разрешено
-Установка разрешения Auth admin.userList установка в Разрешено
-Установка разрешения Auth admin.userEdit установка в Разрешено
-Установка разрешения Auth admin.userUpdate установка в Разрешено
-Установка разрешения Auth admin.groupNew установка в Разрешено
-Установка разрешения Auth admin.groupAdd установка в Разрешено
-Установка разрешения Auth admin.groupEdit установка в Разрешено
-Установка разрешения Auth admin.groupUpdate установка в Разрешено
-Установка разрешения Auth admin.groupList установка в Разрешено
-Установка разрешения Auth admin.groupRights установка в Разрешено
-Установка разрешения Auth admin.groupRightsUpdate установка в Разрешено
-Установка разрешения Auth title.add установка в Разрешено
-Установка разрешения Auth title.del установка в Разрешено
-Установка разрешения Auth title.new установка в Разрешено
-Установка разрешения Auth title.view установка в Разрешено
-Установка разрешения Auth pages.edit установка в Разрешено
-Установка разрешения Auth pages.update установка в Разрешено
-Установка разрешения Auth admin.logs установка в Разрешено
-Установка разрешения Auth counter.new установка в Разрешено
-Установка разрешения Auth counter.add установка в Разрешено
-Установка разрешения Auth counter.view установка в Разрешено
-Установка разрешения Auth counter.del установка в Разрешено
-Установка разрешения Auth admin.userBan установка в Разрешено
-Установка разрешения Auth admin.userUnBan установка в Разрешено
-Установка разрешения Auth admin.userInfo установка в Разрешено
-Установка разрешения Auth admin.userNalet установка в Разрешено
-Установка разрешения Auth admin.groupHide установка в Разрешено
-Установка разрешения Auth admin.groupRightsAdmin установка в Разрешено
-Установка разрешения Auth admin.LoginsList установка в Разрешено
-Установка разрешения Auth orders.view установка в Разрешено
-Установка разрешения Auth orders.viewTur установка в Разрешено
-Установка разрешения Auth orders.type установка в Разрешено
-Установка разрешения Auth orders.locations установка в Разрешено
-Установка разрешения Auth orders.order установка в Разрешено
-Установка разрешения Auth orders.orderUpdate установка в Разрешено
-Установка разрешения Auth orders.search_tourist установка в Разрешено
-Установка разрешения Auth pages.copy установка в Разрешено
-Установка разрешения Auth pages.line установка в Разрешено
-Установка разрешения Auth pages.info установка в Разрешено
-Установка разрешения Auth info.new установка в Разрешено
-Установка разрешения Auth info.add установка в Разрешено
-Установка разрешения Auth info.edit установка в Разрешено
-Установка разрешения Auth info.update установка в Разрешено
-Установка разрешения Auth info.view установка в Разрешено
-Установка разрешения Auth info.del установка в Разрешено
-Установка разрешения Auth info.copy установка в Разрешено
-Установка разрешения Auth info.line установка в Разрешено
-Установка разрешения Auth info.info установка в Разрешено
-Установка разрешения Auth orders.signup установка в Разрешено
-Установка разрешения Auth admin.mails установка в Разрешено
-Установка разрешения Auth orders.search_order установка в Разрешено
-Установка разрешения Auth orders.pay_order установка в Разрешено
-Установка разрешения Auth orders.bank_order_data установка в Разрешено
-Установка разрешения Auth pages.newChild установка в Разрешено
-Установка разрешения Auth pages.addChild установка в Разрешено
-Установка разрешения Auth pages.usemodule установка в Разрешено
-Установка разрешения Auth pages.action установка в Разрешено
-Установка разрешения Auth news.new установка в Разрешено
-Установка разрешения Auth news.add установка в Разрешено
-Установка разрешения Auth news.edit установка в Разрешено
-Установка разрешения Auth news.update установка в Разрешено
-Установка разрешения Auth news.view установка в Разрешено
-Установка разрешения Auth news.newsline установка в Разрешено
-Установка разрешения Auth news.del установка в Разрешено
-Установка разрешения Auth news.newsadmin установка в Разрешено
-Установка разрешения Auth email.view установка в Разрешено
-Установка разрешения Auth email.send установка в Разрешено
-Установка разрешения Auth email.viewlist установка в Разрешено
-Установка разрешения Auth email.emailEdit установка в Разрешено
-Установка разрешения Auth email.emailDelete установка в Разрешено
-Установка разрешения Auth admin.newCar установка в Разрешено
-Установка разрешения Auth admin.carsList установка в Разрешено
-Установка разрешения Auth admin.carEdit установка в Разрешено
-Установка разрешения Auth admin.carUpdate установка в Разрешено
-Установка разрешения Auth admin.carBan установка в Разрешено
-Установка разрешения Auth admin.checkUser установка в Разрешено
-Установка разрешения Auth orders.get_data установка в Разрешено
-Установка разрешения Auth orders.orderBan установка в Разрешено
-Установка разрешения Auth orders.chg_status установка в Разрешено
-Установка разрешения Auth admin.getTelegramUpdates установка в Разрешено
-Установка разрешения Auth orders.LogistList установка в Разрешено
-Установка разрешения Auth orders.chg_courier установка в Разрешено
-Установка разрешения Auth orders.excel установка в Разрешено
-Пользователь авторизован
-modset = {<br /> 	&nbsp;&nbsp;new => 1<br />
-	&nbsp;&nbsp;add => 1<br />
-	&nbsp;&nbsp;edit => 1<br />
-	&nbsp;&nbsp;update => 1<br />
-	&nbsp;&nbsp;view => 1<br />
-	&nbsp;&nbsp;del => 1<br />
-	&nbsp;&nbsp;newChild => 1<br />
-	&nbsp;&nbsp;addChild => 1<br />
-	&nbsp;&nbsp;usemodule => 1<br />
-	&nbsp;&nbsp;action => 1<br />
- }<br />pages = {<br /> 	&nbsp;&nbsp;new => 1<br />
-	&nbsp;&nbsp;add => 1<br />
-	&nbsp;&nbsp;view => 1<br />
-	&nbsp;&nbsp;del => 1<br />
-	&nbsp;&nbsp;edit => 1<br />
-	&nbsp;&nbsp;update => 1<br />
-	&nbsp;&nbsp;copy => 1<br />
-	&nbsp;&nbsp;line => 1<br />
-	&nbsp;&nbsp;info => 1<br />
-	&nbsp;&nbsp;newChild => 1<br />
-	&nbsp;&nbsp;addChild => 1<br />
-	&nbsp;&nbsp;usemodule => 1<br />
-	&nbsp;&nbsp;action => 1<br />
- }<br />admin = {<br /> 	&nbsp;&nbsp;new => 1<br />
-	&nbsp;&nbsp;add => 1<br />
-	&nbsp;&nbsp;view => 1<br />
-	&nbsp;&nbsp;del => 1<br />
-	&nbsp;&nbsp;useAdmin => 1<br />
-	&nbsp;&nbsp;addUser => 1<br />
-	&nbsp;&nbsp;newUser => 1<br />
-	&nbsp;&nbsp;userList => 1<br />
-	&nbsp;&nbsp;userEdit => 1<br />
-	&nbsp;&nbsp;userUpdate => 1<br />
-	&nbsp;&nbsp;groupNew => 1<br />
-	&nbsp;&nbsp;groupAdd => 1<br />
-	&nbsp;&nbsp;groupEdit => 1<br />
-	&nbsp;&nbsp;groupUpdate => 1<br />
-	&nbsp;&nbsp;groupList => 1<br />
-	&nbsp;&nbsp;groupRights => 1<br />
-	&nbsp;&nbsp;groupRightsUpdate => 1<br />
-	&nbsp;&nbsp;logs => 1<br />
-	&nbsp;&nbsp;userBan => 1<br />
-	&nbsp;&nbsp;userUnBan => 1<br />
-	&nbsp;&nbsp;userInfo => 1<br />
-	&nbsp;&nbsp;userNalet => 1<br />
-	&nbsp;&nbsp;groupHide => 1<br />
-	&nbsp;&nbsp;groupRightsAdmin => 1<br />
-	&nbsp;&nbsp;LoginsList => 1<br />
-	&nbsp;&nbsp;mails => 1<br />
-	&nbsp;&nbsp;newCar => 1<br />
-	&nbsp;&nbsp;carsList => 1<br />
-	&nbsp;&nbsp;carEdit => 1<br />
-	&nbsp;&nbsp;carUpdate => 1<br />
-	&nbsp;&nbsp;carBan => 1<br />
-	&nbsp;&nbsp;checkUser => 1<br />
-	&nbsp;&nbsp;getTelegramUpdates => 1<br />
- }<br />title = {<br /> 	&nbsp;&nbsp;add => 1<br />
-	&nbsp;&nbsp;del => 1<br />
-	&nbsp;&nbsp;new => 1<br />
-	&nbsp;&nbsp;view => 1<br />
- }<br />counter = {<br /> 	&nbsp;&nbsp;new => 1<br />
-	&nbsp;&nbsp;add => 1<br />
-	&nbsp;&nbsp;view => 1<br />
-	&nbsp;&nbsp;del => 1<br />
- }<br />orders = {<br /> 	&nbsp;&nbsp;view => 1<br />
-	&nbsp;&nbsp;viewTur => 1<br />
-	&nbsp;&nbsp;type => 1<br />
-	&nbsp;&nbsp;locations => 1<br />
-	&nbsp;&nbsp;order => 1<br />
-	&nbsp;&nbsp;orderUpdate => 1<br />
-	&nbsp;&nbsp;search_tourist => 1<br />
-	&nbsp;&nbsp;signup => 1<br />
-	&nbsp;&nbsp;search_order => 1<br />
-	&nbsp;&nbsp;pay_order => 1<br />
-	&nbsp;&nbsp;bank_order_data => 1<br />
-	&nbsp;&nbsp;get_data => 1<br />
-	&nbsp;&nbsp;orderBan => 1<br />
-	&nbsp;&nbsp;chg_status => 1<br />
-	&nbsp;&nbsp;LogistList => 1<br />
-	&nbsp;&nbsp;chg_courier => 1<br />
-	&nbsp;&nbsp;excel => 1<br />
- }<br />info = {<br /> 	&nbsp;&nbsp;new => 1<br />
-	&nbsp;&nbsp;add => 1<br />
-	&nbsp;&nbsp;edit => 1<br />
-	&nbsp;&nbsp;update => 1<br />
-	&nbsp;&nbsp;view => 1<br />
-	&nbsp;&nbsp;del => 1<br />
-	&nbsp;&nbsp;copy => 1<br />
-	&nbsp;&nbsp;line => 1<br />
-	&nbsp;&nbsp;info => 1<br />
- }<br />news = {<br /> 	&nbsp;&nbsp;new => 1<br />
-	&nbsp;&nbsp;add => 1<br />
-	&nbsp;&nbsp;edit => 1<br />
-	&nbsp;&nbsp;update => 1<br />
-	&nbsp;&nbsp;view => 1<br />
+news = {<br /> 	&nbsp;&nbsp;view => 1<br />
 	&nbsp;&nbsp;newsline => 1<br />
-	&nbsp;&nbsp;del => 1<br />
-	&nbsp;&nbsp;newsadmin => 1<br />
- }<br />email = {<br /> 	&nbsp;&nbsp;view => 1<br />
-	&nbsp;&nbsp;send => 1<br />
-	&nbsp;&nbsp;viewlist => 1<br />
-	&nbsp;&nbsp;emailEdit => 1<br />
-	&nbsp;&nbsp;emailDelete => 1<br />
  }<br />
 SQL => SELECT * FROM modules ORDER BY `id`, `parentMod` DESC<br />
 
-Запрос переменной: &quot;module&quot; &quot;orders&quot; GET
+Запрос переменной: &quot;module&quot; &quot;&quot; GET
 0 => Установка переменной<br />
-module => orders<br />
+module => title<br />
 1 => method: GET<br />
 
-orders
-arg => orders<br />
+title
+arg => title<br />
 
 SQL => SELECT
 			m.*, 
@@ -281,20 +70,20 @@ SQL => SELECT
 			LEFT JOIN module_addons_assign mas ON mas.addon_id = m.addons
 			LEFT JOIN module_addons mad ON mad.id = mas.addon_id
 			LEFT JOIN modules m2 ON mas.mod_id = m2.id
-			WHERE m.`codename` = 'orders'<br />
+			WHERE m.`codename` = 'title'<br />
 
 0 => Модуль подключен<br />
-1 => orders<br />
+1 => title<br />
 
-arg => orders<br />
+arg => title<br />
 
-SQL => SELECT * FROM modules WHERE codename = 'orders'<br />
+SQL => SELECT * FROM modules WHERE codename = 'title'<br />
 
-arg => orders<br />
+arg => title<br />
 
-SQL => SELECT * FROM modules WHERE codename = 'orders'<br />
+SQL => SELECT * FROM modules WHERE codename = 'title'<br />
 
-arg => 13<br />
+arg => 5<br />
 
 arg => view<br />
 
@@ -302,147 +91,27 @@ SQL => SELECT ma.*, mc.group_id as group_adm, m.name as mod_name
             FROM module_actions ma
             INNER JOIN modules m ON ma.mod_id = m.id
             LEFT JOIN module_access mc ON ma.id = mc.action_id AND mc.group_id = 1
-            WHERE mod_id = 13 AND action_name = 'view'<br />
+            WHERE mod_id = 5 AND action_name = 'view'<br />
 
 0 => Регистрацция действия<br />
 1 => view<br />
-2 => 379<br />
-3 => 13<br />
-
-arg => 13<br />
-
-arg => LogistList<br />
-
-SQL => SELECT ma.*, mc.group_id as group_adm, m.name as mod_name
-            FROM module_actions ma
-            INNER JOIN modules m ON ma.mod_id = m.id
-            LEFT JOIN module_access mc ON ma.id = mc.action_id AND mc.group_id = 1
-            WHERE mod_id = 13 AND action_name = 'LogistList'<br />
-
-0 => Регистрацция действия<br />
-1 => LogistList<br />
-2 => 440<br />
-3 => 13<br />
-
-arg => 13<br />
-
-arg => order<br />
-
-SQL => SELECT ma.*, mc.group_id as group_adm, m.name as mod_name
-            FROM module_actions ma
-            INNER JOIN modules m ON ma.mod_id = m.id
-            LEFT JOIN module_access mc ON ma.id = mc.action_id AND mc.group_id = 1
-            WHERE mod_id = 13 AND action_name = 'order'<br />
-
-0 => Регистрацция действия<br />
-1 => order<br />
-2 => 383<br />
-3 => 13<br />
-
-arg => 13<br />
-
-arg => orderUpdate<br />
-
-SQL => SELECT ma.*, mc.group_id as group_adm, m.name as mod_name
-            FROM module_actions ma
-            INNER JOIN modules m ON ma.mod_id = m.id
-            LEFT JOIN module_access mc ON ma.id = mc.action_id AND mc.group_id = 1
-            WHERE mod_id = 13 AND action_name = 'orderUpdate'<br />
-
-0 => Регистрацция действия<br />
-1 => orderUpdate<br />
-2 => 384<br />
-3 => 13<br />
-
-arg => 13<br />
-
-arg => orderBan<br />
-
-SQL => SELECT ma.*, mc.group_id as group_adm, m.name as mod_name
-            FROM module_actions ma
-            INNER JOIN modules m ON ma.mod_id = m.id
-            LEFT JOIN module_access mc ON ma.id = mc.action_id AND mc.group_id = 1
-            WHERE mod_id = 13 AND action_name = 'orderBan'<br />
-
-0 => Регистрацция действия<br />
-1 => orderBan<br />
-2 => 437<br />
-3 => 13<br />
-
-arg => 13<br />
-
-arg => chg_status<br />
-
-SQL => SELECT ma.*, mc.group_id as group_adm, m.name as mod_name
-            FROM module_actions ma
-            INNER JOIN modules m ON ma.mod_id = m.id
-            LEFT JOIN module_access mc ON ma.id = mc.action_id AND mc.group_id = 1
-            WHERE mod_id = 13 AND action_name = 'chg_status'<br />
-
-0 => Регистрацция действия<br />
-1 => chg_status<br />
-2 => 438<br />
-3 => 13<br />
-
-arg => 13<br />
-
-arg => chg_courier<br />
-
-SQL => SELECT ma.*, mc.group_id as group_adm, m.name as mod_name
-            FROM module_actions ma
-            INNER JOIN modules m ON ma.mod_id = m.id
-            LEFT JOIN module_access mc ON ma.id = mc.action_id AND mc.group_id = 1
-            WHERE mod_id = 13 AND action_name = 'chg_courier'<br />
-
-0 => Регистрацция действия<br />
-1 => chg_courier<br />
-2 => 441<br />
-3 => 13<br />
-
-arg => 13<br />
-
-arg => get_data<br />
-
-SQL => SELECT ma.*, mc.group_id as group_adm, m.name as mod_name
-            FROM module_actions ma
-            INNER JOIN modules m ON ma.mod_id = m.id
-            LEFT JOIN module_access mc ON ma.id = mc.action_id AND mc.group_id = 1
-            WHERE mod_id = 13 AND action_name = 'get_data'<br />
-
-0 => Регистрацция действия<br />
-1 => get_data<br />
-2 => 436<br />
-3 => 13<br />
-
-arg => 13<br />
-
-arg => excel<br />
-
-SQL => SELECT ma.*, mc.group_id as group_adm, m.name as mod_name
-            FROM module_actions ma
-            INNER JOIN modules m ON ma.mod_id = m.id
-            LEFT JOIN module_access mc ON ma.id = mc.action_id AND mc.group_id = 1
-            WHERE mod_id = 13 AND action_name = 'excel'<br />
-
-0 => Регистрацция действия<br />
-1 => excel<br />
-2 => 442<br />
-3 => 13<br />
+2 => 267<br />
+3 => 5<br />
 
 Запрос переменной: &quot;view&quot; &quot;&quot; GET
-Запрос переменной: &quot;LogistList&quot; &quot;&quot; GET
-Запрос переменной: &quot;order&quot; &quot;&quot; GET
-Запрос переменной: &quot;orderUpdate&quot; &quot;&quot; GET
-Запрос переменной: &quot;orderBan&quot; &quot;&quot; GET
-Запрос переменной: &quot;chg_status&quot; &quot;&quot; GET
-Запрос переменной: &quot;chg_courier&quot; &quot;&quot; GET
-Запрос переменной: &quot;get_data&quot; &quot;&quot; GET
-Запрос переменной: &quot;excel&quot; &quot;1&quot; GET
-Запрос прав admin.view Разрешено
-Запрос прав orders.excel Разрешено
-Запрос переменной: &quot;sub_action&quot; &quot;&quot; POST
-Запрос переменной: &quot;date_from&quot; &quot;&quot; POST
-Запрос переменной: &quot;date_to&quot; &quot;&quot; POST
+0 => Установка переменной<br />
+view => 1<br />
+1 => method: GET<br />
+
+SQL => SELECT n.*, DATE_FORMAT(`time`, '%d.%m.%Y') as time,
+			    	(SELECT COUNT(*) FROM news) as news_count
+			     FROM news n
+				ORDER BY n.`time` DESC LIMIT 0,3<br />
+
+SQL => SELECT id, km_from, km_to, km_cost FROM routes_price r<br />
+
+SQL => SELECT id, type, cost_route FROM routes_add_price r<br />
+
 Конструктор 
 Запрос переменной: &quot;ajax&quot; 0 INDEX
 Запрос переменной: &quot;without_menu&quot; 0 INDEX
@@ -450,12 +119,12 @@ SQL => SELECT access FROM pages WHERE id ='49'<br />
 
 Дбавлен блок: module
 partName => pageContent<br />
-0 => layout/orders/orders.excel.xsl<br />
+0 => layout/title/index.view.xsl<br />
 
 Дбавлен блок: module
 partName => CurentUser<br />
-0 => layout/orders/orders.excel.xsl, layout/viewLoginBar.xsl<br />
+0 => layout/title/index.view.xsl, layout/viewLoginBar.xsl<br />
 
-pXSL layout/orders/orders.excel.xsl, layout/viewLoginBar.xsl
-pochta911.loc/orders/excel-1/
-System work time: 0.1367
+pXSL layout/title/index.view.xsl, layout/viewLoginBar.xsl
+pochta911.loc/?logout
+System work time: 0.3819
