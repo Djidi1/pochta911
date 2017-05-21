@@ -130,7 +130,7 @@
                                             <xsl:if test="order/target = 1">
                                                 <xsl:attribute name="checked"/>
                                             </xsl:if>
-                                        </input> к точному времени</label>
+                                        </input> доставка к точному времени</label>
                                 </div>
                             </div>
                             <!--<div class="row">-->
@@ -284,14 +284,14 @@
                 </xsl:call-template>
             </div>
             <div class="form-control target_select" style="width: 66%;">
-                <xsl:if test="../../order/target = 0">
+                <xsl:if test="../../order/target != 1 or not(../../order/target)">
                     <xsl:attribute name="style">width: 66%; display:none;</xsl:attribute>
                 </xsl:if>
                 <span class="order-add-title text-primary">
                     Доставить К
                 </span>
                 <xsl:call-template name="time_selector">
-                    <xsl:with-param name="select_class">order-route-data number to_time</xsl:with-param>
+                    <xsl:with-param name="select_class">order-route-data number to_time_target</xsl:with-param>
                     <xsl:with-param name="select_name">target_time[]</xsl:with-param>
                     <xsl:with-param name="select_title">Время доставки</xsl:with-param>
                     <xsl:with-param name="select_value" select="to_time"/>
