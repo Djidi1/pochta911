@@ -2,7 +2,7 @@
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
     <xsl:template match="container[@module = 'list']">
         <xsl:if test="//page/@isAjax != 1">
-            <div id="counter_form" style="z-index: 1001; position: absolute; right: 0; bottom: 0;">
+            <div id="counter_form" style="float: right;">
                 <form name="counter" class="counter">Обновление через <input id="counter_input" type="text" name="d2" disabled="" class="counter_input" style="background-color: transparent;border: none;color: red;width:40px;"/>
                 </form>
                 <script>
@@ -17,10 +17,10 @@
                             <span>Новый заказ</span>
                         </a>
                     </div>
-                    <div class="col-sm-7">
-                        <striong>Статусы: </striong>
+                    <div class="col-sm-7 order-statuses">
+                        <strong class="hide-mobile">Статусы: </strong>
                         <xsl:for-each select="statuses/item">
-                            <label class="btn btn-default btn-xs" style="margin-right:10px;" onchange="filter_table()">
+                            <label class="btn btn-default btn-xs" style="margin-right:2px;" onchange="filter_table()">
                                 <input class="statuses" type="checkbox" aria-label="" value="{id}"/>
                                 <xsl:text> </xsl:text>
                                 <span style="vertical-align: text-bottom;"><xsl:value-of select="status"/></span>
@@ -59,26 +59,26 @@
             <thead>
                 <!--<th>#</th>-->
                 <th>Заказ</th>
-                <th>Готов</th>
+                <th class="hide-mobile">Готов</th>
                 <th>Время доставки</th>
-                <th>Адрес приема и контакт</th>
-                <th>Компания</th>
+                <th class="hide-mobile">Адрес приема и контакт</th>
+                <th class="hide-mobile">Компания</th>
                 <th>Адрес доставки</th>
                 <!--<th>Телефон</th>-->
                 <!--<th>Получатель</th>-->
                 <th>Статус</th>
-                <th>Курьер и телефон</th>
-                <th>Стоимость доставки</th>
-                <th>Инкассация</th>
+                <th class="hide-mobile">Курьер и телефон</th>
+                <th class="hide-mobile">Стоимость доставки</th>
+                <th class="hide-mobile">Инкассация</th>
                 <xsl:if test="/page/body/module[@name='CurentUser']/container/group_id = 1">
                     <!--<th>Инкассация</th>-->
                     <!--<th>% инкассации</th>-->
                     <!--<th>Заработок курьера</th>-->
                     <!--<th>Заработок компании</th>-->
                 </xsl:if>
-                <th>Прим. заказ</th>
+                <th class="hide-mobile">Прим. заказ</th>
                 <!--<th>Прим. адрес</th>-->
-                <th/>
+                <th class="hide-mobile"/>
             </thead>
             <!--<tfoot>-->
             <!--<tr>-->
@@ -108,18 +108,18 @@
                         <td>
                             <xsl:value-of select="../../id"/>
                         </td>
-                        <td><xsl:value-of select="to_time_ready"/></td>
+                        <td class="hide-mobile"><xsl:value-of select="to_time_ready"/></td>
                         <td><nobr>
                             <xsl:value-of select="to_time"/>-<xsl:value-of select="to_time_end"/>
                         </nobr></td>
-                        <td><xsl:value-of select="../../address"/>
+                        <td class="hide-mobile"><xsl:value-of select="../../address"/>
                             <br/>
                             <i>
                                 <xsl:value-of select="../../addr_comment"/>
                             </i>
                         </td>
-                        <td><xsl:value-of select="../../title"/></td>
-                        <td><nobr><b><xsl:value-of select="to"/>, <xsl:value-of select="to_house"/>, <xsl:value-of select="to_appart"/></b></nobr></td>
+                        <td class="hide-mobile"><xsl:value-of select="../../title"/></td>
+                        <td><span class="no-br"><b><xsl:value-of select="to"/>, <xsl:value-of select="to_house"/>, <xsl:value-of select="to_appart"/></b></span></td>
                         <!--<td><nobr>-->
                         <!--<b>-->
                         <!--<xsl:value-of select="to_phone"/>-->
@@ -136,28 +136,28 @@
                             </xsl:attribute>
                             <xsl:value-of select="status"/>
                         </td>
-                        <td>
+                        <td class="hide-mobile">
                             <xsl:value-of select="../../fio_car"/> (<xsl:value-of select="../../car_number"/>)
                         </td>
 
-                        <td><xsl:value-of select="cost_route"/></td>
+                        <td class="hide-mobile"><xsl:value-of select="cost_route"/></td>
                         <xsl:choose>
                             <xsl:when test="pay_type = 2">
-                                <td title="({cost_route} + {cost_tovar})">
+                                <td title="({cost_route} + {cost_tovar})" class="hide-mobile">
                                     <xsl:value-of select="(number(cost_route)+number(cost_tovar))"/>
                                 </td>
                             </xsl:when>
                             <xsl:when test="pay_type = 3 or (pay_type = 1 and cost_tovar > 0)">
-                                <td title="{cost_tovar}">
+                                <td title="{cost_tovar}" class="hide-mobile">
                                     <xsl:value-of select="cost_tovar"/>
                                 </td>
                             </xsl:when>
                             <xsl:when test="(pay_type = 1 and cost_tovar = 0)">
-                                <td title="{cost_route}">
+                                <td title="{cost_route}" class="hide-mobile">
                                     <xsl:value-of select="cost_route"/>
                                 </td>
                             </xsl:when>
-                            <xsl:otherwise><td><xsl:value-of select="cost_tovar"/></td></xsl:otherwise>
+                            <xsl:otherwise><td class="hide-mobile"><xsl:value-of select="cost_tovar"/></td></xsl:otherwise>
                         </xsl:choose>
 
                         <xsl:if test="/page/body/module[@name='CurentUser']/container/group_id = 1">
@@ -169,10 +169,10 @@
                             <!--<td><xsl:value-of select="number(cost_route) * 0.75"/></td>-->
                             <!--<td><xsl:value-of select="number(cost_route) * 0.25"/></td>-->
                         </xsl:if>
-                        <td>
+                        <td class="hide-mobile">
                             <xsl:value-of select="comment"/>
                         </td>
-                        <td style="width:90px">
+                        <td style="width:90px" class="hide-mobile">
                             <xsl:if test="status_id = 1">
                                 <div class="btn-group">
                                     <div title="Изменить статус" class="btn btn-danger btn-xs chg-status" onclick="event.stopPropagation(); cancel_order({../../id})">

@@ -82,10 +82,10 @@
                                 </div>
                             </div>
                             <div class="row">
-                                <div class="col-sm-2">
+                                <div class="col-sm-2 col-xs-4">
                                     <label>Дата:</label>
                                 </div>
-                                <div class="col-sm-4">
+                                <div class="col-sm-4 col-xs-8">
                                     <input class="form-control date-picker" type="text" name="date" onkeyup="check_user(this)" value="{order/date}" size="30" required="">
                                         <xsl:if test="not(order/date)">
                                             <xsl:attribute name="value">
@@ -95,10 +95,10 @@
                                     </input>
                                 </div>
                                 <xsl:if test="order/id > 0">
-                                    <div class="col-sm-2">
+                                    <div class="col-sm-2 col-xs-4">
                                         <label>Курьер:</label>
                                     </div>
-                                    <div class="col-sm-4">
+                                    <div class="col-sm-4 col-xs-8">
                                         <select class="form-control" name="car_courier" title="Курьер">
                                             <xsl:if test="/page/body/module[@name='CurentUser']/container/group_id = 2">
                                                 <xsl:attribute name="disabled">disabled</xsl:attribute>
@@ -124,7 +124,7 @@
                                 <!--</div>-->
                                 <div class="col-sm-2">
                                 </div>
-                                <div class="col-sm-4">
+                                <div class="col-sm-4 col-xs-12">
                                     <label class="btn btn-default">
                                         <input type="checkbox" id="target" name="target" value="1" onchange="calc_route(1); target_time_show()">
                                             <xsl:if test="order/target = 1">
@@ -175,14 +175,21 @@
                         </div>
                         <xsl:if test="$no_edit != 1">
                             <div class="row">
-                                <div class="col-sm-6">
+                                <div class="col-xs-6">
                                     <div style="text-align: center">
                                         <span class="btn btn-info calc_route" onclick="calc_route(1)">Рассчитать маршрут</span>
                                     </div>
                                 </div>
-                                <div class="col-sm-6">
+                                <div class="col-xs-6">
                                     <div style="text-align: center">
                                         <input class="btn btn-success btn-submit" type="button" value="сохранить" onclick="return test_time_all_routes()"/>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-xs-12">
+                                    <div style="text-align: center">
+                                        <a href="/" class="btn btn-warning"><span class="glyphicon glyphicon-circle-arrow-left"/> Выйти без сохранения</a>
                                     </div>
                                 </div>
                             </div>
@@ -194,7 +201,6 @@
                         </xsl:if>
                         <br/>
                     </div>
-                    <a href="/" class="btn btn-warning"><span class="glyphicon glyphicon-circle-arrow-left"/> Выйти без сохранения</a>
                 </div>
                 <div class="col-sm-4 map-form">
                     <div class="map-container">

@@ -20,7 +20,7 @@
                     </div>
                 </div>
                 <div class="body-top">
-                    <div class="main" style="width:90%;">
+                    <div class="main">
                         <xsl:if test="/page/body/module[@name='CurentUser']/container/login = 1">
                             <xsl:call-template name="main_headWrap"/>
                         </xsl:if>

@@ -327,6 +327,7 @@ function calc_route(recalc_cost) {
                 $('#ShortInfo').html(shortInfo);
                 if (delivery_sum > 0) {
                     $('.delivery_sum').html('<b>Итоговая сумма доставки заказа: ' + delivery_sum + '.00 руб</b>');
+                    $('.delivery_sum_title').html('<b>' + delivery_sum + '.00 р.</b>');
                 }
             } else {
                 bootbox.alert('Ошибка построения маршрута: ' + status);

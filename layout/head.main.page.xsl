@@ -3,12 +3,13 @@
     <xsl:template name="main_head">
         <head>
             <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+            <meta name="viewport" content="width=device-width, initial-scale=1"/>
             <base href="."/>
             <title>Доставка цветов</title>
             <link href="/images/favicon.png" rel="shortcut icon" type="image/vnd.microsoft.icon"/>
             <link rel="stylesheet" href="/css/camera.css"/>
             <link rel="stylesheet" href="/css/select2.css?v1.1"/>
-            <link rel="stylesheet" href="/css/style.css?v2.8"/>
+            <link rel="stylesheet" href="/css/style.css?v2.10"/>
             <link rel="stylesheet" href="/css/font-awesome.min.css"/>
             <link rel="stylesheet" href="/css/print.css" media="Print"/>
             <link rel="stylesheet" href="/css/bootstrap.min.css"/>
@@ -143,6 +144,15 @@
                     </div><!-- /.navbar-collapse -->
                 </div><!-- /.container-fluid -->
             </nav>
+            <div class="mobile-sub-menu">
+                <div class="slogan">Логистика для цветочных магазинов</div>
+                <div class="moduletable_LoginForm login-mobile">
+                    <xsl:apply-templates select="//page/body/module[@name = 'CurentUser']/container[@module = 'login']"/>
+                </div>
+                <div class="phone-in-header phone-mobile">
+                    <span class="city-code">(812)</span> 407-24-52
+                </div>
+            </div>
         </div>
         <div id="loading2" style="display:none;">
             <div class="loading-block">
@@ -193,7 +203,7 @@
             </xsl:if>
             <div class="well wrapper">
                 <div class="footerText">
-                    <div class="footer1">Copyright © <xsl:value-of select="//@year"/> Цветочное такси. Все права защищены.
+                    <div class="footer1">Copyright © <xsl:value-of select="//@year"/> Цветочное такси.
                     </div>
                 </div>
             </div>

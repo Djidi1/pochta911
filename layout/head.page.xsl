@@ -1,21 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
-	<!-- Это гостевой заголовок -->
+	<!-- Это гостевой заголовок - ТИТУЛЬНАЯ СТРАНИЦА -->
 	<xsl:template name="head">
 		<head>
 			<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+			<meta name="viewport" content="width=device-width, initial-scale=1"/>
 			<base href="."/>
 			<title>Доставка цветов</title>
 			<link href="/images/favicon.png" rel="shortcut icon" type="image/vnd.microsoft.icon"/>
 			<link rel="stylesheet" href="/css/camera.css?v1.0"/>
 			<link rel="stylesheet" href="/css/select2.css?v1.1"/>
-			<link rel="stylesheet" href="/css/style.css?v2.8"/>
+			<link rel="stylesheet" href="/css/style.css?v2.10"/>
 			<link rel="stylesheet" href="/css/font-awesome.min.css"/>
 			<link rel="stylesheet" href="/css/print.css" media="Print"/>
 			<link rel="stylesheet" href="/css/bootstrap.min.css"/>
 			<link rel="stylesheet" href="/css/bootstrap-datetimepicker.min.css"/>
 			<link rel="stylesheet" href="//cdn.datatables.net/plug-ins/3cfcc339e89/integration/bootstrap/3/dataTables.bootstrap.css"/>
-			<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Lobster"/>
 			<script src="/js/jquery.min.js"/>
 			<script src="/js/jquery-ui.min.js"/>
 			<script src="/js/bootstrap.min.js"/>
@@ -67,30 +67,12 @@
 					<!-- Collect the nav links, forms, and other content for toggling -->
 					<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
 						<ul class="nav navbar-nav">
-							<!--<li>-->
-								<!--<a href="/">Главная</a>-->
-							<!--</li>-->
 							<li>
 								<a class="callme_viewform" href="#">Зарегистрироваться</a>
 							</li>
 							<li>
 								<a href="/pages/view-49/">Условия сотрудничества</a>
 							</li>
-							<!--<li class="item-207">-->
-								<!--<a href="/pages/view-28/">О нас</a>-->
-							<!--</li>-->
-							<!--<li>-->
-								<!--<a href="/orders/">Заказы</a>-->
-							<!--</li>-->
-							<!--<li>-->
-								<!--<a href="/pages/view-49/">Акции</a>-->
-							<!--</li>-->
-							<!--<li>-->
-								<!--<a href="/pages/view-52/">Услуги</a>-->
-							<!--</li>-->
-							<!--<li>-->
-								<!--<a href="#">Контакты</a>-->
-							<!--</li>-->
 						</ul>
 						<script>
 							var now_path = window.location.pathname;
@@ -104,21 +86,18 @@
 						<div class="phone-in-header phone">
 							<span class="city-code">(812)</span> 407-24-52
 						</div>
-						<!--<div class="phoneheader navbar-form navbar-right">-->
-							<!--<span class="phone" style="">-->
-								<!--<ins/>8 812 222-2222-->
-							<!--</span>-->
-							<!--<span class="address" style="">-->
-								<!--<ins/>-->
-								<!--<a href="/pages/view-29/">м.Невский Проспект,-->
-									<!--<nobr>Адрес</nobr>-->
-								<!--</a>-->
-							<!--</span>-->
-						<!--</div>-->
 					</div><!-- /.navbar-collapse -->
 				</div><!-- /.container-fluid -->
 			</nav>
-
+			<div class="mobile-sub-menu">
+				<div class="slogan">Логистика для цветочных магазинов</div>
+				<div class="moduletable_LoginForm login-mobile">
+					<xsl:apply-templates select="//page/body/module[@name = 'CurentUser']/container[@module = 'login']"/>
+				</div>
+				<div class="phone-in-header phone-mobile">
+					<span class="city-code">(812)</span> 407-24-52
+				</div>
+			</div>
 		</div>
 		<div id="loading2" style="display:none;"><div class="loading-block"><p class="title" style="text-align:center;">Пожалуйста, подождите...<br/><img src="/images/anim_load.gif" /></p></div></div>
 	</xsl:template>

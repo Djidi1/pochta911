@@ -1,4 +1,11 @@
 /*@media print {BODY>* {display: none; } DIV.printBlock { display: block !important; }}*/
+@font-face {
+    font-family: 'Lobster';
+    font-style: normal;
+    font-weight: 400;
+    src: local('Lobster'), local('Lobster-Regular'), url(//fonts.gstatic.com/s/lobster/v18/c28rH3kclCLEuIsGhOg7evY6323mHUZFJMgTvxaG2iE.woff2) format('woff2');
+    unicode-range: U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
 BODY {min-width: 320px;}
 #logo img { width: 120px;}
 .header1 {display: block}
@@ -129,6 +136,8 @@ span.order-add-title {
     position: absolute;
     left: 2px;
     top: 0;
+    height: 14px;
+    overflow: hidden;
     font-weight: bold;
     font-size: 10px;
 }
@@ -185,4 +194,63 @@ select.store_address option[value="0"] { /* value not val */
 }
 input:invalid, select:invalid {
     background-color: #ffeded;
+}
+DIV.delivery_sum_title {
+    text-align: center;
+    float: right;
+    border: 1px solid #5cc75f;
+    padding: 6px;
+    border-radius: 4px;
+    background: #c6ffc6;
+}
+.phone-mobile {display: none}
+.login-mobile {display: none}
+.slogan {display: none}
+
+@media (max-width: 768px) {
+
+    /* Главная страница */
+   /* .main {width: 92%;}*/
+    .slogan {
+        font-family: 'Lobster', cursive;
+        text-align: center;
+        display: table;
+        font-size: 18px;
+        color: #ff7305;
+        width: 100%;
+    }
+
+    .camera_wrap {display: none}
+    .phone-in-header.phone {display: none}
+    .moduletable_LoginForm.navbar-right {display: none}
+    .phone-mobile {display: block; padding: 0;}
+    .login-mobile {display: block; float: left; border: 1px solid #3cb4d8;  background: #5bc0de; border-radius: 6px; padding: 0 6px;}
+    .login-mobile ul {margin: 0;}
+    .login-mobile a {color: white;    padding: 4px !important;}
+    .login-mobile .nav .open>a,
+    .login-mobile .nav .open>a:hover,
+    .login-mobile .nav .open>a:focus,
+    .login-mobile .nav .open>a,
+    .login-mobile .nav .open>a:hover,
+    .login-mobile .nav .open>a:focus,
+    .login-mobile .nav>li>a:hover,
+    .login-mobile .nav>li>a:focus
+    { color: white;   background-color: transparent; border-color: transparent;}
+    .navbar { margin-bottom: 5px !important;  }
+
+    /* Остальные страницы */
+    .hide-mobile {display: none;}
+    .bottom-menu li {float: left;}
+    .well.wrapper {display: inline-block; margin-top: 24px;height: 34px;width: 100%;}
+    FORM.order_edit .input-group { margin: 0 -17px;}
+    .mobile-sub-menu {    display: block;
+        height: 60px;
+        border-bottom: 1px solid #ccc;
+        background: #f5f5f5;
+        margin-bottom: 4px;
+        margin-top: -5px;
+        padding: 0 3px; }
+
+    .order-statuses span {font-size: 10px; vertical-align: text-bottom;}
+    .order-statuses {margin: 2px auto;}
 }

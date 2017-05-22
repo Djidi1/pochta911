@@ -1,16 +1,16 @@
 <?php
 
-if ($_SERVER['REMOTE_ADDR'] == '127.0.0.1') {
+//if ($_SERVER['REMOTE_ADDR'] == '127.0.0.1') {
     define ('DB_HOST','localhost');
 	define ('DB_DATABASE','pochta911');
 	define ('DB_USER','root');
 	define ('DB_PASS','');
-} else {
-    define ('DB_HOST','192.168.137.106');
-    define ('DB_DATABASE','db1056464_fd');
-    define ('DB_USER','u1056464_fd');
-    define ('DB_PASS','qh.C38y(q&fi,8[z');
-}
+//} else {
+//    define ('DB_HOST','192.168.137.106');
+//    define ('DB_DATABASE','db1056464_fd');
+//    define ('DB_USER','u1056464_fd');
+//    define ('DB_PASS','qh.C38y(q&fi,8[z');
+//}
 
 define ('DB_USE','mySQL');
 

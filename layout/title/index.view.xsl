@@ -100,7 +100,7 @@
         </xsl:if>
     </xsl:template>
     <xsl:template name="calcOnMain">
-        <div class="col-xs-4">
+        <div class="col-sm-4">
             <div class="alert alert-warning">
                 <span class="glyphicon glyphicon-info-sign"/>
                 <i> Введите адреса для моментального расчёта стоимости доставки:</i>
@@ -137,7 +137,7 @@
             </div>
             <hr/>
             <span class="btn btn-info calc_route" onclick="calc_route(1)">Рассчитать доставку</span>
-            <div class="delivery_sum"/>
+            <div class="delivery_sum_title">---</div>
             <hr/>
             <div class="alert alert-info">
                 <span class="glyphicon glyphicon-ok-sign"/>
@@ -145,7 +145,7 @@
                 <i><a class="callme_viewform" href="#">Зарегистрируйтесь</a>, пожалуйста, чтобы мы могли осуществлять для вас доставки.</i>
             </div>
         </div>
-        <div class="col-xs-8">
+        <div class="col-sm-8">
             <div class="row">
                 <div class="col-sm-12 map-form">
                     <div class="map-container">

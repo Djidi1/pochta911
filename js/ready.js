@@ -82,7 +82,7 @@ jQuery(function ($) {
         bootbox.alert(img);
     });
 
-    if ($('.camera_wrap').length)
+    if ($('.camera_wrap').length && $('body').width() > 768)
         $('.camera_wrap').camera({
             height: '200px'
         });

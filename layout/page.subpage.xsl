@@ -23,7 +23,7 @@
                     <xsl:value-of select="//page/body/module[@name='CurentUser']/container/user_id"/>
                 </xsl:attribute>
                 <div class="body-top">
-                    <div class="main" style="width:90%;">
+                    <div class="main">
                         <xsl:if test="/page/@without_menu != 1">
                             <xsl:if test="/page/body/module[@name='CurentUser']/container/login = 1">
                                 <xsl:call-template name="main_headWrap"/>
