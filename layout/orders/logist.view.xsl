@@ -61,7 +61,7 @@
                 <th>Заказ</th>
                 <th class="hide-mobile">Готов</th>
                 <th>Время доставки</th>
-                <th class="hide-mobile">Адрес приема и контакт</th>
+                <th>Адрес приема и контакт</th>
                 <th class="hide-mobile">Компания</th>
                 <th>Адрес доставки</th>
                 <!--<th>Телефон</th>-->
@@ -112,7 +112,7 @@
                         <td><nobr>
                             <xsl:value-of select="to_time"/>-<xsl:value-of select="to_time_end"/>
                         </nobr></td>
-                        <td class="hide-mobile"><xsl:value-of select="../../address"/>
+                        <td><xsl:value-of select="../../address"/>
                             <br/>
                             <i>
                                 <xsl:value-of select="../../addr_comment"/>
