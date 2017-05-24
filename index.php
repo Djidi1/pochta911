@@ -23,6 +23,10 @@ if ($values->isVal('debug', 'GET')) $_SESSION['DEBUG'] = $values->getVal('debug'
 if (!isset($_SESSION['DEBUG'])) $_SESSION['DEBUG'] = 0;
 define('DEBUG', $_SESSION['DEBUG']);
 
+if ($values->isVal('fullscreen', 'GET')) $_SESSION['FULLSCREEN'] = $values->getVal('fullscreen', 'GET', 'integer');
+if (!isset($_SESSION['FULLSCREEN'])) $_SESSION['FULLSCREEN'] = 0;
+define('FULLSCREEN', $_SESSION['FULLSCREEN']);
+
 $System = new TSYSTEM();
 
 // stop($_SERVER["DOCUMENT_ROOT"]);
@@ -116,6 +120,7 @@ if ($module) {
         $Page->addToPageAttr('isAjax', intval($isAjax));
         $Page->addToPageAttr('year', date('Y'));
         $Page->addToPageAttr('without_menu', $without_menu);
+        $Page->addToPageAttr('fullscreen', FULLSCREEN);
         $Page->addToPageAttr('new_page', $User->get_menu_new(49));
         $Page->addMeta('http-equiv', 'Content-Type', 'text/html; charset=utf-8', '');
 

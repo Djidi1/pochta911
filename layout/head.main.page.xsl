@@ -3,7 +3,9 @@
     <xsl:template name="main_head">
         <head>
             <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-            <meta name="viewport" content="width=device-width, initial-scale=1"/>
+            <xsl:if test="//@fullscreen != 1">
+                <meta name="viewport" content="width=device-width, initial-scale=1"/>
+            </xsl:if>
             <base href="."/>
             <title>Доставка цветов</title>
             <link href="/images/favicon.png" rel="shortcut icon" type="image/vnd.microsoft.icon"/>
@@ -27,7 +29,7 @@
             <script src="/js/bootstrap-typeahead.min.js"/>
             <script src="/js/camera.min.js"/>
             <script src="/js/ready.js?v2.2"/>
-            <script src="/js/common.js?v3.15"/>
+            <script src="/js/common.js?v3.17"/>
             <script src="/js/script.js?v2.4"/>
             <script src="//cdn.ckeditor.com/4.6.1/full/ckeditor.js"/>
             <script src="//cdn.datatables.net/1.10.13/js/jquery.dataTables.min.js"/>
@@ -206,6 +208,14 @@
                     <div class="footer1">Copyright © <xsl:value-of select="//@year"/> Цветочное такси.
                     </div>
                 </div>
+            </div>
+            <div style="text-align:center">
+                <xsl:if test="//@fullscreen != 1">
+                    <a href="?fullscreen=1">Полная версия</a>
+                </xsl:if>
+                <xsl:if test="//@fullscreen = 1">
+                    <a href="?fullscreen=0">Адаптивная версия</a>
+                </xsl:if>
             </div>
         </div>
     </xsl:template>

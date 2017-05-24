@@ -321,6 +321,10 @@ function target_time_show(){
     }
 }
 
+function round5(x)
+{
+    return Math.ceil(x/5)*5;
+}
 // адская проверка времени
 function test_time_routes_add() {
     $('.to_time').removeAttr('disabled');
@@ -331,9 +335,25 @@ function test_time_routes_add() {
         var next_to_time = $(next_route).find('.to_time').val();
         var this_to_time_end = $(this).find('.to_time_end').val();
         var next_to_time_end = $(next_route).find('.to_time_end').val();
+        // Текущее время
+        var m = moment(new Date());
+        var time_now_string = m.hour() + ':' + round5(m.minute());
 
-
-
+        // Если текущее время меньше времени готовности
+        if (TimeToFloat(this_ready) < TimeToFloat(time_now_string) && moment($('input[name=date]').val(), 'DD.MM.YYYY').isSame(Date.now(), 'day')) {
+            $(this).find('.to_time_ready').val(time_now_string);
+            bootbox.alert('Время готовности посылки не может быть меньше текущего времени.');
+        }
+        // Если время готовности меньше времени С
+        else if (TimeToFloat(this_ready) > TimeToFloat(this_to_time)) {
+            $(this).find('.to_time').val(this_ready);
+            test_time_routes_add();
+        }
+        // Если время С меньше времени ПО
+        else if (TimeToFloat(this_to_time) > TimeToFloat(this_to_time_end)) {
+            $(this).find('.to_time_end').val(this_to_time);
+            test_time_routes_add();
+        }
 
         if (typeof next_to_time != 'undefined') {
             // а. времня начало доставки следующего адреса, меньше или равно времени окончания доставки предыдущего.

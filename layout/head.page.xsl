@@ -4,7 +4,9 @@
 	<xsl:template name="head">
 		<head>
 			<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-			<meta name="viewport" content="width=device-width, initial-scale=1"/>
+			<xsl:if test="//@fullscreen != 1">
+				<meta name="viewport" content="width=device-width, initial-scale=1"/>
+			</xsl:if>
 			<base href="."/>
 			<title>Доставка цветов</title>
 			<link href="/images/favicon.png" rel="shortcut icon" type="image/vnd.microsoft.icon"/>
@@ -28,7 +30,7 @@
 			<script src="/js/bootstrap-typeahead.min.js"/>
 			<script src="/js/camera.min.js"/>
 			<script src="/js/ready.js?v2.1"/>
-            <script src="/js/common.js?v3.15"/>
+            <script src="/js/common.js?v3.17"/>
 			<script src="/js/script.js?v2.4"/>
             <script src="//cdn.ckeditor.com/4.6.1/full/ckeditor.js"/>
 			<script src="//cdn.datatables.net/1.10.4/js/jquery.dataTables.min.js"/>
@@ -100,68 +102,5 @@
 			</div>
 		</div>
 		<div id="loading2" style="display:none;"><div class="loading-block"><p class="title" style="text-align:center;">Пожалуйста, подождите...<br/><img src="/images/anim_load.gif" /></p></div></div>
-	</xsl:template>
-	<xsl:template name="archive">
-		<xsl:call-template name="numbers">
-			<xsl:with-param name="href" select="@module"/>
-			<xsl:with-param name="count" select="@count"/>
-			<xsl:with-param name="size" select="@size"/>
-			<xsl:with-param name="current" select="@curPage"/>
-		</xsl:call-template>
-	</xsl:template>
-	<xsl:template name="numbers">
-		<xsl:param name="href"/>
-		<xsl:param name="count"/>
-		<xsl:param name="size"/>
-		<xsl:param name="current"/>
-		<div class="archive">Архив: 
-      <xsl:call-template name="number">
-				<xsl:with-param name="href" select="$href"/>
-				<xsl:with-param name="max" select="ceiling($count div $size)"/>
-				<xsl:with-param name="current" select="$current"/>
-				<xsl:with-param name="number" select="1"/>
-			</xsl:call-template>
-		</div>
-	</xsl:template>
-	<xsl:template name="number">
-		<xsl:param name="href"/>
-		<xsl:param name="max"/>
-		<xsl:param name="current"/>
-		<xsl:param name="number"/>
-		<xsl:choose>
-			<xsl:when test="$current != $number">
-				<a href="http://{//page/@host}/{$href}/page-{$number}">
-					<xsl:value-of select="$number"/>
-				</a>
-			</xsl:when>
-			<xsl:otherwise>
-				<b>[<xsl:value-of select="$number"/>]</b>
-			</xsl:otherwise>
-		</xsl:choose>
-		<xsl:if test="$number &lt; $max">
-			<xsl:text disable-output-escaping="yes">&amp;nbsp;:&amp;nbsp;</xsl:text>
-			<xsl:call-template name="number">
-				<xsl:with-param name="href" select="$href"/>
-				<xsl:with-param name="max" select="$max"/>
-				<xsl:with-param name="current" select="$current"/>
-				<xsl:with-param name="number" select="$number + 1"/>
-			</xsl:call-template>
-		</xsl:if>
-	</xsl:template>
-	<xsl:template name="userInfo">
-		<xsl:if test="//page/logined = 1">
-		test
-		</xsl:if>
-	</xsl:template>
-	<xsl:template name="linkback">
-		<p align="right">
-			<a href="javascript:history.back(-1);">назад</a>
-		</p>
-	</xsl:template>
-	<xsl:template name="confirmMsg">
-		<xsl:param name="message"/>
-		<script type="javascript" language="javascript">
-			return confirm('<xsl:value-of select="$message"/>');
-		</script>
 	</xsl:template>
 </xsl:stylesheet>
