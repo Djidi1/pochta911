@@ -505,6 +505,10 @@ class ordersModel extends module_model {
             $sql_values = '';
 
 			foreach ($params ['to'] as $key => $item) {
+			    // Если к точному времени, то время ПО = времени С
+                if ($params['target'] == 1){
+                    $params ['to_time_end'][$key] = $params ['to_time'][$key];
+                }
                 $params ['status'][$key] = $params ['status'][$key] == 0 ? 1 : $params ['status'][$key];
                 // Если сбросили курьера, но не отмена
                 $params ['status'][$key] = ($params['car_courier'] == 0 and $params ['status'][$key] != 5) ? 1 : $params ['status'][$key];

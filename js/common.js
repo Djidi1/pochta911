@@ -319,6 +319,7 @@ function target_time_show(){
         $('.target_select').hide();
         $('.period_select').show();
     }
+    test_time_routes_add();
 }
 
 function round5(x)

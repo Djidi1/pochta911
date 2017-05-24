@@ -301,7 +301,7 @@
                     <xsl:with-param name="select_name">target_time[]</xsl:with-param>
                     <xsl:with-param name="select_title">Время доставки</xsl:with-param>
                     <xsl:with-param name="select_value" select="to_time"/>
-                    <xsl:with-param name="select_onchange">time_routes_set(this)</xsl:with-param>
+                    <xsl:with-param name="select_onchange">time_routes_set(this); $('.to_time').val($(this).val());$('.to_time_end').val($(this).val());</xsl:with-param>
                 </xsl:call-template>
             </div>
             <div class="form-control period_select" style="width: 33%;">
@@ -316,7 +316,7 @@
                     <xsl:with-param name="select_name">to_time[]</xsl:with-param>
                     <xsl:with-param name="select_title">Время доставки с</xsl:with-param>
                     <xsl:with-param name="select_value" select="to_time"/>
-                    <xsl:with-param name="select_onchange">test_time_routes_add()</xsl:with-param>
+                    <xsl:with-param name="select_onchange">test_time_routes_add(); $('.to_time_target').val($(this).val());</xsl:with-param>
                 </xsl:call-template>
             </div>
             <div class="form-control period_select" style="width: 33%;">
