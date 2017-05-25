@@ -40,7 +40,7 @@
             <script src="//maps.googleapis.com/maps/api/js?key=AIzaSyAnDrB-qO4i5uCua-4krGQsloWYJBRtgNU&libraries=places"></script>
                 ]]>
             </xsl:text>
-			<script src="/js/gmap.js?v2.13"/>
+			<script src="/js/gmap.js?v2.14"/>
 			<script type="text/javascript" src="/callme/js/callme.js"/>
 		</head>
 	</xsl:template>

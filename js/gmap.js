@@ -123,7 +123,7 @@ function calc_route(recalc_cost) {
         // var route_to_corpus = $(this).parent().parent().find('.to_corpus').val();
         var route_to_corpus = '';
         if (route_address !== '') {
-            route_address = (route_address.indexOf(',') > -1 || route_address_region == 47) ? 'Ленинградская обл., ' + route_address : 'Ленинградская обл., Санкт-Петербург, ' + route_address;
+            route_address = (route_address.indexOf(',') > -1 || route_address_region == 47) ? 'Ленинградская обл., ' + route_address : 'Санкт-Петербург, ' + route_address;
             way_points.push({
                 location: (route_address + ((route_to_house !== '') ? (', ' + route_to_house) : '') + ((route_to_corpus !== '') ? (', ' + route_to_corpus) : '')) + '',
                 stopover: true
