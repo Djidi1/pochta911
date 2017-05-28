@@ -122,16 +122,16 @@
                                 <!--<div class="col-sm-4">-->
                                     <!--<input class="form-control time-picker" type="text" name="ready" onkeyup="check_user(this)" value="{order/ready}" size="30" required=""/>-->
                                 <!--</div>-->
-                                <div class="col-sm-2">
-                                </div>
-                                <div class="col-sm-4 col-xs-12">
-                                    <label class="btn btn-default">
-                                        <input type="checkbox" id="target" name="target" value="1" onchange="calc_route(1); target_time_show()">
-                                            <xsl:if test="order/target = 1">
-                                                <xsl:attribute name="checked"/>
-                                            </xsl:if>
-                                        </input> доставка к точному времени</label>
-                                </div>
+                                <!--<div class="col-sm-2">-->
+                                <!--</div>-->
+                                <!--<div class="col-sm-4 col-xs-12">-->
+                                    <!--<label class="btn btn-default">-->
+                                        <!--<input type="checkbox" id="target" name="target" value="1" onchange="calc_route(1); target_time_show()">-->
+                                            <!--<xsl:if test="order/target = 1">-->
+                                                <!--<xsl:attribute name="checked"/>-->
+                                            <!--</xsl:if>-->
+                                        <!--</input> доставка к точному времени</label>-->
+                                <!--</div>-->
                             </div>
                             <!--<div class="row">-->
                                 <!--<div class="col-sm-2">-->
@@ -265,15 +265,25 @@
             </div>
 
 
-            <div class="form-control" style="width: 50%;">
+            <div class="form-control" style="width: 40%;">
                 <span class="order-add-title text-warning">Получатель ФИО</span>
                 <input type="text" class="order-route-data" name="to_fio[]" title="Получатель" value="{to_fio}" required=""/>
             </div>
-            <div class="form-control" style="width: 50%;">
+            <div class="form-control" style="width: 30%;">
                 <span class="order-add-title text-warning">
                     Телефон получателя
                 </span>
                 <input type="text" class="order-route-data" name="to_phone[]" title="Телефон получателя" value="{to_phone}" required=""/>
+            </div>
+            <div class="form-control" style="width: 30%; text-align:right">
+                <span class="order-add-title text-warning">
+                    доставка к точному времени
+                </span>
+                <input type="checkbox" class="order-route-data target" name="target" value="1" onchange="calc_route(1); target_time_show()" style="width:32px;margin:0">
+                    <xsl:if test="../../order/target = 1">
+                        <xsl:attribute name="checked"/>
+                    </xsl:if>
+                </input>
             </div>
 
 

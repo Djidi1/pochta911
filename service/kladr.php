@@ -32,6 +32,7 @@ if ($search_type == 'street') {
         $res['id'] = '';
         $res['region'] = $row['region'];
         $res['name'] = ''.$row['SHORTNAME'].'. '.$row['city'];
+//        $res['name'] = $row['city'];
         $items[] = $res;
         $i++;
     }
@@ -63,6 +64,7 @@ if ($search_type == 'street') {
         $res['id'] = $row['AOGUID'];
         $res['region'] = $row['region'];
         $res['name'] = ($row['city'] != ''?''.$row['shtn'].'. '.$row['city'].', ':'').$row['SHORTNAME'].'. '.$row['street'];
+//        $res['name'] = ($row['city'] != ''?$row['city'].', ':'').$row['SHORTNAME'].'. '.$row['street'];
         $items[] = $res;
         $i++;
     }

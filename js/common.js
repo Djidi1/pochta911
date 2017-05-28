@@ -312,7 +312,7 @@ function time_routes_set(obj){
 }
 
 function target_time_show(){
-    if ($('#target').prop('checked')){
+    if ($('.target').prop('checked')){
         $('.target_select').show();
         $('.period_select').hide();
     }else{
@@ -491,7 +491,7 @@ function test_time_routes_each(route_row){
         }
     }
     // Проверка от и до не менее 40 мин, если только не к точному времени
-    if ((tt_end_2 - tt_2) <= 0.65 && !$('#target').prop('checked')){
+    if ((tt_end_2 - tt_2) <= 0.65 && !$('.target').prop('checked')){
         errors += '<li>Интервал доставки не может быть менее 40 минут.</li><br/>';
         no_error = false;
     }
@@ -627,6 +627,7 @@ function add_data_table(obj){
         , "bLengthChange": false
         , "bPaginate": false
         , "bFilter": true
+        , "stateSave": true
         , "order": [[ 2, 'asc' ]]
     });
 }

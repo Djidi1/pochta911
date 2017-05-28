@@ -478,7 +478,7 @@ function refresh_page(url) {
     }
     if (seconds <= -1) {
         milisec = 0;
-        sendFilter(url_set+'/ajax-1/', 'sFilter', 'orders_table');
+        sendFilter(url_set+'/ajax-1/', 'form_orders', 'orders_table');
         $('#counter_input').val(seconds_def);
         seconds = seconds_def;
     } else
