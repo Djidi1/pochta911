@@ -108,7 +108,7 @@ function ArrayToCoords(arr){
     return points;
 }
 
-function calc_route(recalc_cost) {
+function calc_route(recalc_cost, dest_point) {
     // Удаляем старые маршруты
     $.each(order_route, function () {
         this.setMap(null);
@@ -142,6 +142,7 @@ function calc_route(recalc_cost) {
     // var destination_point = route[route.length-1].location;
     // Исклюаем конечную точку маршрута из промежуточных
     var destination_point = way_points.pop();
+    var destination_point_location = (typeof dest_point == 'undefined') ? destination_point.location : dest_point;
 
     if (origin_point === ''){
         origin_point = way_points.pop();
@@ -152,7 +153,7 @@ function calc_route(recalc_cost) {
     if ( origin_point !== '' ) {
         directionsService.route({
             origin: origin_point,
-            destination: destination_point.location,
+            destination: destination_point_location,
             waypoints: way_points,
             region: 'ru',
             provideRouteAlternatives: true,
@@ -330,12 +331,28 @@ function calc_route(recalc_cost) {
                     $('.delivery_sum_title').html('<b>' + delivery_sum + '.00 р.</b>');
                 }
             } else {
-                bootbox.alert('Ошибка построения маршрута: ' + status);
+                if (status == 'NOT_FOUND'){
+                    var dest_point = response.request.destination;
+                    $.get('https://geocode-maps.yandex.ru/1.x/?format=json&geocode='+dest_point, function(data){
+                        var dest_point = data.response.GeoObjectCollection.featureMember[0].GeoObject.Point.pos;
+                        if (typeof dest_point !== 'undefined'){
+                            var ll = strToLatLng(dest_point);
+                            calc_route(1, ll);
+                        }else {
+                            console.log(data);
+                        }
+                    });
+                }else {
+                    bootbox.alert('Ошибка построения маршрута: ' + status);
+                }
             }
         });
     }
 }
-
+function strToLatLng(ll){
+    var latlng = ll.split(' ');
+    return new google.maps.LatLng(parseFloat(latlng[1]), parseFloat(latlng[0]));
+}
 function MetersToKilo(number){
     return Math.ceil(number / 100)/10;
 }

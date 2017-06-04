@@ -720,7 +720,7 @@ class ordersProcess extends module_process {
             $statuses = $this->nModel->getStatuses();
             $car_couriers = $this->nModel->getCarCouriers();
 			$users = $this->nModel->getUsers($uid);
-            $userData = $this->nModel->getUserParams($user_id);
+            $userData = $this->nModel->getUserParams($uid);
             $user_pay_type = $userData['pay_type'];
             $user_fix_price = $userData['fixprice'];
 			$prices = $this->nModel->getPrices();

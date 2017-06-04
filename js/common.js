@@ -336,6 +336,7 @@ function test_time_routes_add() {
         var next_route = $('div.routes-block').eq(index+1);
         var this_ready = $(this).find('.to_time_ready').val();
         var this_to_time = $(this).find('.to_time').val();
+        var this_to_time_target = $(this).find('.to_time_target').val();
         var next_to_time = $(next_route).find('.to_time').val();
         var this_to_time_end = $(this).find('.to_time_end').val();
         var next_to_time_end = $(next_route).find('.to_time_end').val();
@@ -346,11 +347,12 @@ function test_time_routes_add() {
         // Если текущее время меньше времени готовности
         if (TimeToFloat(this_ready) < TimeToFloat(time_now_string) && moment($('input[name=date]').val(), 'DD.MM.YYYY').isSame(Date.now(), 'day')) {
             $(this).find('.to_time_ready').val(time_now_string);
-            bootbox.alert('Время готовности посылки не может быть меньше текущего времени.');
+            bootbox.alert('Время готовности не может быть меньше текущего времени.');
         }
         // Если время готовности меньше времени С
-        else if (TimeToFloat(this_ready) > TimeToFloat(this_to_time)) {
+        else if (TimeToFloat(this_ready) > TimeToFloat(this_to_time) || TimeToFloat(this_ready) > TimeToFloat(this_to_time_target)) {
             $(this).find('.to_time').val(this_ready);
+            $(this).find('.to_time_target').val(this_ready);
             test_time_routes_add();
         }
         // Если время С меньше времени ПО
