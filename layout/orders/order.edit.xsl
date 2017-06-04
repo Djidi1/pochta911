@@ -225,10 +225,15 @@
                 <input id="user_fix_price" type="hidden" value="{//@user_fix_price}"/>
             </div>
         </div>
+        <input id="order_edited" type="hidden" value="0"/>
+        <input id="order_id" type="hidden" value="{order/id}"/>
         <script>
             $('FORM').on('keyup keypress', function(e) {
-            var keyCode = e.keyCode || e.which;
-            if (keyCode === 13) { e.preventDefault(); return false; }
+                var keyCode = e.keyCode || e.which;
+                if (keyCode === 13) { e.preventDefault(); return false; }
+            });
+            $('input, select').on('change', function() {
+                $('#order_edited').val(1);
             });
         </script>
     </xsl:template>
@@ -275,15 +280,26 @@
                 </span>
                 <input type="text" class="order-route-data" name="to_phone[]" title="Телефон получателя" value="{to_phone}" required=""/>
             </div>
-            <div class="form-control" style="width: 30%; text-align:right">
+            <div class="form-control" style="width: 30%;">
                 <span class="order-add-title text-warning">
-                    доставка к точному времени
                 </span>
-                <input type="checkbox" class="order-route-data target" name="target" value="1" onchange="calc_route(1); target_time_show()" style="width:32px;margin:0">
-                    <xsl:if test="../../order/target = 1">
-                        <xsl:attribute name="checked"/>
-                    </xsl:if>
-                </input>
+                <div class="funkyradio">
+                    <div class="funkyradio-success">
+                        <input type="checkbox" id="checkbox_{position()}" class="target" name="target" value="1" onchange="calc_route(1); target_time_show()" >
+                            <xsl:if test="../../order/target = 1">
+                                <xsl:attribute name="checked"/>
+                            </xsl:if>
+                        </input>
+                        <label for="checkbox_{position()}"><span>К точному времени</span></label>
+                    </div>
+                </div>
+                <label style="width:100%; text-align:center">
+                    <input type="checkbox" class="order-route-data target" name="target" value="1" onchange="calc_route(1); target_time_show()" style="width:32px;margin:0">
+                        <xsl:if test="../../order/target = 1">
+                            <xsl:attribute name="checked"/>
+                        </xsl:if>
+                    </input>
+                </label>
             </div>
 
 

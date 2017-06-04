@@ -298,7 +298,7 @@ function calc_route(recalc_cost) {
 
                     if (recalc_cost > 0) {
                         // Если к определенному времени, то прибавляем стоимость точного времени.
-                        var cost_target = $('#target').prop('checked') ? $('#km_target').val() : 0;
+                        var cost_target = $('.target').prop('checked') ? $('#km_target').val() : 0;
                         // Если установлена фиксированная стоимость по городу, то ставим ее вместо расчетной
                         var fixprice_inside = $('#user_fix_price').val();
                         var cost_in_spb = (fixprice_inside == 0 || typeof fixprice_inside == 'undefined')

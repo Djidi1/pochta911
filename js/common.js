@@ -252,7 +252,10 @@ function autoc_spb_streets(){
 function updUserStores(obj){
     var user_id = $(obj).val();
     $.post("/orders/get_data-userStores/", {user_id:user_id},  function(data) {
-        $('.js-store_address').html(data).change();
+        data = JSON.parse(data);
+        $('SELECT.pay_type').val(data.pay_type);
+        $('#user_fix_price').val(data.fixprice);
+        $('.js-store_address').html(data.opts).change();
     });
 }
 
@@ -382,62 +385,69 @@ function test_time_routes(obj){
     test_time_routes_each(route_row);
 }
 function test_time_all_routes(){
-    // Проверка времени готовности
-    var first_time = '';
-    var prev_time = '';
-    var need_sync = false;
-    $('div.routes-block').each(function (index) {
-        var this_time = $(this).find('.to_time_ready').val();
-        if (index == 0){
-            first_time = this_time;
-        }
-        if (index != 0 && this_time != prev_time){
-            need_sync = true;
-        }else {
-            prev_time = this_time;
-        }
-    });
+    var order_edited = $('#order_edited').val();
+    var order_id = $('#order_id').val();
 
-    var invalid = false;
-    $('div.routes-block').find("select:required, input:required",this).each(function() {
-        if($(this).val().trim() == "") {
-            invalid = true;
-            $(this).focus();
-        }
-    });
-    if (invalid){
-        bootbox.alert('Заполните, пожалуйста, все обязательные поля формы заказа.');
-        return false;
-    }
-    if (need_sync){
-        bootbox.alert('Время готовности всех заказов должно быть единым.<br/>Мы установили равным времени готовности первого заказа по маршруту');
-        $('div.routes-block').find('.to_time_ready').val(first_time);
-        return false;
-    }
+    // Запускаем проверку только, если это новый заказ или если в нем было что-то изменено (кроме примечания)
+    if (order_edited == 1 || order_id == 0 ) {
+        // Проверка времени готовности
+        var first_time = '';
+        var prev_time = '';
+        var need_sync = false;
+        $('div.routes-block').each(function (index) {
+            var this_time = $(this).find('.to_time_ready').val();
+            if (index == 0) {
+                first_time = this_time;
+            }
+            if (index != 0 && this_time != prev_time) {
+                need_sync = true;
+            } else {
+                prev_time = this_time;
+            }
+        });
 
-    $('div.routes-block').each(function () {
-        var this_ready = $(this).find('.to_time_ready').val();
-        var this_to_time = $(this).find('.to_time').val();
-        var this_to_time_end = $(this).find('.to_time_end').val();
-
-        // Время начала доставки не может быть позже времени окончания доставки
-        if (this_to_time > this_to_time_end) {
-            $(this).find('.to_time').val(this_to_time_end);
-            this_to_time = this_to_time_end;
-            bootbox.alert('Время начала доставки не может быть позже времени окончания доставки.');
+        var invalid = false;
+        $('div.routes-block').find("select:required, input:required", this).each(function () {
+            if ($(this).val().trim() == "") {
+                invalid = true;
+                $(this).focus();
+            }
+        });
+        if (invalid) {
+            bootbox.alert('Заполните, пожалуйста, все обязательные поля формы заказа.');
             return false;
         }
-        // Время готовности не может быть больше времени доставки
-        if (this_ready > this_to_time) {
-            $(this).find('.to_time_ready').val(this_to_time);
-            bootbox.alert('Время готовности не может быть больше времени начала доставки.');
+        if (need_sync) {
+            bootbox.alert('Время готовности всех заказов должно быть единым.<br/>Мы установили равным времени готовности первого заказа по маршруту');
+            $('div.routes-block').find('.to_time_ready').val(first_time);
             return false;
         }
-    });
-    $('div.routes-block').each(function () {
-        test_time_routes_each(this);
-    });
 
+        $('div.routes-block').each(function () {
+            var this_ready = $(this).find('.to_time_ready').val();
+            var this_to_time = $(this).find('.to_time').val();
+            var this_to_time_end = $(this).find('.to_time_end').val();
+
+            // Время начала доставки не может быть позже времени окончания доставки
+            if (this_to_time > this_to_time_end) {
+                $(this).find('.to_time').val(this_to_time_end);
+                this_to_time = this_to_time_end;
+                bootbox.alert('Время начала доставки не может быть позже времени окончания доставки.');
+                return false;
+            }
+            // Время готовности не может быть больше времени доставки
+            if (this_ready > this_to_time) {
+                $(this).find('.to_time_ready').val(this_to_time);
+                bootbox.alert('Время готовности не может быть больше времени начала доставки.');
+                return false;
+            }
+        });
+        $('div.routes-block').each(function () {
+            test_time_routes_each(this);
+        });
+    }else{
+        document.getElementById("order_edit").submit();
+    }
 }
 
 function test_time_routes_each(route_row){
@@ -498,10 +508,14 @@ function test_time_routes_each(route_row){
 
 
     // Заказы вечером на завтра и утром на сегодня запрещены на утро (проверка по крайнему времени доставки)
-    if ((set_date == tomarrow && t_now > 21 && tt_end < 11) || (set_date == today && t_now < 11 && tt_end < 11 ) ){
-        errors += '<li>Заказ с доставкой в период с 8:00 до 11:00 можно оставить не позднее 21:00.</li><br/>';
+    if ((set_date == tomarrow && t_now > 21 && tt_end < 12) || (set_date == today && t_now < 9 && tt_end < 12 ) ){
+        errors += '<li>Заказ с доставкой в период с 8:00 до 12:00 можно оставить не раньше 09:00 и не позднее 21:00.</li><br/>';
         no_error = false;
     }
+    // if ((set_date == tomarrow && t_now > 21 && tt_end < 11) || (set_date == today && t_now < 11 && tt_end < 11 ) ){
+    //     errors += '<li>Заказ с доставкой в период с 8:00 до 11:00 можно оставить не позднее 21:00.</li><br/>';
+    //     no_error = false;
+    // }
     // Только для новых заказов
     if ($('#order_id').val() == '') {
         // Добавляем день, если заказ на текущей и время готовности меньше текушего

@@ -11,7 +11,7 @@
             <link href="/images/favicon.png" rel="shortcut icon" type="image/vnd.microsoft.icon"/>
             <link rel="stylesheet" href="/css/camera.css"/>
             <link rel="stylesheet" href="/css/select2.css?v1.1"/>
-            <link rel="stylesheet" href="/css/style.css?v2.10"/>
+            <link rel="stylesheet" href="/css/style.css?v2.11"/>
             <link rel="stylesheet" href="/css/font-awesome.min.css"/>
             <link rel="stylesheet" href="/css/print.css" media="Print"/>
             <link rel="stylesheet" href="/css/bootstrap.min.css"/>
@@ -39,7 +39,7 @@
             <script src="//maps.googleapis.com/maps/api/js?key=AIzaSyAnDrB-qO4i5uCua-4krGQsloWYJBRtgNU&libraries=places"></script>
                 ]]>
             </xsl:text>
-            <script src="/js/gmap.js?v2.14"/>
+            <script src="/js/gmap.js?v2.15"/>
             <!--<script src="https://api-maps.yandex.ru/2.1/?lang=ru_RU&amp;coordorder=longlat"/>-->
             <!--<script src="/js/ymap.js?v1"/>-->
             <script>

@@ -147,10 +147,10 @@ class ordersModel extends module_model {
         return $this->get_assoc_array($sql);
     }
     public function getUserParams($uid) {
-        $sql = "SELECT pay_type,fixprice_inside FROM users u WHERE u.id = $uid";
+        $sql = "SELECT pay_type, fixprice_inside FROM users u WHERE u.id = $uid";
         $this->query($sql);
         $result = $this->fetchRowA ();
-        return array($result['pay_type'],$result['fixprice_inside']);
+        return array('pay_type' => $result['pay_type'], 'fixprice' => $result['fixprice_inside']);
     }
     public function getPrices() {
         $sql = 'SELECT id, km_from, km_to, km_cost FROM routes_price r';
@@ -676,7 +676,7 @@ class ordersProcess extends module_process {
 				$items = $this->nModel->getSpbStreets();
 				echo json_encode($items);
 			}
-			if ($type_data == 'userStores'){
+            if ($type_data == 'userStores'){
                 $user_id = $this->Vals->getVal ( 'user_id', 'POST', 'string' );
                 $stores = $this->nModel->getStores($user_id);
                 $opt = '';
@@ -684,7 +684,9 @@ class ordersProcess extends module_process {
                     $opt .= '<option value="'.$store['id'].'">'.$store['address'].'</option>';
                 }
                 $opt .= '<option value="0" style="color:maroon;">Ручной ввод</option>';
-                echo $opt;
+                $items = $this->nModel->getUserParams($user_id);
+                $items['opts'] = $opt;
+                echo json_encode($items);
             }
             exit();
 		}
@@ -718,7 +720,9 @@ class ordersProcess extends module_process {
             $statuses = $this->nModel->getStatuses();
             $car_couriers = $this->nModel->getCarCouriers();
 			$users = $this->nModel->getUsers($uid);
-			list($user_pay_type,$user_fix_price) = $this->nModel->getUserParams($user_id);
+            $userData = $this->nModel->getUserParams($user_id);
+            $user_pay_type = $userData['pay_type'];
+            $user_fix_price = $userData['fixprice'];
 			$prices = $this->nModel->getPrices();
 			$timer = $this->getTimeForSelect();
             $add_prices = $this->nModel->getAddPrices();
