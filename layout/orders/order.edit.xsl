@@ -254,7 +254,8 @@
             </span>
             <div class="form-control" style="width: 60%;">
                 <span class="order-add-title text-info">Адрес доставки</span>
-                <input type="search" class="order-route-data spb-streets js-street_upper" name="to[]" title="Улица, проспект и т.д." value="{to}" onchange="" autocomplete="off" required=""/>
+                <input type="search" class="order-route-data spb-streets js-street_upper" name="to[]" title="Улица, проспект и т.д." value="{to}" onchange="" autocomplete="off" required="" region="{to_region}"/>
+                <input type="hidden" class="to_region" name="to_region[]" value="{to_region}"/>
             </div>
             <div class="form-control" style="width: 20%;">
                 <span class="order-add-title text-info">дом/корп/строение</span>

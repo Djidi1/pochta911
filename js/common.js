@@ -205,6 +205,7 @@ function autoc_spb_streets(){
             },
             updater: function (item) {
                 $($this).parent().parent().find('.to_house').attr('AOGUID', item.id);
+                $($this).parent().parent().find('.to_region').val(item.region);
                 $($this).attr('region', item.region);
                 return item;
             },

@@ -120,12 +120,10 @@ function calc_route(recalc_cost, dest_point) {
         var route_address = $(this).val();
         var route_address_region = $(this).attr('region');
         var route_to_house = $(this).parent().parent().find('.to_house').val();
-        // var route_to_corpus = $(this).parent().parent().find('.to_corpus').val();
-        var route_to_corpus = '';
         if (route_address !== '') {
             route_address = (route_address.indexOf(',') > -1 || route_address_region == 47) ? 'Ленинградская обл., ' + route_address : 'Санкт-Петербург, ' + route_address;
             way_points.push({
-                location: (route_address + ((route_to_house !== '') ? (', ' + route_to_house) : '') + ((route_to_corpus !== '') ? (', ' + route_to_corpus) : '')) + '',
+                location: (route_address + ((route_to_house !== '') ? (', ' + route_to_house) : '')) + '',
                 stopover: true
             });
             i++;
@@ -139,16 +137,21 @@ function calc_route(recalc_cost, dest_point) {
     // Начальная точка маршрута
     var origin_point = ($("SELECT.store_address").val() !== '0')?$("SELECT.store_address option:selected").text():$('INPUT.store_address_new').val();
     // Конечная точка маршрута
-    // var destination_point = route[route.length-1].location;
     // Исклюаем конечную точку маршрута из промежуточных
     var destination_point = way_points.pop();
+
+    // Заглушка, на постоянный поиск адресов в яндексе.
+    if (typeof dest_point == 'undefined'){
+        getDestCoordsFromYandex(destination_point.location);
+        return true;
+    }
     var destination_point_location = (typeof dest_point == 'undefined') ? destination_point.location : dest_point;
 
     if (origin_point === ''){
         origin_point = way_points.pop();
         origin_point = (typeof origin_point !== 'undefined') ? origin_point.location : '';
     }else{
-        origin_point = (origin_point.indexOf(',') > -1) ? 'Ленинградская обл., ' + origin_point : 'Ленинградская обл., Санкт-Петербург, ' + origin_point;
+        // origin_point = (origin_point.indexOf(',') > -1) ? 'Ленинградская обл., ' + origin_point : 'Ленинградская обл., Санкт-Петербург, ' + origin_point;
     }
     if ( origin_point !== '' ) {
         directionsService.route({
@@ -333,15 +336,7 @@ function calc_route(recalc_cost, dest_point) {
             } else {
                 if (status == 'NOT_FOUND'){
                     var dest_point = response.request.destination;
-                    $.get('https://geocode-maps.yandex.ru/1.x/?format=json&geocode='+dest_point, function(data){
-                        var dest_point = data.response.GeoObjectCollection.featureMember[0].GeoObject.Point.pos;
-                        if (typeof dest_point !== 'undefined'){
-                            var ll = strToLatLng(dest_point);
-                            calc_route(1, ll);
-                        }else {
-                            console.log(data);
-                        }
-                    });
+                    getDestCoordsFromYandex(dest_point);
                 }else {
                     bootbox.alert('Ошибка построения маршрута: ' + status);
                 }
@@ -349,10 +344,24 @@ function calc_route(recalc_cost, dest_point) {
         });
     }
 }
+function getDestCoordsFromYandex(dest_point){
+    $.get('https://geocode-maps.yandex.ru/1.x/?format=json&geocode='+dest_point, function(data){
+        var dest_point = data.response.GeoObjectCollection.featureMember[0].GeoObject.Point.pos;
+        if (typeof dest_point !== 'undefined'){
+            var ll = strToLatLng(dest_point);
+            calc_route(1, ll);
+        }else {
+            console.log(data);
+        }
+    });
+}
 function strToLatLng(ll){
     var latlng = ll.split(' ');
     return new google.maps.LatLng(parseFloat(latlng[1]), parseFloat(latlng[0]));
 }
+/**
+ * @return {number}
+ */
 function MetersToKilo(number){
     return Math.ceil(number / 100)/10;
 }
@@ -397,8 +406,4 @@ function getShortestRoute(response){
         }
     });
     return routeIndex;
-}
-
-function iLog(text) {
-    console.log(text);
 }
