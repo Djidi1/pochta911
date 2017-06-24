@@ -142,16 +142,17 @@ function calc_route(recalc_cost, dest_point) {
 
     // Заглушка, на постоянный поиск адресов в яндексе.
     if (typeof dest_point == 'undefined'){
-        getDestCoordsFromYandex(destination_point.location);
+        getDestCoordsFromYandex(recalc_cost, destination_point.location);
         return true;
     }
-    var destination_point_location = (typeof dest_point == 'undefined') ? destination_point.location : dest_point;
+    var destination_point_location = (typeof dest_point == 'undefined' || dest_point == '') ? destination_point.location : dest_point;
 
     if (origin_point === ''){
         origin_point = way_points.pop();
         origin_point = (typeof origin_point !== 'undefined') ? origin_point.location : '';
     }else{
         // origin_point = (origin_point.indexOf(',') > -1) ? 'Ленинградская обл., ' + origin_point : 'Ленинградская обл., Санкт-Петербург, ' + origin_point;
+         origin_point = 'Санкт-Петербург, ' + origin_point;
     }
     if ( origin_point !== '' ) {
         directionsService.route({
@@ -336,7 +337,7 @@ function calc_route(recalc_cost, dest_point) {
             } else {
                 if (status == 'NOT_FOUND'){
                     var dest_point = response.request.destination;
-                    getDestCoordsFromYandex(dest_point);
+                    getDestCoordsFromYandex(recalc_cost, dest_point);
                 }else {
                     bootbox.alert('Ошибка построения маршрута: ' + status);
                 }
@@ -344,14 +345,20 @@ function calc_route(recalc_cost, dest_point) {
         });
     }
 }
-function getDestCoordsFromYandex(dest_point){
+function getDestCoordsFromYandex(recalc_cost, dest_point){
     $.get('https://geocode-maps.yandex.ru/1.x/?format=json&geocode='+dest_point, function(data){
         var dest_point = data.response.GeoObjectCollection.featureMember[0].GeoObject.Point.pos;
         if (typeof dest_point !== 'undefined'){
             var ll = strToLatLng(dest_point);
-            calc_route(1, ll);
+            calc_route(recalc_cost, ll);
         }else {
             console.log(data);
+        }
+    }).fail(function(data) {
+        console.log(data.status);
+        // 429 - Превышен лимит в 25 000 запросов в сутки
+        if (data.status === 429) {
+            calc_route(recalc_cost, '')
         }
     });
 }
