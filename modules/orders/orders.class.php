@@ -995,10 +995,10 @@ class ordersProcess extends module_process {
 
 	public function getTimeForSelect(){
         $time_arr = array();
-        for ($h = 8; $h <= 23; $h++) {
+        for ($h = 7; $h <= 23; $h++) {
             if ($h < 23){
                 for ($i= 0; $i <= 11; $i++){
-                    $time_arr[] = substr('0'.$h,-2).':'.substr('0'.($i*5),-2);
+                    $time_arr[] = substr('0'.$h,-2).':'.substr('0'.($i*10),-2);
                 }
             }else{
                 $time_arr[] = $h.':00';
