@@ -386,7 +386,7 @@ abstract class module_collection extends ArrayObject {
 		return true;
 	}
 
-	public function addItem($params, $auto_id = false) {
+	public function addItem($params) {
 //		$item = new module_item($params, $auto_id);
 //		$this->add($item);
 	}
@@ -446,7 +446,7 @@ class addonsSet extends module_item {
 
 	public function __construct ($Params) {
 		global $LOG;
-		if (!is_array($Params) || count($Params) == 0) { unset($this); return false;}
+		if (!is_array($Params) || count($Params) == 0) { return false;}
 		parent::__construct();
 		if (isset($Params['addon_id'])) $this->addon_id = $Params['addon_id']; else $this->addon_id = -1;
 		if (isset($Params['addon_codename'])) $this->addon_codename = $Params['addon_codename']; else $this->addon_codename = -1;
@@ -505,7 +505,7 @@ class modsetItem extends module_item {
 
 	public function __construct ($Params) {
 		global $LOG;
-		if (!is_array($Params) || count($Params) == 0) { unset($this); return false;}
+		if (!is_array($Params) || count($Params) == 0) { return false;}
 		parent::__construct();
 		if (isset($Params['id'])) $this->id = $Params['id']; else $this->id = -1;
 		if (isset($Params['name'])) $this->name = $Params['name']; else $this->name = 0;
@@ -530,7 +530,6 @@ class modsetItem extends module_item {
 		$this->notInsert['addonsItem'] = 1;
 		foreach ($Params as $key => $val) {
 			if (!$val && $key != 'actions') {
-				unset($this);
 				return false;
 			}
 		}
@@ -984,8 +983,6 @@ abstract class module_process {
 		$this->vals = $values;
 		$this->Vals = $values;
 		$this->System = $System;
-		if (!$modName) unset($this);
-
 		$this->modName = $modName;
 		$this->User = $User;
 		$this->Log = $LOG;

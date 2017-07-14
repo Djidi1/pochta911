@@ -209,7 +209,6 @@ class counterProcess extends module_process {
 		global $values, $User, $LOG,$System;
 		$this->Vals = $values;
 		$this->System = $System;
-		if (!$modName) unset($this);
 		$this->modName = $modName;
 		$this->User = $User;
 		$this->Log = $LOG;
