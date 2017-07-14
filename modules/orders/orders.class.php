@@ -997,7 +997,7 @@ class ordersProcess extends module_process {
         $time_arr = array();
         for ($h = 7; $h <= 23; $h++) {
             if ($h < 23){
-                for ($i= 0; $i <= 11; $i++){
+                for ($i= 0; $i <= 5; $i++){
                     $time_arr[] = substr('0'.$h,-2).':'.substr('0'.($i*10),-2);
                 }
             }else{

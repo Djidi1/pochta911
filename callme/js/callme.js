@@ -40,7 +40,7 @@ var cme_css = jQuery("<link>"); // add css
 cme_css.attr ({
 	type: 'text/css',
 	rel: 'stylesheet',
-	href: cme_folder + '/templates/' +  cme_template + '/style.css'
+	href: cme_folder + '/templates/' +  cme_template + '/style.css?v1.1'
 });
 
 jQuery("head").append(cme_css);
